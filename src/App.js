@@ -1,23 +1,26 @@
-import "./index.css";
-import { useState, useEffect } from "react";
-import { supabase } from "./supabaseClient";
-import Auth from "./Auth";
-import Account from "./Account";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-export default function App() {
-  const [session, setSession] = useState(null);
+import { SharedLayout, SharedPagesLayout, Error, Register, ProtectedRoute, Clients } from "./pages";
 
-  useEffect(() => {
-    setSession(supabase.auth.session());
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
-
+function App() {
   return (
-    <div className="container" style={{ padding: "50px 0 100px 0" }}>
-      {!session ? <Auth /> : <Account key={session.user.id} session={session} />}
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <SharedLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Clients />} />
+        </Route>
+        <Route path="register" element={<Register />} />
+        <Route path="*" element={<Error />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
+
+export default App;
