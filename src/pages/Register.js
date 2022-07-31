@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { supabase } from "../supabaseClient";
 import { Logo } from "../components";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, registerUser } from "../features/user/userSlice";
@@ -35,33 +36,23 @@ function Register() {
           return;
         }
         if (isMember) {
-          const result = await login({
-            variables: {
-              Username: input.Username,
-              Password: input.Password,
-            },
-          });
-          if (!result?.errors) {
+          const { user: existingUser, error } = await supabase.auth.signIn({ Username, Password });
+          if (!error) {
             const localObject = {
-              token: result?.data?.login?.token,
-              idProfile: result?.data?.login?.profile?.idProfile,
-              Username: result?.data?.login?.profile?.Username,
+              token: existingUser?.login?.token,
+              idProfile: existingUser?.login?.profile?.idProfile,
+              Username: existingUser?.login?.profile?.Username,
             };
             addUserToLocalStorage(localObject);
             dispatch(loginUser(localObject));
           }
         } else {
-          const result = await register({
-            variables: {
-              Username: input.Username,
-              Password: input.Password,
-            },
-          });
-          if (!result?.errors) {
+          const { user: createdUser, error } = await supabase.auth.signUp({ Username, Password });
+          if (!error) {
             const localObject = {
-              token: result?.data?.register?.token,
-              idProfile: result?.data?.register?.profile?.idProfile,
-              Username: result?.data?.register?.profile?.Username,
+              token: createdUser?.register?.token,
+              idProfile: createdUser?.register?.profile?.idProfile,
+              Username: createdUser?.register?.profile?.Username,
             };
             addUserToLocalStorage(localObject);
             dispatch(registerUser(localObject));
@@ -89,14 +80,12 @@ function Register() {
   };
 
   const loginDemo = async () => {
-    const result = await login({
-      variables: { Username: "demo", Password: "secret" },
-    });
-    if (!result?.errors) {
+    const { user: existingUser, error } = await supabase.auth.signIn({ Username: "demo", Password: "secret" });
+    if (!error) {
       const localObject = {
-        token: result?.data?.login?.token,
-        idProfile: result?.data?.login?.profile?.idProfile,
-        Username: result?.data?.login?.profile?.Username,
+        token: existingUser?.login?.token,
+        idProfile: existingUser?.login?.profile?.idProfile,
+        Username: existingUser?.login?.profile?.Username,
       };
       addUserToLocalStorage(localObject);
       dispatch(loginUser(localObject));
@@ -111,54 +100,32 @@ function Register() {
   }, [user]);
 
   if (!isMounted) return <></>;
-  if (isLoading || loadingLogin || loadingRegister) return <CircularProgress />;
+  if (isLoading) return <div>circular progress</div>;
   return (
     <div>
-      <form className="form" onSubmit={onSubmit}>
+      <form onSubmit={onSubmit}>
         <Logo />
         <h3>{input.isMember ? "Login" : "Register"}</h3>
-        <InputLabel error={isErrorInput.Username}>Username</InputLabel>
-        <TextField
-          error={isErrorInput.Username}
-          autoFocus
-          size="small"
-          margin="dense"
-          id="Username"
-          type="text"
-          value={input.Username}
-          onChange={handleUsername}
-          required
-          variant="outlined"
-          fullWidth
-        />
-        <InputLabel error={isErrorInput.Password}>Password</InputLabel>
-        <TextField
-          error={isErrorInput.Password}
-          size="small"
-          margin="dense"
-          id="Password"
-          type="password"
-          value={input.Password}
-          onChange={handlePassword}
-          required
-          variant="outlined"
-          fullWidth
-        />
+        <label>Username</label>
+        <input autoFocus id="Username" type="text" value={input.Username} onChange={handleUsername} required />
+        <label>Password</label>
+        <input id="Password" type="password" value={input.Password} onChange={handlePassword} required />
 
-        <Button type="submit" className="btn btn-block" disabled={isLoading} variant="contained" size="small">
+        <button type="submit" className="btn btn-block" disabled={isLoading}>
           {isLoading ? "loading..." : "connect"}
-        </Button>
-        <Button type="button" className="btn btn-block btn-hipster" disabled={isLoading} onClick={loginDemo} variant="contained" size="small">
+        </button>
+        <button type="button" className="btn btn-block" disabled={isLoading} onClick={loginDemo}>
           {isLoading ? "loading..." : "demo app"}
-        </Button>
+        </button>
         <p>
           {input.isMember ? "Not a member yet?" : "Already a member?"}
-          <Button type="button" onClick={toggleMember} className="member-btn" variant="text" size="small">
+          <button type="button" onClick={toggleMember} className="member-btn">
             {input.isMember ? "Register" : "Login"}
-          </Button>
+          </button>
         </p>
+        {/*         
         {loginError && <Typography color="error.main">{loginError.message}</Typography>}
-        {registerError && <Typography color="error.main">{registerError.message}</Typography>}
+        {registerError && <Typography color="error.main">{registerError.message}</Typography>} */}
       </form>
       <Copyright />
     </div>
