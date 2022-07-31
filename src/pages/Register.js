@@ -36,23 +36,23 @@ function Register() {
           return;
         }
         if (isMember) {
-          const { user: existingUser, error } = await supabase.auth.signIn({ Username, Password });
+          const { user: existingUser, session, error } = await supabase.auth.signIn({ email: Username, password: Password });
           if (!error) {
             const localObject = {
-              token: existingUser?.login?.token,
-              idProfile: existingUser?.login?.profile?.idProfile,
-              Username: existingUser?.login?.profile?.Username,
+              token: session?.access_token,
+              idProfile: existingUser?.id,
+              Username: existingUser?.email,
             };
             addUserToLocalStorage(localObject);
             dispatch(loginUser(localObject));
           }
         } else {
-          const { user: createdUser, error } = await supabase.auth.signUp({ Username, Password });
+          const { user: createdUser, session, error } = await supabase.auth.signUp({ email: Username, password: Password });
           if (!error) {
             const localObject = {
-              token: createdUser?.register?.token,
-              idProfile: createdUser?.register?.profile?.idProfile,
-              Username: createdUser?.register?.profile?.Username,
+              token: session?.access_token,
+              idProfile: createdUser?.id,
+              Username: createdUser?.email,
             };
             addUserToLocalStorage(localObject);
             dispatch(registerUser(localObject));
@@ -80,7 +80,7 @@ function Register() {
   };
 
   const loginDemo = async () => {
-    const { user: existingUser, error } = await supabase.auth.signIn({ Username: "demo", Password: "secret" });
+    const { user: existingUser, error } = await supabase.auth.signIn({ email: "demo@demo.com", password: "secret123" });
     if (!error) {
       const localObject = {
         token: existingUser?.login?.token,
@@ -100,34 +100,48 @@ function Register() {
   }, [user]);
 
   if (!isMounted) return <></>;
-  if (isLoading) return <div>circular progress</div>;
+  if (isLoading) return <div>loading...</div>;
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <Logo />
-        <h3>{input.isMember ? "Login" : "Register"}</h3>
-        <label>Username</label>
-        <input autoFocus id="Username" type="text" value={input.Username} onChange={handleUsername} required />
-        <label>Password</label>
-        <input id="Password" type="password" value={input.Password} onChange={handlePassword} required />
-
-        <button type="submit" className="btn btn-block" disabled={isLoading}>
-          {isLoading ? "loading..." : "connect"}
-        </button>
-        <button type="button" className="btn btn-block" disabled={isLoading} onClick={loginDemo}>
-          {isLoading ? "loading..." : "demo app"}
-        </button>
-        <p>
-          {input.isMember ? "Not a member yet?" : "Already a member?"}
-          <button type="button" onClick={toggleMember} className="member-btn">
-            {input.isMember ? "Register" : "Login"}
-          </button>
-        </p>
-        {/*         
+    <div className="container mx-auto" style={{ width: "300px" }}>
+      <div className="container-fluid p-2 my-4 shadow border border-primary rounded-3">
+        <div className="d-flex justify-content-left align-items-center">
+          <Logo />
+          <p className="h1 text-capitalize ms-2">BG Clients</p>
+        </div>
+        <form onSubmit={onSubmit}>
+          <p className="h6 text-center text-capitalize pt-2">{input.isMember ? "Login" : "Register"}</p>
+          <div className="mb-3 mt-3">
+            <label htmlFor="Username" className="form-label">
+              Username:
+            </label>
+            <input autoFocus className="form-control" id="Username" type="email" value={input.Username} onChange={handleUsername} required />
+          </div>
+          <div className="mb-3 mt-3">
+            <label htmlFor="Password" className="form-label">
+              Password:
+            </label>
+            <input className="form-control" id="Password" type="password" value={input.Password} onChange={handlePassword} required />
+          </div>
+          <div className="d-flex justify-content-center align-content-center align-items-center">
+            <button type="submit" className="btn btn-primary text-capitalize flex-fill m-1" disabled={isLoading}>
+              {isLoading ? "loading..." : input.isMember ? "connect" : "register"}
+            </button>
+            <button type="button" className="btn btn-primary text-capitalize flex-fill m-1" disabled={isLoading} onClick={loginDemo}>
+              {isLoading ? "loading..." : "demo"}
+            </button>
+          </div>
+          <div className="text-center text-capitalize">
+            {input.isMember ? "Not a member yet?" : "Already a member?"}
+            <button type="button" onClick={toggleMember} className="btn btn-link">
+              {input.isMember ? "Register" : "Login"}
+            </button>
+          </div>
+          {/*         
         {loginError && <Typography color="error.main">{loginError.message}</Typography>}
         {registerError && <Typography color="error.main">{registerError.message}</Typography>} */}
-      </form>
-      <Copyright />
+        </form>
+        <Copyright />
+      </div>
     </div>
   );
 }
