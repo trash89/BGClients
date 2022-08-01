@@ -1,15 +1,17 @@
 import { supabase } from "../supabaseClient";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../features/user/userSlice";
 import { links } from "../utils/links";
 import Logo from "./Logo";
+import { Link } from "react-router-dom";
 
 const MenuAppBar = () => {
   const { user } = useSelector((store) => store.user);
+  const dispatch = useDispatch();
   return (
-    <nav className="navbar navbar-expand-sm bg-primary navbar-dark sticky-top">
+    <nav className="navbar navbar-expand-sm bg-primary navbar-dark sticky-top pt-0 pb-0">
       <div className="container-fluid">
-        <a className="navbar-brand" href="/">
+        <a href="/" className="navbar-brand">
           <Logo />
         </a>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
@@ -20,39 +22,27 @@ const MenuAppBar = () => {
             {links.map((page) => {
               return (
                 <li key={page.id} className="nav-item text-capitalize">
-                  <a className="nav-link" href={page.path}>
+                  <Link to={page.path} className="nav-link">
                     {page.text}
-                  </a>
+                  </Link>
                 </li>
               );
             })}
-          </ul>
-        </div>
-        <div className="d-flex">
-          <div className="nav-item dropdown">
-            <a className="nav-link dropdown-toggle bg-primary text-white" href="/" role="button" data-bs-toggle="dropdown">
-              {user.Username}
-            </a>
-            <ul className="dropdown-menu">
-              <li>
-                <a className="dropdown-item text-capitalize" href="/profiles">
-                  profiles
-                </a>
-              </li>
-              <li>
+            <li>
+              <div className="d-flex">
                 <a
-                  className="dropdown-item text-capitalize"
                   href="/"
+                  className="nav-link"
                   onClick={async () => {
+                    dispatch(logoutUser());
                     await supabase.auth.signOut();
-                    logoutUser();
                   }}
                 >
-                  Logout
+                  {user.Username}
                 </a>
-              </li>
-            </ul>
-          </div>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>

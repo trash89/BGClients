@@ -1,7 +1,7 @@
 import React from "react";
 
-const Events = () => {
-  return <div>Events</div>;
+const Profiles = () => {
+  return <div>Profiles</div>;
 };
 
-export default Events;
+export default Profiles;
