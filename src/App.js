@@ -33,22 +33,23 @@ function App() {
         >
           <Route index element={<Clients />} />
 
-          <Route path="profiles" element={<SharedPagesLayout title="profiles" />}>
-            <Route index element={<Profiles />} />
-            <Route path=":idProfile" element={<EditProfile />} />
-          </Route>
-
-          <Route path="clients" element={<SharedPagesLayout title="clients" />}>
+          <Route path="clients" element={<SharedPagesLayout />}>
             <Route index element={<Clients />} />
             <Route path=":idClient" element={<EditClient />} />
             <Route path="newclient" element={<NewClient />} />
           </Route>
-          <Route path="contacts" element={<SharedPagesLayout title="contacts" />}>
+
+          <Route path="profiles" element={<SharedPagesLayout />}>
+            <Route index element={<Profiles />} />
+            <Route path=":idProfile" element={<EditProfile />} />
+          </Route>
+
+          <Route path="contacts" element={<SharedPagesLayout />}>
             <Route index element={<Contacts />} />
             <Route path=":idContact" element={<EditContact />} />
             <Route path="newcontact" element={<NewContact />} />
           </Route>
-          <Route path="events" element={<SharedPagesLayout title="events" />}>
+          <Route path="events" element={<SharedPagesLayout />}>
             <Route index element={<Events />} />
             <Route path=":idEvent" element={<EditEvent />} />
             <Route path="newevent" element={<NewEvent />} />

@@ -28,22 +28,34 @@ const MenuAppBar = () => {
                 </li>
               );
             })}
-            <li>
-              <div className="d-flex">
-                <a
-                  href="/"
-                  className="nav-link"
+          </ul>
+        </div>
+        <ul className="nav justify-content-end">
+          <li className="nav-item dropdown">
+            <Link to="/" className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
+              {user.Username}
+            </Link>
+            <ul className="dropdown-menu">
+              <li>
+                <Link to="/profiles" className="dropdown-item text-capitalize">
+                  Profiles
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/"
+                  className="dropdown-item text-capitalize"
                   onClick={async () => {
                     dispatch(logoutUser());
                     await supabase.auth.signOut();
                   }}
                 >
-                  {user.Username}
-                </a>
-              </div>
-            </li>
-          </ul>
-        </div>
+                  Logout
+                </Link>
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </nav>
   );

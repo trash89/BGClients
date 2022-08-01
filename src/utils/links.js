@@ -6,7 +6,6 @@ const links = [
   { id: 0, text: "clients", path: "clients", icon: <BsPersonLinesFill /> },
   { id: 1, text: "contacts", path: "contacts", icon: <FaProjectDiagram /> },
   { id: 2, text: "events", path: "events", icon: <FaWpforms /> },
-  { id: 3, text: "profiles", path: "profiles", icon: <FaWpforms /> },
 ];
 
 export { links };
