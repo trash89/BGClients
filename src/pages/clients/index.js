@@ -1,3 +1,5 @@
 import Clients from "./Clients";
+import NewClient from "./NewClient";
+import EditClient from "./EditClient";
 
-export { Clients };
+export { Clients, NewClient, EditClient };
