@@ -38,13 +38,17 @@ function Register() {
         if (isMember) {
           const { user: existingUser, session, error } = await supabase.auth.signIn({ email: Username, password: Password });
           if (!error) {
-            const localObject = {
-              token: session?.access_token,
-              idProfile: existingUser?.id,
-              Username: existingUser?.email,
-            };
-            addUserToLocalStorage(localObject);
-            dispatch(loginUser(localObject));
+            const { data: localuser, error } = await supabase.from("localusers").select();
+            if (!error) {
+              const localObject = {
+                access_token: session.access_token,
+                id: existingUser.id,
+                email: existingUser.email,
+                isAdmin: localuser[0].isAdmin,
+              };
+              addUserToLocalStorage(localObject);
+              dispatch(loginUser(localObject));
+            }
           }
         } else {
           const { user: createdUser, session, error } = await supabase.auth.signUp({ email: Username, password: Password });
@@ -80,15 +84,19 @@ function Register() {
   };
 
   const loginDemo = async () => {
-    const { user: existingUser, error } = await supabase.auth.signIn({ email: "demo@demo.com", password: "secret123" });
+    const { user: existingUser, error, session } = await supabase.auth.signIn({ email: "demo@demo.com", password: "secret123" });
     if (!error) {
-      const localObject = {
-        token: existingUser?.login?.token,
-        idProfile: existingUser?.login?.profile?.idProfile,
-        Username: existingUser?.login?.profile?.Username,
-      };
-      addUserToLocalStorage(localObject);
-      dispatch(loginUser(localObject));
+      const { data: localuser, error } = await supabase.from("localusers").select();
+      if (!error) {
+        const localObject = {
+          access_token: session.access_token,
+          id: existingUser.id,
+          email: existingUser.email,
+          isAdmin: localuser[0].isAdmin,
+        };
+        addUserToLocalStorage(localObject);
+        dispatch(loginUser(localObject));
+      }
     }
   };
 

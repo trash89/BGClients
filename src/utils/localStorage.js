@@ -2,9 +2,10 @@ import { USER } from "./constants";
 
 export const addUserToLocalStorage = (user) => {
   const obj = {
-    token: user?.token,
-    idProfile: user?.idProfile,
-    Username: user?.Username,
+    access_token: user?.access_token,
+    id: user?.id,
+    email: user?.email,
+    isAdmin: user?.isAdmin,
   };
   localStorage.setItem(USER, JSON.stringify(obj));
 };

@@ -32,7 +32,7 @@ const MenuAppBar = () => {
           <ul className="nav align-content-start justify-content-sm-start justify-content-md-end flex-sm-grow-1">
             <li className="nav-item dropdown m-0 p-0">
               <Link to="/" className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
-                {user.Username}
+                {user.email}
               </Link>
               <ul className="dropdown-menu">
                 <li>
