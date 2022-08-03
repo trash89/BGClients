@@ -104,9 +104,9 @@ function Register() {
   return (
     <div className="container mx-auto" style={{ width: "300px" }}>
       <div className="container-fluid p-2 my-4 shadow border border-primary rounded-3">
-        <div className="d-flex justify-content-left align-items-center">
+        <div className="d-flex flex-row justify-content-center align-content-center align-items-center p-0 m-0">
           <Logo />
-          <p className="h1 text-capitalize ms-2">BG Clients</p>
+          <p className="h4 text-center text-capitalize flex-grow-1">BG Clients</p>
         </div>
         <form onSubmit={onSubmit}>
           <p className="h6 text-center text-capitalize pt-2">{input.isMember ? "Login" : "Register"}</p>

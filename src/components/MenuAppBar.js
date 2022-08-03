@@ -9,15 +9,15 @@ const MenuAppBar = () => {
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
   return (
-    <nav className="navbar navbar-expand-sm bg-primary navbar-dark sticky-top pt-0 pb-0">
+    <nav className="navbar navbar-expand-sm bg-primary navbar-dark sticky-top p-0 p-0">
       <div className="container-fluid">
-        <a href="/" className="navbar-brand">
+        <a href="/" className="navbar-brand m-0">
           <Logo />
         </a>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="collapsibleNavbar">
+        <div className="collapse navbar-collapse text-align-start" id="collapsibleNavbar">
           <ul className="navbar-nav">
             {links.map((page) => {
               return (
@@ -29,33 +29,33 @@ const MenuAppBar = () => {
               );
             })}
           </ul>
+          <ul className="nav align-content-start justify-content-sm-start justify-content-md-end flex-sm-grow-1">
+            <li className="nav-item dropdown m-0 p-0">
+              <Link to="/" className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
+                {user.Username}
+              </Link>
+              <ul className="dropdown-menu">
+                <li>
+                  <Link to="/profiles" className="dropdown-item text-capitalize">
+                    Profiles
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/"
+                    className="dropdown-item text-capitalize"
+                    onClick={async () => {
+                      dispatch(logoutUser());
+                      await supabase.auth.signOut();
+                    }}
+                  >
+                    Logout
+                  </Link>
+                </li>
+              </ul>
+            </li>
+          </ul>
         </div>
-        <ul className="nav justify-content-end">
-          <li className="nav-item dropdown">
-            <Link to="/" className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
-              {user.Username}
-            </Link>
-            <ul className="dropdown-menu">
-              <li>
-                <Link to="/profiles" className="dropdown-item text-capitalize">
-                  Profiles
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/"
-                  className="dropdown-item text-capitalize"
-                  onClick={async () => {
-                    dispatch(logoutUser());
-                    await supabase.auth.signOut();
-                  }}
-                >
-                  Logout
-                </Link>
-              </li>
-            </ul>
-          </li>
-        </ul>
       </div>
     </nav>
   );
