@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "../lib/supabaseClient";
 import { Logo } from "../components";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, registerUser } from "../features/user/userSlice";
-import { useNavigate } from "react-router-dom";
-import { addUserToLocalStorage } from "../utils/localStorage";
-import { useIsMounted } from "../hooks";
+import { loginUser, registerUser } from "../lib/features/user/userSlice";
+import { useRouter } from "next/router";
+import { addUserToLocalStorage } from "../lib/utils/localStorage";
+import { useIsMounted } from "../lib/hooks";
 
-import { Copyright } from "../components";
+import { Footer } from "../components";
 
 function Register() {
   const isMounted = useIsMounted();
@@ -25,7 +25,7 @@ function Register() {
   const { user, isLoading } = useSelector((store) => store.user);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +44,7 @@ function Register() {
                 access_token: session.access_token,
                 id: existingUser.id,
                 email: existingUser.email,
-                isAdmin: localuser[0].isAdmin,
+                isAdmin: localuser.isAdmin,
               };
               addUserToLocalStorage(localObject);
               dispatch(loginUser(localObject));
@@ -86,13 +86,13 @@ function Register() {
   const loginDemo = async () => {
     const { user: existingUser, error, session } = await supabase.auth.signIn({ email: "demo@demo.com", password: "secret123" });
     if (!error) {
-      const { data: localuser, error } = await supabase.from("localusers").select();
+      const { data: localuser, error } = await supabase.from("localusers").select().single();
       if (!error) {
         const localObject = {
           access_token: session.access_token,
           id: existingUser.id,
           email: existingUser.email,
-          isAdmin: localuser[0].isAdmin,
+          isAdmin: localuser.isAdmin,
         };
         addUserToLocalStorage(localObject);
         dispatch(loginUser(localObject));
@@ -102,7 +102,7 @@ function Register() {
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      router.push("/");
     }
     // eslint-disable-next-line
   }, [user]);
@@ -148,7 +148,7 @@ function Register() {
         {loginError && <Typography color="error.main">{loginError.message}</Typography>}
         {registerError && <Typography color="error.main">{registerError.message}</Typography>} */}
         </form>
-        <Copyright />
+        <Footer />
       </div>
     </div>
   );
