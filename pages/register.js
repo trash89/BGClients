@@ -9,7 +9,7 @@ import { useIsMounted } from "../lib/hooks";
 
 import { Footer } from "../components";
 
-function Register() {
+export default function Register() {
   const isMounted = useIsMounted();
   const [input, setInput] = useState({
     Username: "",
@@ -153,4 +153,7 @@ function Register() {
     </div>
   );
 }
-export default Register;
+
+Register.getLayout = function getLayout(page) {
+  return <>{page}</>;
+};

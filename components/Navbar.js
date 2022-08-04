@@ -12,7 +12,7 @@ export default function Navbar() {
 
   const MyButton = React.forwardRef(({ onClick, href }, ref) => {
     return (
-      <a href={href} onClick={onClick} ref={ref}>
+      <a href={href} onClick={onClick} ref={ref} className="dropdown-item text-capitalize">
         Logout
       </a>
     );
@@ -27,8 +27,8 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-sm bg-primary navbar-dark sticky-top p-0 p-0">
       <div className="container-fluid">
-        <Link href="/" className="navbar-brand m-0">
-          <a>
+        <Link href="/">
+          <a className="navbar-brand m-0">
             <Logo />
           </a>
         </Link>
@@ -40,8 +40,8 @@ export default function Navbar() {
             {links.map((page) => {
               return (
                 <li key={page.id} className="nav-item text-capitalize">
-                  <Link href={page.path} className="nav-link">
-                    <a>{page.text}</a>
+                  <Link href={page.path}>
+                    <a className="nav-link">{page.text}</a>
                   </Link>
                 </li>
               );
@@ -49,17 +49,19 @@ export default function Navbar() {
           </ul>
           <ul className="nav align-content-start justify-content-sm-start justify-content-md-end flex-sm-grow-1">
             <li className="nav-item dropdown m-0 p-0">
-              <Link href="/" className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
-                <a>{user?.email}</a>
+              <Link href="/">
+                <a className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
+                  {user?.email}
+                </a>
               </Link>
               <ul className="dropdown-menu">
                 <li>
-                  <Link href="/profiles" className="dropdown-item text-capitalize">
-                    <a>Profiles</a>
+                  <Link href="/profiles">
+                    <a className="dropdown-item text-capitalize">Profiles</a>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/" className="dropdown-item text-capitalize" passHref>
+                  <Link href="/" passHref>
                     <MyButton />
                   </Link>
                 </li>

@@ -5,11 +5,18 @@ import { store } from "../lib/store";
 import Layout from "../components/layout";
 
 function MyApp({ Component, pageProps }) {
-  return (
+  const getLayout =
+    Component.getLayout ||
+    ((page) => {
+      return (
+        <Provider store={store}>
+          <Layout>{page}</Layout>
+        </Provider>
+      );
+    });
+  return getLayout(
     <Provider store={store}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <Component {...pageProps} />
     </Provider>
   );
 }
