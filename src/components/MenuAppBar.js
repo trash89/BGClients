@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../features/user/userSlice";
 import { links } from "../utils/links";
 import Logo from "./Logo";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const MenuAppBar = () => {
   const { user } = useSelector((store) => store.user);
@@ -11,9 +12,11 @@ const MenuAppBar = () => {
   return (
     <nav className="navbar navbar-expand-sm bg-primary navbar-dark sticky-top p-0 p-0">
       <div className="container-fluid">
-        <a href="/" className="navbar-brand m-0">
-          <Logo />
-        </a>
+        <Link href="/" className="navbar-brand m-0">
+          <a>
+            <Logo />
+          </a>
+        </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
           <span className="navbar-toggler-icon"></span>
         </button>

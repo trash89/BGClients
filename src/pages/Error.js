@@ -1,13 +1,13 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import img from "../assets/images/not-found.svg";
-
+import Image from "next/image";
 const Error = () => {
   return (
     <div className="container">
-      <img src={img} alt="not found" width={300} height={300} />
+      <Image src={img} alt="not found" width={300} height={300} />
       <h3>Ohh! Page Not Found</h3>
-      <p>We can't seem to find the page you're looking for</p>
-      <Link to="/">back home</Link>
+      <p>We can&apos;t seem to find the page you&apos;re looking for</p>
+      <Link href="/">back home</Link>
     </div>
   );
 };

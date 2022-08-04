@@ -6,7 +6,7 @@ import { links } from "../lib/utils/links";
 import Logo from "./Logo";
 import Link from "next/link";
 
-const Navbar = () => {
+export default function Navbar() {
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
 
@@ -17,6 +17,8 @@ const Navbar = () => {
       </a>
     );
   });
+  MyButton.displayName = "MyButton";
+
   const onClick = async () => {
     dispatch(logoutUser());
     await supabase.auth.signOut();
@@ -68,5 +70,4 @@ const Navbar = () => {
       </div>
     </nav>
   );
-};
-export default Navbar;
+}
