@@ -62,7 +62,7 @@ export default function Navbar() {
                 </li>
                 <li>
                   <Link href="/" passHref>
-                    <MyButton />
+                    <MyButton onClick={onClick} />
                   </Link>
                 </li>
               </ul>

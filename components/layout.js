@@ -13,7 +13,7 @@ export default function Layout({ children }) {
     if (!user) {
       router.push("/register");
     }
-  }, []);
+  });
 
   return (
     <>
