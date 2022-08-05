@@ -26,7 +26,7 @@ export default function Navbar() {
 
   return (
     <nav className="navbar navbar-expand-sm bg-primary navbar-dark sticky-top p-0 p-0">
-      <div class="container-fluid">
+      <div className="container-fluid">
         <Link href="/">
           <a className="navbar-brand">
             <Logo />
