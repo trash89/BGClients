@@ -17,9 +17,13 @@ export default function Layout({ children }) {
 
   return (
     <>
-      <Navbar />
-      <main>{children}</main>
-      <Footer />
+      {user && (
+        <>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </>
+      )}
     </>
   );
 }
