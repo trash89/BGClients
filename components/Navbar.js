@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../lib/features/user/userSlice";
@@ -23,6 +23,21 @@ export default function Navbar() {
     dispatch(logoutUser());
     await supabase.auth.signOut();
   };
+
+  useEffect(() => {
+    fetch("/api/getUser", {
+      method: "GET",
+      headers: new Headers({ "Content-Type": "application/json" }),
+      credentials: "same-origin",
+    })
+      .then((res) => {
+        console.log("res=", res);
+        res.json();
+      })
+      .then((data) => {
+        console.log("data=", data);
+      });
+  }, []);
 
   return (
     <nav className="navbar navbar-expand-sm bg-primary navbar-dark sticky-top p-0 p-0">

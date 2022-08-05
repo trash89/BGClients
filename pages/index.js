@@ -3,16 +3,18 @@ import { supabase } from "../lib/supabaseClient";
 import Head from "next/head";
 
 export default function Home() {
-  const [session, setSession] = useState(null);
-
+  const [user, setUser] = useState(null);
   useEffect(() => {
-    const session = supabase.auth.session();
-    setSession(session);
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+    const { data: authListener } = supabase.auth.onAuthStateChange(async () => checkUser());
+    checkUser();
+    return () => {
+      authListener?.unsubscribe();
+    };
   }, []);
+  async function checkUser() {
+    const user = supabase.auth.user();
+    setUser(user);
+  }
 
   return (
     <div className="container-fluid">
