@@ -27,6 +27,26 @@ export default function Register() {
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const loginDemo = async () => {
+    await login("demo@demo.com", "secret123");
+  };
+
+  const login = async (Username, Password) => {
+    const { user: existingUser, session, error } = await supabase.auth.signIn({ email: Username, password: Password });
+    if (!error) {
+      const { data: localuser, error } = await supabase.from("localusers").select().single();
+      if (!error) {
+        const localObject = {
+          access_token: session.access_token,
+          id: existingUser.id,
+          email: existingUser.email,
+          isAdmin: localuser.isAdmin,
+        };
+        addUserToLocalStorage(localObject);
+        dispatch(loginUser(localObject));
+      }
+    }
+  };
   const onSubmit = async (e) => {
     e.preventDefault();
     if (input.Username && input.Username !== "") {
@@ -36,20 +56,7 @@ export default function Register() {
           return;
         }
         if (isMember) {
-          const { user: existingUser, session, error } = await supabase.auth.signIn({ email: Username, password: Password });
-          if (!error) {
-            const { data: localuser, error } = await supabase.from("localusers").select().single();
-            if (!error) {
-              const localObject = {
-                access_token: session.access_token,
-                id: existingUser.id,
-                email: existingUser.email,
-                isAdmin: localuser.isAdmin,
-              };
-              addUserToLocalStorage(localObject);
-              dispatch(loginUser(localObject));
-            }
-          }
+          await login(Username, Password);
         } else {
           const { user: createdUser, session, error } = await supabase.auth.signUp({ email: Username, password: Password });
           if (!error) {
@@ -83,29 +90,27 @@ export default function Register() {
     if (isErrorInput.Password) setIsErrorInput({ ...isErrorInput, Password: false });
   };
 
-  const loginDemo = async () => {
-    const { user: existingUser, error, session } = await supabase.auth.signIn({ email: "demo@demo.com", password: "secret123" });
-    if (!error) {
-      const { data: localuser, error } = await supabase.from("localusers").select().single();
-      if (!error) {
-        const localObject = {
-          access_token: session.access_token,
-          id: existingUser.id,
-          email: existingUser.email,
-          isAdmin: localuser.isAdmin,
-        };
-        addUserToLocalStorage(localObject);
-        dispatch(loginUser(localObject));
-      }
-    }
-  };
-
   useEffect(() => {
     if (user) {
       router.push("/");
     }
     // eslint-disable-next-line
   }, [user]);
+
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      fetch("/api/auth", {
+        method: "POST",
+        headers: new Headers({ "Content-Type": "application/json" }),
+        credentials: "same-origin",
+        body: JSON.stringify({ event, session }),
+      }).then((res) => res.json());
+    });
+
+    return () => {
+      authListener.unsubscribe();
+    };
+  });
 
   if (!isMounted) return <></>;
   if (isLoading) return <div>loading...</div>;

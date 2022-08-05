@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { supabase } from "../lib/supabaseClient";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../lib/features/user/userSlice";
@@ -7,7 +7,7 @@ import Logo from "./Logo";
 import Link from "next/link";
 
 export default function Navbar() {
-  const { user } = useSelector((store) => store.user);
+  const { user: userRedux } = useSelector((store) => store.user);
   const dispatch = useDispatch();
 
   const MyButton = React.forwardRef(({ onClick, href }, ref) => {
@@ -26,9 +26,9 @@ export default function Navbar() {
 
   return (
     <nav className="navbar navbar-expand-sm bg-primary navbar-dark sticky-top p-0 p-0">
-      <div className="container-fluid">
+      <div class="container-fluid">
         <Link href="/">
-          <a className="navbar-brand m-0">
+          <a className="navbar-brand">
             <Logo />
           </a>
         </Link>
@@ -51,10 +51,10 @@ export default function Navbar() {
             <li className="nav-item dropdown m-0 p-0">
               <Link href="/">
                 <a className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
-                  {user?.email}
+                  {userRedux?.email}
                 </a>
               </Link>
-              <ul className="dropdown-menu">
+              <ul className="dropdown-menu" style={{ margin: 0 }}>
                 <li>
                   <Link href="/profiles">
                     <a className="dropdown-item text-capitalize">Profiles</a>
