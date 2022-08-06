@@ -10,8 +10,6 @@ import { dateFormat } from "../../lib/utils/constants";
 import { Progress } from "../../components";
 import { supabase } from "../../lib/supabaseClient";
 
-const fetcher = (...args) => fetch(...args).then((res) => res.json());
-
 const newClient = () => {
   const isMounted = useIsMounted();
   const { user } = useSelector((store) => store.user);
@@ -23,11 +21,11 @@ const newClient = () => {
     email: "",
   });
   if (!isMounted) return <></>;
-  //if (loading) return <Progress />;
+  if (loading) return <Progress />;
 
-  // if (!user) {
-  //   return <Navigate to="/register" />;
-  // }
+  if (!user) {
+    return <Navigate to="/register" />;
+  }
   const onSubmit = async (e) => {
     e.preventDefault();
 
