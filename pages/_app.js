@@ -1,6 +1,6 @@
+import "bootstrap/dist/css/bootstrap.css"; // Add this line
 import "normalize.css";
 import "../styles/globals.css";
-import "bootstrap/dist/css/bootstrap.css"; // Add this line
 import { useEffect } from "react";
 import { Provider } from "react-redux";
 import { store } from "../lib/store";
