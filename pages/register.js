@@ -34,7 +34,7 @@ export default function Register() {
   const login = async (Username, Password) => {
     const { user: existingUser, session, error } = await supabase.auth.signIn({ email: Username, password: Password });
     if (!error) {
-      const { data: localuser, error } = await supabase.from("localusers").select().single();
+      const { data: localuser, error } = await supabase.from("localusers").select("*").eq("user_id", existingUser.id).single();
       if (!error) {
         const localObject = {
           access_token: session.access_token,
@@ -44,7 +44,11 @@ export default function Register() {
         };
         addUserToLocalStorage(localObject);
         dispatch(loginUser(localObject));
+      } else {
+        console.log("error localusers=", error);
       }
+    } else {
+      console.log("error signIn=", error);
     }
   };
   const onSubmit = async (e) => {

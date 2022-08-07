@@ -21,7 +21,7 @@ const newClient = () => {
     email: "",
   });
   if (!isMounted) return <></>;
-  if (loading) return <Progress />;
+  //if (loading) return <Progress />;
 
   if (!user) {
     return <Navigate to="/register" />;
@@ -34,8 +34,10 @@ const newClient = () => {
       if (input.name && input.name !== "") {
         if (input.description && input.description !== "") {
           if (input.address && input.address !== "") {
-            const resp = await axios.post("/api/createUser", { email: input.email, password: "secret" });
-            console.log(resp.data);
+            const resp = await axios.post("/api/createUser", { email: input.email, password: "secret123" });
+            console.log(resp.data, resp.data.user.id);
+            const { data, error } = await supabase.from("localusers").insert({ user_id: resp.data.user.id }, { returning: "minimal" });
+            console.log("error=", error);
           }
         }
       }
