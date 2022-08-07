@@ -10,10 +10,11 @@ import { dateFormat } from "../../lib/utils/constants";
 import { Progress } from "../../components";
 import { supabase } from "../../lib/supabaseClient";
 
-const newClient = () => {
+const NewClient = () => {
   const isMounted = useIsMounted();
   const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
+  const router = useRouter();
   const [input, setInput] = useState({
     name: "",
     description: "",
@@ -24,7 +25,7 @@ const newClient = () => {
   //if (loading) return <Progress />;
 
   if (!user) {
-    return <Navigate to="/register" />;
+    router.push("/register");
   }
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -34,10 +35,11 @@ const newClient = () => {
       if (input.name && input.name !== "") {
         if (input.description && input.description !== "") {
           if (input.address && input.address !== "") {
-            const resp = await axios.post("/api/createUser", { email: input.email, password: "secret123" });
-            console.log(resp.data, resp.data.user.id);
-            const { data, error } = await supabase.from("localusers").insert({ user_id: resp.data.user.id }, { returning: "minimal" });
-            console.log("error=", error);
+            try {
+              const resp = await axios.post("/api/createUser", { email: input.email, password: "secret123" });
+            } catch (error) {
+              console.log(error.response);
+            }
           }
         }
       }
@@ -111,4 +113,4 @@ const newClient = () => {
   );
 };
 
-export default newClient;
+export default NewClient;
