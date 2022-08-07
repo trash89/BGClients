@@ -53,7 +53,7 @@ const NewClient = () => {
   };
   return (
     <div className="container p-2 my-2 border border-primary rounded-3">
-      <p class="h4 text-capitalize">New Client</p>
+      <p className="h4 text-capitalize">New Client</p>
       <form onSubmit={onSubmit}>
         <div className="mb-3 mt-3">
           <label htmlFor="email" className="form-label">

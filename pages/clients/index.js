@@ -44,9 +44,11 @@ const Clients = () => {
               return (
                 <tr key={row.id}>
                   <td>
-                    <a href="/">
-                      <i class="fa-solid fa-pen" />
-                    </a>
+                    <Link href="/">
+                      <a>
+                        <i className="fa-solid fa-pen" />
+                      </a>
+                    </Link>
                   </td>
                   <td>{row.email}</td>
                   <td>{row.name}</td>
