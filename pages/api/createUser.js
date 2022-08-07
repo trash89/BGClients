@@ -9,19 +9,15 @@ export default async function registerUser(req, res) {
         email_confirm: true,
         password: "secret123",
       });
-      if (errorCreatedUser) return res.status(401).json({ error: errorCreatedUser.message });
+      if (errorCreatedUser) return res.status(401).json({ error: `createdUser:${errorCreatedUser.message}` });
 
-      const { data: localUser, error: errorLocalUser } = await supabase
-        .from("localusers")
-        .insert({ user_id: createdUser.id, isAdmin: false }, { returning: "minimal" });
+      const { error: errorLocalUser } = await supabase.from("localusers").insert({ user_id: createdUser.id, isAdmin: false }, { returning: "minimal" });
       if (errorLocalUser) {
-        const { data: deletedUser, error: errorDeletedUser } = await supabase.auth.api.deleteUser(createdUser.id);
-        if (errorDeletedUser) {
-          return res.status(401).json({ error: errorDeletedUser.message });
-        }
-        return res.status(401).json({ error: errorLocalUser.message });
+        return res.status(401).json({ error: `localUser:${errorLocalUser.message}` });
       }
-      return res.status(200).json({ user: createdUser });
+      const { data: localUser, error: errorLocalUserSelect } = await supabase.from("localusers").select("*").eq("user_id", createdUser.id).single();
+
+      return res.status(200).json({ user: localUser });
     } else {
       res.status(401).json({ error: "no email provided for creating the user" });
     }

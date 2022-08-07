@@ -12,7 +12,7 @@ import { supabase } from "../../lib/supabaseClient";
 
 const NewClient = () => {
   const isMounted = useIsMounted();
-  const { user } = useSelector((store) => store.user);
+  const { user, isLoading } = useSelector((store) => store.user);
   const dispatch = useDispatch();
   const router = useRouter();
   const [input, setInput] = useState({
@@ -22,7 +22,7 @@ const NewClient = () => {
     email: "",
   });
   if (!isMounted) return <></>;
-  //if (loading) return <Progress />;
+  if (isLoading) return <Progress />;
 
   if (!user) {
     router.push("/register");
@@ -31,14 +31,20 @@ const NewClient = () => {
     e.preventDefault();
 
     if (input.email && input.email !== "") {
-      console.log("here", input.email);
       if (input.name && input.name !== "") {
         if (input.description && input.description !== "") {
           if (input.address && input.address !== "") {
             try {
               const resp = await axios.post("/api/createUser", { email: input.email, password: "secret123" });
+              console.log(resp.data);
+              const { data, error } = await supabase
+                .from("clients")
+                .insert([{ email: input.email, name: input.name, description: input.description, address: input.address, localuser_id: resp.data.user.id }]);
+              if (error) {
+                console.log(error);
+              }
             } catch (error) {
-              console.log(error.response);
+              console.log(error);
             }
           }
         }
@@ -46,7 +52,8 @@ const NewClient = () => {
     }
   };
   return (
-    <div className="container">
+    <div className="container p-2 my-2 border border-primary rounded-3">
+      <p class="h4 text-capitalize">New Client</p>
       <form onSubmit={onSubmit}>
         <div className="mb-3 mt-3">
           <label htmlFor="email" className="form-label">
