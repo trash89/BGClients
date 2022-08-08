@@ -25,7 +25,12 @@ const NewClient = () => {
   if (!user) {
     router.push("/register");
   }
-  const onSubmit = async (e) => {
+  const handleCancel = async (e) => {
+    e.preventDefault();
+
+    router.push("/clients");
+  };
+  const handleSave = async (e) => {
     e.preventDefault();
 
     if (input.email && input.email !== "") {
@@ -49,9 +54,9 @@ const NewClient = () => {
     }
   };
   return (
-    <div className="container p-2 my-2 border border-primary rounded-3">
-      <p className="h4 text-capitalize">New Client</p>
-      <form onSubmit={onSubmit}>
+    <section className="container p-2 my-2 border border-primary rounded-3">
+      <p className="h4 text-capitalize">enter a new client</p>
+      <form>
         <div className="mb-3 mt-3">
           <label htmlFor="email" className="form-label">
             Email:
@@ -108,12 +113,21 @@ const NewClient = () => {
             onChange={(e) => setInput({ ...input, address: e.target.value })}
           />
         </div>
-
-        <button type="submit" className="btn btn-primary">
-          Submit
+        <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
+          <i className="fa-solid fa-times" />
+        </button>
+        <button
+          type="button"
+          className="btn btn-primary me-2"
+          data-bs-toggle="tooltip"
+          title="Save"
+          onClick={handleSave}
+          disabled={!input.email || !input.name || !input.description || !input.address}
+        >
+          <i className="fa-solid fa-floppy-disk" />
         </button>
       </form>
-    </div>
+    </section>
   );
 };
 
