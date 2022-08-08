@@ -4,9 +4,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 
 import { useSelector, useDispatch } from "react-redux";
-
 import { useIsMounted } from "../../lib/hooks";
-import { dateFormat } from "../../lib/utils/constants";
 import { Progress } from "../../components";
 import { supabase } from "../../lib/supabaseClient";
 
@@ -36,7 +34,6 @@ const NewClient = () => {
           if (input.address && input.address !== "") {
             try {
               const resp = await axios.post("/api/createUser", { email: input.email, password: "secret123" });
-              console.log(resp.data);
               const { data, error } = await supabase
                 .from("clients")
                 .insert([{ email: input.email, name: input.name, description: input.description, address: input.address, localuser_id: resp.data.user.id }]);
