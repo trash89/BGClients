@@ -39,14 +39,19 @@ const NewClient = () => {
     e.preventDefault();
     try {
       const resp = await axios.post("/api/createUser", { email: input.email });
-      console.log(resp);
-      const { data, error } = await supabase
-        .from("clients")
-        .insert([{ email: input.email, name: input.name, description: input.description, address: input.address, localuser_id: resp.data.user.id }]);
+      const { data, error } = await supabase.from("clients").insert({
+        email: input.email,
+        name: input.name,
+        description: input.description,
+        address: input.address,
+        localuser_id: resp.data.user.id,
+        user_id: resp.data.user.user_id,
+      });
       if (error) {
         setError(`insert clients err: ${error?.message}`);
+      } else {
+        router.push("/clients");
       }
-      router.push("/clients");
     } catch (error) {
       setError(`axios err: ${error?.response?.data?.error}`);
     }

@@ -4,6 +4,7 @@ import { supabase } from "../../lib/supabaseClient";
 import { useSelector } from "react-redux";
 import { useIsMounted } from "../../lib/hooks";
 import { Progress } from "../../components";
+import axios from "axios";
 
 const EditClient = ({ data }) => {
   const isMounted = useIsMounted();
@@ -15,6 +16,7 @@ const EditClient = ({ data }) => {
     description: data.description,
     address: data.address,
     email: data.email,
+    password: "secret123",
   });
 
   if (!isMounted) return <></>;
@@ -36,16 +38,17 @@ const EditClient = ({ data }) => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const resp = await axios.post("/api/editUser", { email: input.email, password: input.password });
-      console.log(resp);
-      const { data, error } = await supabase
+      const resp = await axios.post("/api/editUser", { id: data.user_id, email: input.email, password: input.password });
+
+      const { data: clients, error } = await supabase
         .from("clients")
-        .update([{ email: input.email, name: input.name, description: input.description, address: input.address, localuser_id: resp.data.user.id }])
-        .match({ id: data.id });
+        .update({ name: input.name, description: input.description, address: input.address })
+        .eq("id", data.id);
       if (error) {
         setError(`update client err: ${error?.message}`);
+      } else {
+        router.push("/clients");
       }
-      router.push("/clients");
     } catch (error) {
       setError(`axios err: ${error?.response?.data?.error}`);
     }
@@ -76,6 +79,7 @@ const EditClient = ({ data }) => {
                 onChange={handleChange}
               />
             </div>
+
             <div className="col">
               <label htmlFor="name" className="form-label">
                 Client Name:
@@ -97,10 +101,10 @@ const EditClient = ({ data }) => {
               </label>
               <input
                 required
-                type="password"
+                type="text"
                 className="form-control"
                 id="password"
-                placeholder="Enter new password"
+                placeholder="Enter a new password"
                 name="password"
                 value={input.password}
                 onChange={handleChange}
@@ -146,7 +150,7 @@ const EditClient = ({ data }) => {
             data-bs-toggle="tooltip"
             title="Save"
             onClick={handleSave}
-            disabled={!input.email || !input.name || !input.description || !input.address}
+            disabled={!input.name || !input.description || !input.address}
           >
             <i className="fa-solid fa-floppy-disk" />
           </button>
@@ -177,5 +181,6 @@ export async function getStaticProps({ params }) {
     console.log("error EditClient getStaticProps,", error);
     return { props: { data: [] } };
   }
+
   return { props: { data } };
 }

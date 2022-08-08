@@ -3,8 +3,9 @@ import { supabase } from "../../lib/supabaseServer";
 export default async function editUser(req, res) {
   if (req.method === "POST") {
     const { id, email, password } = req.body;
+    console.log(id, email, password);
     if (email) {
-      const { data: editUser, error: errorEditUser } = await supabase.auth.api.updateUserById({
+      const { data: editUser, error: errorEditUser } = await supabase.auth.api.updateUserById(id, {
         email: email,
         email_confirm: true,
         password: password,

@@ -2,10 +2,12 @@ drop POLICY if exists "pol_localusers" on public.localusers;
 drop POLICY if exists "pol_localusers_select" on public.localusers;
 drop POLICY if exists "pol_localusers_insert" on public.localusers;
 drop POLICY if exists "pol_clients_insert" on public.clients;
+drop POLICY if exists "pol_clients_update" on public.clients;
+drop POLICY if exists "pol_clients_delete" on public.clients;
 drop POLICY if exists "pol_clients_select" on public.clients;
 drop POLICY if exists "clients_select" on public.clients;
 
-GRANT SELECT ON table auth.users to authenticated;
+GRANT SELECT,update ON table auth.users to authenticated;
 
 CREATE POLICY "pol_localusers_select"
 ON public.localusers
@@ -24,6 +26,16 @@ ON public.clients
 FOR INSERT
 TO authenticated 
 WITH CHECK (true);
+
+CREATE POLICY "pol_clients_update"
+ON public.clients
+FOR UPDATE
+using (true);
+
+CREATE POLICY "pol_clients_delete"
+ON public.clients
+FOR DELETE USING(true);
+
 
 CREATE POLICY "pol_clients_select"
 ON public.clients
