@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
 import { useIsMounted } from "../../lib/hooks";
 import { Progress } from "../../components";
-import { supabase } from "../../lib/supabaseClient";
+import { supabase, getUserOnServer } from "../../lib/supabaseClient";
 
 const Clients = ({ clients }) => {
   const isMounted = useIsMounted();
@@ -61,7 +60,12 @@ const Clients = ({ clients }) => {
 export default Clients;
 
 export async function getServerSideProps({ req, res }) {
-  const { data, error } = await supabase.from("clients").select("*");
+  const user = await getUserOnServer(req, res);
+  let query = supabase.from("clients").select("*");
+  if (!user.isAdmin) {
+    query = query.eq("user_id", user.id);
+  }
+  const { data, error } = await query;
   if (error) {
     console.log("error Clients getServerSideProps,", error);
     return {

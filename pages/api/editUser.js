@@ -1,26 +1,30 @@
-import { supabase } from "../../lib/supabaseServer";
+import { supabase, getUserOnServer } from "../../lib/supabaseServer";
 
 export default async function editUser(req, res) {
   if (req.method === "POST") {
-    const { id, email, password } = req.body;
-    console.log(id, email, password);
-    if (email) {
-      const { data: editUser, error: errorEditUser } = await supabase.auth.api.updateUserById(id, {
-        email: email,
-        email_confirm: true,
-        password: password,
-      });
-      if (errorEditUser) return res.status(401).json({ error: `editUser:${errorEditUser.message}` });
+    const user = await getUserOnServer(req, res);
+    if (user.isAdmin) {
+      const { id, email, password } = req.body;
+      if (email) {
+        const { data: editUser, error: errorEditUser } = await supabase.auth.api.updateUserById(id, {
+          email: email,
+          email_confirm: true,
+          password: password,
+        });
+        if (errorEditUser) return res.status(401).json({ error: `editUser:${errorEditUser.message}` });
 
-      const { data: localUser, error: errorLocalUserSelect } = await supabase.from("localusers").select("*").eq("user_id", editUser.id).single();
-      if (errorLocalUserSelect) {
-        return res.status(401).json({ error: `localUser select:${errorLocalUserSelect.message}` });
+        const { data: localUser, error: errorLocalUserSelect } = await supabase.from("localusers").select("*").eq("user_id", editUser.id).single();
+        if (errorLocalUserSelect) {
+          return res.status(401).json({ error: `localUser select:${errorLocalUserSelect.message}` });
+        }
+        return res.status(200).json({ user: localUser });
+      } else {
+        res.status(401).json({ error: "no email provided for editing the user" });
       }
-      return res.status(200).json({ user: localUser });
     } else {
-      res.status(401).json({ error: "no email provided for editing the user" });
+      res.status(401).json({ error: "only POST method is accepted" });
     }
   } else {
-    res.status(401).json({ error: "only POST method is accepted" });
+    res.status(401).json({ error: "only admin users allowed" });
   }
 }

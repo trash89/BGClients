@@ -6,7 +6,7 @@ import { loginUser, registerUser } from "../lib/features/user/userSlice";
 import { useRouter } from "next/router";
 import { addUserToLocalStorage } from "../lib/utils/localStorage";
 import { useIsMounted } from "../lib/hooks";
-
+import axios from "axios";
 import { Footer } from "../components";
 
 export default function Register() {

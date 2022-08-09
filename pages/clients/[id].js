@@ -42,7 +42,7 @@ const EditClient = ({ data }) => {
 
       const { data: clients, error } = await supabase
         .from("clients")
-        .update({ name: input.name, description: input.description, address: input.address })
+        .update({ email: input.email, name: input.name, description: input.description, address: input.address })
         .eq("id", data.id);
       if (error) {
         setError(`update client err: ${error?.message}`);
@@ -56,6 +56,15 @@ const EditClient = ({ data }) => {
   const handleChange = async (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
     if (error) setError(null);
+  };
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      const resp = await axios.post("/api/deleteUser", { id: data.user_id });
+      router.push("/clients");
+    } catch (error) {
+      setError(`axios err: ${error?.response?.data?.error}`);
+    }
   };
 
   if (user.isAdmin) {
@@ -144,6 +153,10 @@ const EditClient = ({ data }) => {
           <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
             <i className="fa-solid fa-times" />
           </button>
+          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Delete" onClick={handleDelete}>
+            <i className="fa-solid fa-trash" />
+          </button>
+
           <button
             type="button"
             className="btn btn-primary me-2"

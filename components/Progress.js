@@ -1,6 +1,6 @@
 const Progress = () => {
   return (
-    <div className="loading">
+    <div className="spinner-border">
       <h5>Loading...</h5>
     </div>
   );

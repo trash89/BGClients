@@ -19,7 +19,7 @@ export default function Home({ user }) {
 }
 
 export async function getServerSideProps({ req, res }) {
-  const { user, error } = await supabase.auth.api.getUser(req.cookies["sb-access-token"]);
+  const { user, error } = await supabase.auth.api.getUserByCookie(req, res);
   if (error) {
     return {
       props: {},
