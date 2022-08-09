@@ -44,7 +44,7 @@ export default function Navbar() {
               <ul className="dropdown-menu" style={{ margin: 0 }}>
                 <li>
                   <Link to="/profiles" className="dropdown-item text-capitalize">
-                    Profiles
+                    profiles
                   </Link>
                 </li>
                 <li>

@@ -1,22 +1,21 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useIsMounted } from "../../lib/hooks";
+import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { supabase, getUserOnServer } from "../../lib/supabaseClient";
+import { supabase, getUserOnServer } from "../../supabaseClient";
 
-const Events = ({ events }) => {
+const Events = () => {
   const isMounted = useIsMounted();
   const { user, isLoading } = useSelector((store) => store.user);
+  const events = [];
   if (!isMounted) return <></>;
   if (isLoading) return <Progress />;
   if (user.isAdmin) {
     return (
       <div className="container p-2 my-2 border border-primary rounded-3">
         <p className="h4 text-capitalize">Events list</p>
-        <Link href="/events/newEvent">
-          <a className="btn btn-outline-primary btn-sm">
-            <i className="fa-solid fa-plus" />
-          </a>
+        <Link to="/events/newEvent" className="btn btn-outline-primary btn-sm">
+          <i className="fa-solid fa-plus" />
         </Link>
         <div className="table-responsive">
           <table className="table table-bordered table-hover table-sm">
@@ -34,10 +33,8 @@ const Events = ({ events }) => {
                 return (
                   <tr key={row.id}>
                     <td>
-                      <Link href={`/events/${row.id}`}>
-                        <a className="btn btn-outline-primary btn-sm">
-                          <i className="fa-solid fa-pen" />
-                        </a>
+                      <Link to={`/events/${row.id}`} className="btn btn-outline-primary btn-sm">
+                        <i className="fa-solid fa-pen" />
                       </Link>
                     </td>
                     <td>{row.name}</td>

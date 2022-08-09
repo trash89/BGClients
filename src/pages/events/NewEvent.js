@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 import { useSelector } from "react-redux";
@@ -10,7 +10,7 @@ import { supabase } from "../../supabaseClient";
 const NewEvent = () => {
   const isMounted = useIsMounted();
   const { user, isLoading } = useSelector((store) => store.user);
-  const router = useRouter();
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [input, setInput] = useState({
     name: "",
@@ -21,12 +21,12 @@ const NewEvent = () => {
   if (!isMounted) return <></>;
   if (isLoading) return <Progress />;
 
-  if (!user) router.push("/register");
-  if (!user.isAdmin) router.push("/events");
+  if (!user) navigate("/register");
+  if (!user.isAdmin) navigate("/events");
 
   const handleCancel = async (e) => {
     e.preventDefault();
-    router.push("/events");
+    navigate("/events");
     setInput({
       name: "",
       description: "",
@@ -50,7 +50,7 @@ const NewEvent = () => {
       if (error) {
         setError(`insert clients err: ${error?.message}`);
       } else {
-        router.push("/events");
+        navigate("/events");
       }
     } catch (error) {
       setError(`axios err: ${error?.response?.data?.error}`);
