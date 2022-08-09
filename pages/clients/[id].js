@@ -180,7 +180,7 @@ export async function getStaticPaths() {
   const { data, error } = await supabase.from("clients").select("*");
   if (error) {
     console.log("error EditClient getStaticPaths,", error);
-    return { paths: [], fallback: true };
+    return { paths: [], fallback: blocking };
   }
   const paths = data.map((item) => ({
     params: { id: `${item.id}` },
