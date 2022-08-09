@@ -9,8 +9,8 @@ const Wrapper = styled.aside`
       background: var(--white);
       min-height: 100vh;
       height: 100%;
-      width: 250px;
-      margin-left: -250px;
+      width: 150px;
+      margin-left: -150px;
       transition: var(--transition);
     }
     .content {
@@ -36,13 +36,13 @@ const Wrapper = styled.aside`
       align-items: center;
       color: var(--grey-500);
       padding: 1rem 0;
-      padding-left: 2.5rem;
+      padding-left: 1rem;
       text-transform: capitalize;
       transition: var(--transition);
     }
     .nav-link:hover {
       background: var(--grey-50);
-      padding-left: 3rem;
+      padding-left: 1.5rem;
       color: var(--grey-900);
     }
     .nav-link:hover .icon {
