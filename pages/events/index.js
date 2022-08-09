@@ -53,7 +53,7 @@ const Events = ({ events }) => {
       </div>
     );
   } else {
-    return <>for clients</>;
+    return <>for events</>;
   }
 };
 
