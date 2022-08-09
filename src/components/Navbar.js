@@ -10,16 +10,7 @@ export default function Navbar() {
   const { user: userRedux } = useSelector((store) => store.user);
   const dispatch = useDispatch();
 
-  const MyButton = React.forwardRef(({ onClick, href }, ref) => {
-    return (
-      <a href={href} onClick={onClick} ref={ref} className="dropdown-item text-capitalize">
-        Logout
-      </a>
-    );
-  });
-  MyButton.displayName = "MyButton";
-
-  const onClick = async () => {
+  const logout = async () => {
     dispatch(logoutUser());
     await supabase.auth.signOut();
   };
@@ -57,9 +48,8 @@ export default function Navbar() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/">
-                    {/* <MyButton onClick={onClick} /> */}
-                    close
+                  <Link to="/" className="dropdown-item text-capitalize" onClick={logout}>
+                    logout
                   </Link>
                 </li>
               </ul>

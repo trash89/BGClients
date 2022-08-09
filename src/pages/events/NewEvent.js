@@ -3,9 +3,9 @@ import { useRouter } from "next/router";
 import axios from "axios";
 
 import { useSelector } from "react-redux";
-import { useIsMounted } from "../../lib/hooks";
+import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { supabase } from "../../lib/supabaseClient";
+import { supabase } from "../../supabaseClient";
 
 const NewEvent = () => {
   const isMounted = useIsMounted();

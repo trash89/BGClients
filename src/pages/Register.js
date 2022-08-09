@@ -6,7 +6,6 @@ import { loginUser, registerUser } from "../features/user/userSlice";
 import { useNavigate } from "react-router-dom";
 import { addUserToLocalStorage } from "../utils/localStorage";
 import { useIsMounted } from "../hooks";
-import axios from "axios";
 import { Copyright } from "../components";
 
 export default function Register() {
