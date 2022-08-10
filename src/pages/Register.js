@@ -1,40 +1,35 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../supabaseClient";
-import { Logo } from "../components";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser, registerUser } from "../features/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
+
+import { Logo, Copyright, Progress } from "../components";
+import { loginUser } from "../features/user/userSlice";
 import { addUserToLocalStorage } from "../utils/localStorage";
 import { useIsMounted } from "../hooks";
-import { Copyright } from "../components";
 
 export default function Register() {
   const isMounted = useIsMounted();
   const [input, setInput] = useState({
-    Username: "",
-    Password: "",
-    isMember: true,
+    email: "",
+    password: "",
   });
   const [isErrorInput, setIsErrorInput] = useState({
-    Username: false,
-    Password: false,
-    isMember: false,
+    email: false,
+    password: false,
   });
+  const [error, setError] = useState(null);
 
   const { user, isLoading } = useSelector((store) => store.user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const loginDemo = async () => {
-    await login("demo@demo.com", "secret123");
-  };
-
-  const login = async (Username, Password) => {
-    const { user: existingUser, session, error } = await supabase.auth.signIn({ email: Username, password: Password });
-    if (!error) {
-      const { data: localuser, error } = await supabase.from("localusers").select("*").eq("user_id", existingUser.id).single();
-      if (!error) {
+  const login = async (email, password) => {
+    const { user: existingUser, session, error: loginError } = await supabase.auth.signIn({ email, password });
+    if (!loginError) {
+      const { data: localuser, error: localUserError } = await supabase.from("localusers").select("*").eq("user_id", existingUser.id).single();
+      if (!localUserError) {
         const localObject = {
           access_token: session.access_token,
           id: existingUser.id,
@@ -44,53 +39,43 @@ export default function Register() {
         addUserToLocalStorage(localObject);
         dispatch(loginUser(localObject));
       } else {
-        console.log("error localusers=", error);
+        setError(localUserError);
+        console.log("error localusers=", localUserError);
       }
     } else {
-      console.log("error signIn=", error);
+      setError(loginError);
+      console.log("error signIn=", loginError);
     }
   };
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (input.Username && input.Username !== "") {
-      if (input.Password && input.Password !== "") {
-        const { Username, Password, isMember } = input;
-        if (!Password || (!isMember && !Username)) {
+    if (input.email && input.email !== "") {
+      if (input.password && input.password !== "") {
+        const { email, password } = input;
+        if (!password || !email) {
           return;
         }
-        if (isMember) {
-          await login(Username, Password);
-        } else {
-          const { user: createdUser, session, error } = await supabase.auth.signUp({ email: Username, password: Password });
-          if (!error) {
-            const localObject = {
-              token: session?.access_token,
-              idProfile: createdUser?.id,
-              Username: createdUser?.email,
-            };
-            addUserToLocalStorage(localObject);
-            dispatch(registerUser(localObject));
-          }
-        }
+        await login(email, password);
         return;
       } else {
-        setIsErrorInput({ ...isErrorInput, Password: true });
+        setIsErrorInput({ ...isErrorInput, password: true });
+        if (error) setError(null);
       }
     } else {
-      setIsErrorInput({ ...isErrorInput, Username: true });
+      setIsErrorInput({ ...isErrorInput, email: true });
+      if (error) setError(null);
     }
   };
 
-  const toggleMember = () => {
-    setInput({ ...input, isMember: !input.isMember });
-  };
-  const handleUsername = async (e) => {
-    setInput({ ...input, Username: e.target.value });
-    if (isErrorInput.Username) setIsErrorInput({ ...isErrorInput, Username: false });
+  const handleEmail = async (e) => {
+    setInput({ ...input, email: e.target.value });
+    if (isErrorInput.email) setIsErrorInput({ ...isErrorInput, email: false });
+    if (error) setError(null);
   };
   const handlePassword = async (e) => {
-    setInput({ ...input, Password: e.target.value });
-    if (isErrorInput.Password) setIsErrorInput({ ...isErrorInput, Password: false });
+    setInput({ ...input, password: e.target.value });
+    if (isErrorInput.password) setIsErrorInput({ ...isErrorInput, password: false });
+    if (error) setError(null);
   };
 
   useEffect(() => {
@@ -101,7 +86,7 @@ export default function Register() {
   }, [user]);
 
   if (!isMounted) return <></>;
-  if (isLoading) return <div>loading...</div>;
+  if (isLoading) return <Progress />;
   return (
     <div className="container mx-auto" style={{ width: "300px" }}>
       <div className="container-fluid p-2 my-4 shadow border border-primary rounded-3">
@@ -110,36 +95,25 @@ export default function Register() {
           <p className="h4 text-center text-capitalize flex-grow-1">BG Clients</p>
         </div>
         <form onSubmit={onSubmit}>
-          <p className="h6 text-center text-capitalize pt-2">{input.isMember ? "Login" : "Register"}</p>
+          <p className="h6 text-center text-capitalize pt-2">Login</p>
           <div className="mb-3 mt-3">
-            <label htmlFor="Username" className="form-label">
-              Username:
+            <label htmlFor="email" className="form-label">
+              Email:
             </label>
-            <input autoFocus className="form-control" id="Username" type="email" value={input.Username} onChange={handleUsername} required />
+            <input autoFocus className="form-control" id="email" type="email" value={input.email} onChange={handleEmail} required />
           </div>
           <div className="mb-3 mt-3">
-            <label htmlFor="Password" className="form-label">
+            <label htmlFor="password" className="form-label">
               Password:
             </label>
-            <input className="form-control" id="Password" type="password" value={input.Password} onChange={handlePassword} required />
+            <input className="form-control" id="Password" type="password" value={input.password} onChange={handlePassword} required />
           </div>
           <div className="d-flex justify-content-center align-content-center align-items-center">
             <button type="submit" className="btn btn-primary text-capitalize flex-fill m-1" disabled={isLoading}>
-              {isLoading ? "loading..." : input.isMember ? "connect" : "register"}
-            </button>
-            <button type="button" className="btn btn-primary text-capitalize flex-fill m-1" disabled={isLoading} onClick={loginDemo}>
-              {isLoading ? "loading..." : "demo"}
+              {isLoading ? "loading..." : "connect"}
             </button>
           </div>
-          <div className="text-center text-capitalize">
-            {input.isMember ? "Not a member yet?" : "Already a member?"}
-            <button type="button" onClick={toggleMember} className="btn btn-link">
-              {input.isMember ? "Register" : "Login"}
-            </button>
-          </div>
-          {/*         
-        {loginError && <Typography color="error.main">{loginError.message}</Typography>}
-        {registerError && <Typography color="error.main">{registerError.message}</Typography>} */}
+          {error && <p className="text-center text-danger">{error.message}</p>}
         </form>
         <Copyright />
       </div>
