@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 import { Logo, Copyright, Progress } from "../components";
 import { loginUser } from "../features/user/userSlice";
@@ -11,6 +12,7 @@ import { useIsMounted } from "../hooks";
 import { APISERVER } from "../utils/constants";
 
 export default function Register() {
+  const [cookies, setCookie] = useCookies(["user"]);
   const isMounted = useIsMounted();
   const [input, setInput] = useState({
     email: "",
@@ -28,6 +30,19 @@ export default function Register() {
   const navigate = useNavigate();
 
   const login = async (email, password) => {
+    // const resp = await axios.post("http://localhost:5000/api/v1/auth/login", { email, password });
+    // const { user, session } = resp.data;
+    // setCookie("sb-access-token", session.access_token, { path: "/" });
+    // setCookie("sb-refresh-token", session.refresh_token, { path: "/" });
+    // const localObject = {
+    //   access_token: session.access_token,
+    //   id: user.id,
+    //   email: user.email,
+    //   isAdmin: user.isAdmin,
+    // };
+    // addUserToLocalStorage(localObject);
+    // dispatch(loginUser(localObject));
+
     const { user, session, error } = await supabase.auth.signIn({ email, password });
     if (!error) {
       const { data: localUser, error: errorLocalUser } = await supabase.from("localusers").select("isAdmin").eq("user_id", user.id).single();

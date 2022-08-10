@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../../supabaseServer";
 import { useSelector } from "react-redux";
 import { useIsMounted } from "../../hooks";
@@ -40,14 +40,13 @@ const EditClient = () => {
   };
 
   useEffect(() => {
-    getData();
+    if (!user.isAdmin) {
+      navigate("/clients");
+    } else getData();
   }, []);
 
   if (!isMounted) return <></>;
   if (isLoading) return <Progress />;
-  if (!user.isAdmin) {
-    return Navigate({ to: "/clients" });
-  }
   if (!data || data === []) return <></>;
   const handleCancel = async (e) => {
     e.preventDefault();

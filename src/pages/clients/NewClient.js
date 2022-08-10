@@ -1,17 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseServer";
 
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
+import axios from "axios";
 
 const NewClient = () => {
   const isMounted = useIsMounted();
   const navigate = useNavigate();
-
   const { user, isLoading } = useSelector((store) => store.user);
-
   const [error, setError] = useState(null);
   const [input, setInput] = useState({
     name: "",
@@ -20,12 +19,12 @@ const NewClient = () => {
     email: "",
   });
 
+  useEffect(() => {
+    if (!user.isAdmin) navigate("/clients");
+  }, []);
+
   if (!isMounted) return <></>;
   if (isLoading) return <Progress />;
-
-  if (!user.isAdmin) {
-    return Navigate({ to: "/clients" });
-  }
 
   const handleCancel = async (e) => {
     e.preventDefault();
@@ -34,6 +33,23 @@ const NewClient = () => {
   };
   const handleSave = async (e) => {
     e.preventDefault();
+
+    // const resp = await axios.post("http://localhost:5000/api/v1/users/createUser", { email: input.email }, { withCredentials: true });
+    // console.log(resp);
+    // const { data: client, error } = await supabase.from("clients").insert({
+    //   email: input.email,
+    //   name: input.name,
+    //   description: input.description,
+    //   address: input.address,
+    //   localuser_id: resp.data.user.id,
+    //   user_id: resp.data.user_id,
+    // });
+    // if (error) {
+    //   setError(error);
+    // } else {
+    //   navigate("/clients");
+    // }
+
     const { data: createdUser, error: errorCreatedUser } = await supabase.auth.api.createUser({
       email: input.email,
       email_confirm: true,

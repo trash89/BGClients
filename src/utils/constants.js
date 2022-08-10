@@ -1,3 +1,4 @@
 const USER = "USER";
 const dateFormat = "DD/MM/YYYY";
-export { USER, dateFormat };
+const APISERVER = "http://localhost:5000/api/v1";
+export { USER, dateFormat, APISERVER };
