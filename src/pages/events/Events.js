@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { supabase, getUserOnServer } from "../../supabaseClient";
+import { supabase } from "../../supabaseClient";
 
 const Events = () => {
   const isMounted = useIsMounted();
@@ -56,20 +56,20 @@ const Events = () => {
 
 export default Events;
 
-export async function getServerSideProps({ req, res }) {
-  const user = await getUserOnServer(req, res);
-  let query = supabase.from("events").select("id,client_id,ev_name,ev_description,ev_date,user_id,clients(name)");
-  if (!user.isAdmin) {
-    query = query.eq("user_id", user.id);
-  }
-  const { data, error } = await query;
-  if (error) {
-    console.log("error Events getServerSideProps,", error);
-    return {
-      props: { events: [] },
-    };
-  }
-  return {
-    props: { events: data },
-  };
-}
+// export async function getServerSideProps({ req, res }) {
+//   const user = await getUserOnServer(req, res);
+//   let query = supabase.from("events").select("id,client_id,ev_name,ev_description,ev_date,user_id,clients(name)");
+//   if (!user.isAdmin) {
+//     query = query.eq("user_id", user.id);
+//   }
+//   const { data, error } = await query;
+//   if (error) {
+//     console.log("error Events getServerSideProps,", error);
+//     return {
+//       props: { events: [] },
+//     };
+//   }
+//   return {
+//     props: { events: data },
+//   };
+// }

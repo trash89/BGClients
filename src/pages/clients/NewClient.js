@@ -1,16 +1,14 @@
 import { useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
+import { useSelector } from "react-redux";
+import { Navigate, useNavigate } from "react-router-dom";
+import { supabase } from "../../supabaseServer";
 
-import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { supabase } from "../../supabaseClient";
 
 const NewClient = () => {
   const isMounted = useIsMounted();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const { user, isLoading } = useSelector((store) => store.user);
 
@@ -21,46 +19,50 @@ const NewClient = () => {
     address: "",
     email: "",
   });
+
   if (!isMounted) return <></>;
   if (isLoading) return <Progress />;
 
   if (!user) {
-    return <Navigate to="/register" />;
+    return Navigate({ to: "/register" });
   }
   if (!user.isAdmin) {
-    return <Navigate to="/clients" />;
+    return Navigate({ to: "/clients" });
   }
 
   const handleCancel = async (e) => {
     e.preventDefault();
     navigate("/clients");
-    setInput({
-      name: "",
-      description: "",
-      address: "",
-      email: "",
-    });
     setError(null);
   };
   const handleSave = async (e) => {
     e.preventDefault();
-    try {
-      const resp = await axios.post("/api/createUser", { email: input.email });
-      const { data, error } = await supabase.from("clients").insert({
-        email: input.email,
-        name: input.name,
-        description: input.description,
-        address: input.address,
-        localuser_id: resp.data.user.id,
-        user_id: resp.data.user.user_id,
-      });
-      if (error) {
-        setError(`insert clients err: ${error?.message}`);
+    const { data: createdUser, error: errorCreatedUser } = await supabase.auth.api.createUser({
+      email: input.email,
+      email_confirm: true,
+      password: "secret123",
+    });
+    if (!errorCreatedUser) {
+      const { data: localUser, error: errorLocalUser } = await supabase.from("localusers").insert({ user_id: createdUser.id, isAdmin: false });
+      if (!errorLocalUser) {
+        const { data: client, error } = await supabase.from("clients").insert({
+          email: input.email,
+          name: input.name,
+          description: input.description,
+          address: input.address,
+          localuser_id: localUser[0].id,
+          user_id: localUser[0].user_id,
+        });
+        if (error) {
+          setError(error);
+        } else {
+          navigate("/clients");
+        }
       } else {
-        navigate("/clients");
+        setError(errorLocalUser);
       }
-    } catch (error) {
-      setError(`axios err: ${error?.response?.data?.error}`);
+    } else {
+      setError(errorCreatedUser);
     }
   };
   const handleChange = async (e) => {
@@ -77,6 +79,7 @@ const NewClient = () => {
               Email:
             </label>
             <input
+              autoFocus
               required
               type="email"
               className="form-control"
@@ -146,7 +149,7 @@ const NewClient = () => {
         >
           <i className="fa-solid fa-floppy-disk" />
         </button>
-        {error && <p className="text-danger">{error}</p>}
+        {error && <p className="text-center text-danger">{error}</p>}
       </form>
     </section>
   );

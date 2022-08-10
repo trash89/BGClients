@@ -1,14 +1,32 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { supabase, getUserOnServer } from "../../supabaseClient";
+import { supabase } from "../../supabaseClient";
 
 const Clients = () => {
   const isMounted = useIsMounted();
   const { user, isLoading } = useSelector((store) => store.user);
-  const clients = [];
+  const [clients, setClients] = useState([]);
+
+  const getData = async () => {
+    let query = supabase.from("clients").select("*");
+    if (!user.isAdmin) {
+      query = query.eq("user_id", user.id);
+    }
+    const { data, error } = await query;
+    if (error) {
+      console.log("error Clients=,", error);
+      setClients([]);
+    }
+    setClients(data);
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+
   if (!isMounted) return <></>;
   if (isLoading) return <Progress />;
   if (user.isAdmin) {
@@ -56,21 +74,3 @@ const Clients = () => {
 };
 
 export default Clients;
-
-// export async function getServerSideProps({ req, res }) {
-//   const user = await getUserOnServer(req, res);
-//   let query = supabase.from("clients").select("*");
-//   if (!user.isAdmin) {
-//     query = query.eq("user_id", user.id);
-//   }
-//   const { data, error } = await query;
-//   if (error) {
-//     console.log("error Clients getServerSideProps,", error);
-//     return {
-//       props: { clients: [] },
-//     };
-//   }
-//   return {
-//     props: { clients: data },
-//   };
-// }

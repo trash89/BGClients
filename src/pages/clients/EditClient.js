@@ -1,70 +1,94 @@
 import { useState, useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
+import { supabase } from "../../supabaseServer";
 import { useSelector } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import axios from "axios";
 
-const EditClient = ({ data }) => {
+const EditClient = () => {
   const isMounted = useIsMounted();
   const { user, isLoading } = useSelector((store) => store.user);
   const navigate = useNavigate();
+  const params = useParams();
   const [error, setError] = useState(null);
+  const [data, setData] = useState([]);
   const [input, setInput] = useState({
     name: data.name,
     description: data.description,
     address: data.address,
     email: data.email,
-    password: "secret123",
   });
+  const getData = async () => {
+    let query = supabase.from("clients").select("*").eq("id", params.idClient).single();
+    if (!user.isAdmin) {
+      query = query.eq("user_id", user.id);
+    }
+    const { data, error } = await query;
+    if (error) {
+      setError(error);
+      console.log("error editClient=,", error);
+      setData([]);
+    }
+    setData(data);
+    setInput({
+      name: data.name,
+      description: data.description,
+      address: data.address,
+      email: data.email,
+    });
+  };
+  useEffect(() => {
+    getData();
+  }, []);
 
   if (!isMounted) return <></>;
   if (isLoading) return <Progress />;
-  if (!user) navigate("/register");
-  if (!user.isAdmin) navigate("/clients");
+  if (!user) {
+    return Navigate({ to: "/register" });
+  }
+  if (!user.isAdmin) {
+    return Navigate({ to: "/clients" });
+  }
   const handleCancel = async (e) => {
     e.preventDefault();
     navigate("/clients");
-    setInput({
-      name: "",
-      description: "",
-      address: "",
-      email: "",
-      password: "",
-    });
     setError(null);
   };
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    const { data: client, error: errorClient } = await supabase.from("clients").delete().eq("id", params.idClient);
+    if (!errorClient) {
+      const { data: localUser, error: errorLocalUser } = await supabase.from("localusers").delete().eq("id", data.localuser_id);
+      if (!errorLocalUser) {
+        const { data: user, error } = await supabase.auth.api.deleteUser(data.user_id);
+        if (!error) {
+          navigate("/clients");
+        } else {
+          setError(error);
+        }
+      } else {
+        setError(errorLocalUser);
+      }
+    } else {
+      setError(errorClient);
+    }
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
-    try {
-      const resp = await axios.post("/api/editUser", { id: data.user_id, email: input.email, password: input.password });
-
-      const { data: clients, error } = await supabase
-        .from("clients")
-        .update({ email: input.email, name: input.name, description: input.description, address: input.address })
-        .eq("id", data.id);
-      if (error) {
-        setError(`update client err: ${error?.message}`);
-      } else {
-        navigate("/clients");
-      }
-    } catch (error) {
-      setError(`axios err: ${error?.response?.data?.error}`);
+    const { data: client, error: errorClient } = await supabase
+      .from("clients")
+      .update({ name: input.name, description: input.description, address: input.address })
+      .eq("id", params.idClient);
+    if (errorClient) {
+      setError(errorClient);
+    } else {
+      navigate("/clients");
     }
   };
   const handleChange = async (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
     if (error) setError(null);
-  };
-  const handleDelete = async (e) => {
-    e.preventDefault();
-    try {
-      const resp = await axios.post("/api/deleteUser", { id: data.user_id });
-      navigate("/clients");
-    } catch (error) {
-      setError(`axios err: ${error?.response?.data?.error}`);
-    }
   };
 
   if (user.isAdmin) {
@@ -77,16 +101,7 @@ const EditClient = ({ data }) => {
               <label htmlFor="email" className="form-label">
                 Email:
               </label>
-              <input
-                required
-                type="email"
-                className="form-control"
-                id="email"
-                placeholder="Enter email"
-                name="email"
-                value={input.email}
-                onChange={handleChange}
-              />
+              <input type="email" className="form-control" id="email" placeholder="Enter email" name="email" value={input.email} disabled />
             </div>
 
             <div className="col">
@@ -94,6 +109,7 @@ const EditClient = ({ data }) => {
                 Client Name:
               </label>
               <input
+                autoFocus
                 required
                 type="text"
                 className="form-control"
@@ -101,21 +117,6 @@ const EditClient = ({ data }) => {
                 placeholder="Enter client name"
                 name="name"
                 value={input.name}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col">
-              <label htmlFor="password" className="form-label">
-                Password:
-              </label>
-              <input
-                required
-                type="text"
-                className="form-control"
-                id="password"
-                placeholder="Enter a new password"
-                name="password"
-                value={input.password}
                 onChange={handleChange}
               />
             </div>
@@ -167,7 +168,7 @@ const EditClient = ({ data }) => {
           >
             <i className="fa-solid fa-floppy-disk" />
           </button>
-          {error && <p className="text-danger">{error}</p>}
+          {error && <p className="text-center text-danger">{error.message}</p>}
         </form>
       </section>
     );
@@ -175,25 +176,3 @@ const EditClient = ({ data }) => {
 };
 
 export default EditClient;
-
-export async function getStaticPaths() {
-  const { data, error } = await supabase.from("clients").select("*");
-  if (error) {
-    console.log("error EditClient getStaticPaths,", error);
-    return { paths: [], fallback: "blocking" };
-  }
-  const paths = data.map((item) => ({
-    params: { id: `${item.id}` },
-  }));
-  return { paths, fallback: false };
-}
-
-export async function getStaticProps({ params }) {
-  const { data, error } = await supabase.from("clients").select("*").eq("id", `${params.id}`).single();
-  if (error) {
-    console.log("error EditClient getStaticProps,", error);
-    return { props: { data: [] } };
-  }
-
-  return { props: { data } };
-}

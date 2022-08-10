@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import axios from "axios";
 
 import { Logo, Copyright, Progress } from "../components";
 import { loginUser } from "../features/user/userSlice";
 import { addUserToLocalStorage } from "../utils/localStorage";
 import { useIsMounted } from "../hooks";
+import { APISERVER } from "../utils/constants";
 
 export default function Register() {
   const isMounted = useIsMounted();
@@ -26,25 +28,25 @@ export default function Register() {
   const navigate = useNavigate();
 
   const login = async (email, password) => {
-    const { user: existingUser, session, error: loginError } = await supabase.auth.signIn({ email, password });
-    if (!loginError) {
-      const { data: localuser, error: localUserError } = await supabase.from("localusers").select("*").eq("user_id", existingUser.id).single();
-      if (!localUserError) {
+    const { user, session, error } = await supabase.auth.signIn({ email, password });
+    if (!error) {
+      const { data: localUser, error: errorLocalUser } = await supabase.from("localusers").select("isAdmin").eq("user_id", user.id).single();
+      if (!errorLocalUser) {
         const localObject = {
           access_token: session.access_token,
-          id: existingUser.id,
-          email: existingUser.email,
-          isAdmin: localuser.isAdmin,
+          id: user.id,
+          email: user.email,
+          isAdmin: localUser.isAdmin,
         };
         addUserToLocalStorage(localObject);
         dispatch(loginUser(localObject));
       } else {
-        setError(localUserError);
-        console.log("error localusers=", localUserError);
+        setError(errorLocalUser);
+        console.log("error signIn localuser=", errorLocalUser);
       }
     } else {
-      setError(loginError);
-      console.log("error signIn=", loginError);
+      setError(error);
+      console.log("error signIn=", error);
     }
   };
   const onSubmit = async (e) => {
@@ -80,7 +82,7 @@ export default function Register() {
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate("/clients");
     }
     // eslint-disable-next-line
   }, [user]);

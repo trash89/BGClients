@@ -1,10 +1,12 @@
 import React from "react";
-import { supabase } from "../supabaseClient";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
+import { supabase } from "../supabaseClient";
+
 import { logoutUser } from "../features/user/userSlice";
 import { links } from "../utils/links";
 import Logo from "./Logo";
-import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const { user: userRedux } = useSelector((store) => store.user);
@@ -41,14 +43,14 @@ export default function Navbar() {
               <Link to="/" className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
                 {userRedux?.email}
               </Link>
-              <ul className="dropdown-menu" style={{ margin: 0 }}>
+              <ul className="dropdown-menu">
                 <li>
                   <Link to="/profiles" className="dropdown-item text-capitalize">
                     profiles
                   </Link>
                 </li>
                 <li>
-                  <Link to="/" className="dropdown-item text-capitalize" onClick={logout}>
+                  <Link to="/register" className="dropdown-item text-capitalize" onClick={logout}>
                     logout
                   </Link>
                 </li>
