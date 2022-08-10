@@ -13,10 +13,10 @@ const EditClient = () => {
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
   const [input, setInput] = useState({
-    name: data.name,
-    description: data.description,
-    address: data.address,
-    email: data.email,
+    name: data?.name,
+    description: data?.description,
+    address: data?.address,
+    email: data?.email,
   });
   const getData = async () => {
     let query = supabase.from("clients").select("*").eq("id", params.idClient).single();
@@ -30,25 +30,25 @@ const EditClient = () => {
       setData([]);
     }
     setData(data);
+    console.log(data);
     setInput({
-      name: data.name,
-      description: data.description,
-      address: data.address,
-      email: data.email,
+      name: data?.name,
+      description: data?.description,
+      address: data?.address,
+      email: data?.email,
     });
   };
+
   useEffect(() => {
     getData();
   }, []);
 
   if (!isMounted) return <></>;
   if (isLoading) return <Progress />;
-  if (!user) {
-    return Navigate({ to: "/register" });
-  }
   if (!user.isAdmin) {
     return Navigate({ to: "/clients" });
   }
+  if (!data || data === []) return <></>;
   const handleCancel = async (e) => {
     e.preventDefault();
     navigate("/clients");

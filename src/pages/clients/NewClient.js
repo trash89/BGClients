@@ -23,9 +23,6 @@ const NewClient = () => {
   if (!isMounted) return <></>;
   if (isLoading) return <Progress />;
 
-  if (!user) {
-    return Navigate({ to: "/register" });
-  }
   if (!user.isAdmin) {
     return Navigate({ to: "/clients" });
   }

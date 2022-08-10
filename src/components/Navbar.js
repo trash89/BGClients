@@ -45,11 +45,6 @@ export default function Navbar() {
               </Link>
               <ul className="dropdown-menu">
                 <li>
-                  <Link to="/profiles" className="dropdown-item text-capitalize">
-                    profiles
-                  </Link>
-                </li>
-                <li>
                   <Link to="/register" className="dropdown-item text-capitalize" onClick={logout}>
                     logout
                   </Link>
