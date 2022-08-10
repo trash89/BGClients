@@ -12,7 +12,6 @@ const BigSidebar = () => {
         <div className="content">
           <header>
             <Logo />
-            Journal
           </header>
           <NavLinks />
         </div>

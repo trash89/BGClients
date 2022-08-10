@@ -109,7 +109,7 @@ export default function Register() {
           <Logo />
           <p className="h4 text-center text-capitalize flex-grow-1">BG Clients</p>
         </div>
-        <form onSubmit={onSubmit} className="was-validated">
+        <form onSubmit={onSubmit}>
           <p className="h6 text-center text-capitalize pt-2">{input.isMember ? "Login" : "Register"}</p>
           <div className="mb-3 mt-3">
             <label htmlFor="Username" className="form-label">
