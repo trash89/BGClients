@@ -12,6 +12,7 @@ const NewClient = () => {
   const navigate = useNavigate();
   const { user, isLoading } = useSelector((store) => store.user);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [input, setInput] = useState({
     name: "",
     description: "",
@@ -20,12 +21,16 @@ const NewClient = () => {
   });
 
   useEffect(() => {
-    if (!user.isAdmin) navigate("/clients");
+    if (!user.isAdmin) {
+      navigate("/clients");
+      return;
+    }
   }, []);
 
-  if (!isMounted) return <></>;
-  if (isLoading) return <Progress />;
-
+  const handleChange = async (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+    if (error) setError(null);
+  };
   const handleCancel = async (e) => {
     e.preventDefault();
     navigate("/clients");
@@ -34,6 +39,7 @@ const NewClient = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const resp = await axiosInstance.post("/clients", {
         email: input.email,
         password: defaultPassword,
@@ -45,6 +51,8 @@ const NewClient = () => {
     } catch (error) {
       console.log(error);
       setError(error);
+    } finally {
+      setLoading(false);
     }
 
     // const { data: createdUser, error: errorCreatedUser } = await supabase.auth.api.createUser({
@@ -75,10 +83,9 @@ const NewClient = () => {
     //   setError(errorCreatedUser);
     // }
   };
-  const handleChange = async (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
-    if (error) setError(null);
-  };
+  if (!isMounted) return <></>;
+  if (isLoading || loading) return <Progress />;
+
   return (
     <section className="container p-2 my-2 border border-primary rounded-3">
       <p className="h4 text-capitalize">enter a new client</p>

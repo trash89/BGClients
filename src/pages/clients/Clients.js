@@ -10,22 +10,26 @@ const Clients = () => {
   const isMounted = useIsMounted();
   const { user, isLoading } = useSelector((store) => store.user);
   const [clients, setClients] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getData = async () => {
+      setLoading(true);
       try {
         const resp = await axiosInstance.get("/clients");
         setClients(resp.data.clients);
       } catch (error) {
         console.log(error);
         setClients([]);
+      } finally {
+        setLoading(false);
       }
     };
     getData();
   }, []);
 
   if (!isMounted) return <></>;
-  if (isLoading) return <Progress />;
+  if (isLoading || loading) return <Progress />;
   if (user.isAdmin) {
     return (
       <div className="container p-2 my-2 border border-primary rounded-3">

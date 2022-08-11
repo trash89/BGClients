@@ -11,29 +11,45 @@ const EditClient = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [error, setError] = useState(null);
-  const [data, setData] = useState({});
+  const [loading, setLoading] = useState(false);
   const [input, setInput] = useState({
+    id: "",
     name: "",
     description: "",
     address: "",
     email: "",
+    localuser_id: -1,
+    user_id: "",
   });
 
   useEffect(() => {
     const getData = async () => {
+      setLoading(true);
       try {
         const resp = await axiosInstance.get(`/clients/${params.idClient}`);
-        console.log(resp);
+        const { id, name, description, address, email, localuser_id, user_id } = resp.data.client;
+        setInput({
+          id,
+          name,
+          description,
+          address,
+          email,
+          localuser_id,
+          user_id,
+        });
       } catch (error) {
         console.log(error);
+        setError(error);
+      } finally {
+        setLoading(false);
       }
     };
     getData();
   }, []);
 
   if (!isMounted) return <></>;
-  if (isLoading) return <Progress />;
-  if (!data || data === []) return <></>;
+  if (isLoading || loading) return <Progress />;
+
   const handleCancel = async (e) => {
     e.preventDefault();
     navigate("/clients");
@@ -42,27 +58,36 @@ const EditClient = () => {
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
-      const resp = await axiosInstance.delete("/clients", { id: params.idClient });
+      setLoading(true);
+      const resp = await axiosInstance.delete(`/clients/${params.idClient}`);
       console.log(resp);
+      navigate("/clients");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const resp = await axiosInstance.post("/clients", {
+      setLoading(true);
+      const resp = await axiosInstance.patch(`/clients/${params.idClient}`, {
+        id: input.id,
         email: input.email,
-        password: "secret123",
         name: input.name,
         description: input.description,
         address: input.address,
+        user_id: input.user_id,
+        localuser_id: input.localuser_id,
       });
       navigate("/clients");
     } catch (error) {
       console.log(error);
       setError(error);
+    } finally {
+      setLoading(false);
     }
   };
   const handleChange = async (e) => {

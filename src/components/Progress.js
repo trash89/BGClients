@@ -1,8 +1,9 @@
 const Progress = () => {
   return (
-    <div className="spinner-border">
-      <h5>Loading...</h5>
-    </div>
+    <>
+      Loading...
+      <div className="spinner-border" />
+    </>
   );
 };
 
