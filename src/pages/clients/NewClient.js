@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
 
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import axios from "axios";
-import { APISERVER } from "../../utils/constants";
+import { axiosInstance } from "../../axiosInstance";
+import { defaultPassword } from "../../utils/constants";
 
 const NewClient = () => {
   const isMounted = useIsMounted();
@@ -35,21 +34,16 @@ const NewClient = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const resp = await axios.post(`${APISERVER}/users`, { email: input.email }, { withCredentials: true });
-      const { data: client, error: errorClient } = await supabase.from("clients").insert({
+      const resp = await axiosInstance.post("/clients", {
         email: input.email,
+        password: defaultPassword,
         name: input.name,
         description: input.description,
         address: input.address,
-        localuser_id: resp.data.user.id,
-        user_id: resp.data.user.user_id,
       });
-      if (errorClient) {
-        setError(errorClient);
-      } else {
-        navigate("/clients");
-      }
+      navigate("/clients");
     } catch (error) {
+      console.log(error);
       setError(error);
     }
 

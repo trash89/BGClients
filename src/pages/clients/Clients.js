@@ -4,26 +4,23 @@ import { useSelector } from "react-redux";
 
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { supabase } from "../../supabaseClient";
+import { axiosInstance } from "../../axiosInstance";
 
 const Clients = () => {
   const isMounted = useIsMounted();
   const { user, isLoading } = useSelector((store) => store.user);
   const [clients, setClients] = useState([]);
 
-  const getData = async () => {
-    let query = supabase.from("clients").select("*");
-    if (!user.isAdmin) {
-      query = query.eq("user_id", user.id);
-    }
-    const { data, error } = await query;
-    if (error) {
-      console.log("error Clients=,", error);
-      setClients([]);
-    }
-    setClients(data);
-  };
   useEffect(() => {
+    const getData = async () => {
+      try {
+        const resp = await axiosInstance.get("/clients");
+        setClients(resp.data.clients);
+      } catch (error) {
+        console.log(error);
+        setClients([]);
+      }
+    };
     getData();
   }, []);
 

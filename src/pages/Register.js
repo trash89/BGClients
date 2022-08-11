@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 //import { supabase } from "../supabaseClient";
-import axios from "axios";
+import { axiosInstance } from "../axiosInstance";
 import { useCookies } from "react-cookie";
 
 import { Logo, Copyright, Progress } from "../components";
@@ -31,7 +31,7 @@ export default function Register() {
 
   const login = async (email, password) => {
     try {
-      const resp = await axios.post(`${APISERVER}/auth/login`, { email, password });
+      const resp = await axiosInstance.post("/auth/login", { email, password });
       const { user, session } = resp.data;
       setCookie("sb-access-token", session.access_token, { path: "/" });
       setCookie("sb-refresh-token", session.refresh_token, { path: "/" });

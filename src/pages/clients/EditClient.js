@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { supabase } from "../../supabaseServer";
+import { axiosInstance } from "../../axiosInstance";
 import { useSelector } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
@@ -18,35 +18,17 @@ const EditClient = () => {
     address: "",
     email: "",
   });
-  const getData = async () => {
-    let query = supabase.from("clients").select("*").eq("id", params.idClient).single();
-    if (!user.isAdmin) {
-      query = query.eq("user_id", user.id);
-    }
-    const { data, error } = await query;
-    if (error) {
-      setError(error);
-      console.log("error editClient=,", error);
-      setData({
-        name: "",
-        description: "",
-        address: "",
-        email: "",
-      });
-    }
-    setData(data);
-    setInput({
-      name: data?.name,
-      description: data?.description,
-      address: data?.address,
-      email: data?.email,
-    });
-  };
 
   useEffect(() => {
-    if (!user.isAdmin) {
-      navigate("/clients");
-    } else getData();
+    const getData = async () => {
+      try {
+        const resp = await axiosInstance.get(`/clients/${params.idClient}`);
+        console.log(resp);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getData();
   }, []);
 
   if (!isMounted) return <></>;
@@ -59,34 +41,28 @@ const EditClient = () => {
   };
   const handleDelete = async (e) => {
     e.preventDefault();
-    const { data: client, error: errorClient } = await supabase.from("clients").delete().eq("id", params.idClient);
-    if (!errorClient) {
-      const { data: localUser, error: errorLocalUser } = await supabase.from("localusers").delete().eq("id", data.localuser_id);
-      if (!errorLocalUser) {
-        const { data: user, error } = await supabase.auth.api.deleteUser(data.user_id);
-        if (!error) {
-          navigate("/clients");
-        } else {
-          setError(error);
-        }
-      } else {
-        setError(errorLocalUser);
-      }
-    } else {
-      setError(errorClient);
+    try {
+      const resp = await axiosInstance.delete("/clients", { id: params.idClient });
+      console.log(resp);
+    } catch (error) {
+      console.log(error);
     }
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const { data: client, error: errorClient } = await supabase
-      .from("clients")
-      .update({ name: input.name, description: input.description, address: input.address })
-      .eq("id", params.idClient);
-    if (errorClient) {
-      setError(errorClient);
-    } else {
+    try {
+      const resp = await axiosInstance.post("/clients", {
+        email: input.email,
+        password: "secret123",
+        name: input.name,
+        description: input.description,
+        address: input.address,
+      });
       navigate("/clients");
+    } catch (error) {
+      console.log(error);
+      setError(error);
     }
   };
   const handleChange = async (e) => {
@@ -104,9 +80,17 @@ const EditClient = () => {
               <label htmlFor="email" className="form-label">
                 Email:
               </label>
-              <input type="email" className="form-control" id="email" placeholder="Enter email" name="email" value={input.email} disabled />
+              <input
+                required
+                type="email"
+                className="form-control"
+                id="email"
+                placeholder="Enter email"
+                name="email"
+                value={input.email}
+                onChange={handleChange}
+              />
             </div>
-
             <div className="col">
               <label htmlFor="name" className="form-label">
                 Client Name:
