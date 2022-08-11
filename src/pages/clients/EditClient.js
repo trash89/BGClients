@@ -11,12 +11,12 @@ const EditClient = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [error, setError] = useState(null);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState({});
   const [input, setInput] = useState({
-    name: data?.name,
-    description: data?.description,
-    address: data?.address,
-    email: data?.email,
+    name: "",
+    description: "",
+    address: "",
+    email: "",
   });
   const getData = async () => {
     let query = supabase.from("clients").select("*").eq("id", params.idClient).single();
@@ -27,10 +27,14 @@ const EditClient = () => {
     if (error) {
       setError(error);
       console.log("error editClient=,", error);
-      setData([]);
+      setData({
+        name: "",
+        description: "",
+        address: "",
+        email: "",
+      });
     }
     setData(data);
-    console.log(data);
     setInput({
       name: data?.name,
       description: data?.description,

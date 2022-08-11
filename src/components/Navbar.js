@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 import { supabase } from "../supabaseClient";
 
@@ -9,10 +10,13 @@ import { links } from "../utils/links";
 import Logo from "./Logo";
 
 export default function Navbar() {
+  const [cookies, setCookie, removeCookie] = useCookies();
   const { user: userRedux } = useSelector((store) => store.user);
   const dispatch = useDispatch();
 
   const logout = async () => {
+    removeCookie("sb-access-token", { path: "/" });
+    removeCookie("sb-refresh-token", { path: "/" });
     dispatch(logoutUser());
     await supabase.auth.signOut();
   };

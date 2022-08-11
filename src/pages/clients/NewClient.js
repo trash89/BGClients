@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseServer";
+import { supabase } from "../../supabaseClient";
 
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
 import axios from "axios";
+import { APISERVER } from "../../utils/constants";
 
 const NewClient = () => {
   const isMounted = useIsMounted();
@@ -33,50 +34,52 @@ const NewClient = () => {
   };
   const handleSave = async (e) => {
     e.preventDefault();
-
-    // const resp = await axios.post("http://localhost:5000/api/v1/users/createUser", { email: input.email }, { withCredentials: true });
-    // console.log(resp);
-    // const { data: client, error } = await supabase.from("clients").insert({
-    //   email: input.email,
-    //   name: input.name,
-    //   description: input.description,
-    //   address: input.address,
-    //   localuser_id: resp.data.user.id,
-    //   user_id: resp.data.user_id,
-    // });
-    // if (error) {
-    //   setError(error);
-    // } else {
-    //   navigate("/clients");
-    // }
-
-    const { data: createdUser, error: errorCreatedUser } = await supabase.auth.api.createUser({
-      email: input.email,
-      email_confirm: true,
-      password: "secret123",
-    });
-    if (!errorCreatedUser) {
-      const { data: localUser, error: errorLocalUser } = await supabase.from("localusers").insert({ user_id: createdUser.id, isAdmin: false });
-      if (!errorLocalUser) {
-        const { data: client, error } = await supabase.from("clients").insert({
-          email: input.email,
-          name: input.name,
-          description: input.description,
-          address: input.address,
-          localuser_id: localUser[0].id,
-          user_id: localUser[0].user_id,
-        });
-        if (error) {
-          setError(error);
-        } else {
-          navigate("/clients");
-        }
+    try {
+      const resp = await axios.post(`${APISERVER}/users`, { email: input.email }, { withCredentials: true });
+      const { data: client, error: errorClient } = await supabase.from("clients").insert({
+        email: input.email,
+        name: input.name,
+        description: input.description,
+        address: input.address,
+        localuser_id: resp.data.user.id,
+        user_id: resp.data.user.user_id,
+      });
+      if (errorClient) {
+        setError(errorClient);
       } else {
-        setError(errorLocalUser);
+        navigate("/clients");
       }
-    } else {
-      setError(errorCreatedUser);
+    } catch (error) {
+      setError(error);
     }
+
+    // const { data: createdUser, error: errorCreatedUser } = await supabase.auth.api.createUser({
+    //   email: input.email,
+    //   email_confirm: true,
+    //   password: "secret123",
+    // });
+    // if (!errorCreatedUser) {
+    //   const { data: localUser, error: errorLocalUser } = await supabase.from("localusers").insert({ user_id: createdUser.id, isAdmin: false });
+    //   if (!errorLocalUser) {
+    //     const { data: client, error } = await supabase.from("clients").insert({
+    //       email: input.email,
+    //       name: input.name,
+    //       description: input.description,
+    //       address: input.address,
+    //       localuser_id: localUser[0].id,
+    //       user_id: localUser[0].user_id,
+    //     });
+    //     if (error) {
+    //       setError(error);
+    //     } else {
+    //       navigate("/clients");
+    //     }
+    //   } else {
+    //     setError(errorLocalUser);
+    //   }
+    // } else {
+    //   setError(errorCreatedUser);
+    // }
   };
   const handleChange = async (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -162,7 +165,7 @@ const NewClient = () => {
         >
           <i className="fa-solid fa-floppy-disk" />
         </button>
-        {error && <p className="text-center text-danger">{error}</p>}
+        {error && <p className="text-center text-danger">{error.message}</p>}
       </form>
     </section>
   );
