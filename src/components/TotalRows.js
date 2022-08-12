@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 
 const TotalRows = ({ link, count, download = "" }) => {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
+    <div className="d-flex justify-content-between">
       <span>
         {link !== "" && (
-          <Link to={link} className="btn btn-outline-primary btn-sm">
+          <Link to={link} className="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Create a new row">
             <i className="fa-solid fa-plus" />
           </Link>
         )}
@@ -15,7 +15,7 @@ const TotalRows = ({ link, count, download = "" }) => {
           <i className="fa-solid fa-file-csv"></i>
         </button>
       )}
-      <span>{count} rows</span>
+      <span className="text-primary text-capitalize">{count} rows</span>
     </div>
   );
 };

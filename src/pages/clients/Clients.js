@@ -62,7 +62,7 @@ const Clients = () => {
                 return (
                   <tr key={row.id}>
                     <td>
-                      <Link to={`/clients/${row.id}`} className="btn btn-outline-primary btn-sm">
+                      <Link to={`/clients/${row.id}`} className="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Edit Client">
                         <i className="fa-solid fa-pen" />
                       </Link>
                     </td>

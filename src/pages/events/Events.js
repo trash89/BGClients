@@ -46,7 +46,7 @@ const Events = () => {
     return (
       <div className="container p-2 my-2 border border-primary rounded-3">
         <p className="h4 text-capitalize">Events list</p>
-        <TotalRows link="/events/newEvent" count={data.count} download={handleDownloadCsv} />
+        <TotalRows link="/events/newEvent" count={data.count} download={handleDownloadCsv} data-bs-toggle="tooltip" title="New Event" />
         <div className="table-responsive">
           <table className="table table-bordered table-hover table-sm">
             <thead className="table-primary">
@@ -64,7 +64,7 @@ const Events = () => {
                 return (
                   <tr key={row.id}>
                     <td>
-                      <Link to={`/events/${row.id}`} className="btn btn-outline-primary btn-sm">
+                      <Link to={`/events/${row.id}`} className="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Edit Event">
                         <i className="fa-solid fa-pen" />
                       </Link>
                     </td>
