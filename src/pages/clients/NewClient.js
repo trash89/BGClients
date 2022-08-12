@@ -54,34 +54,6 @@ const NewClient = () => {
     } finally {
       setLoading(false);
     }
-
-    // const { data: createdUser, error: errorCreatedUser } = await supabase.auth.api.createUser({
-    //   email: input.email,
-    //   email_confirm: true,
-    //   password: "secret123",
-    // });
-    // if (!errorCreatedUser) {
-    //   const { data: localUser, error: errorLocalUser } = await supabase.from("localusers").insert({ user_id: createdUser.id, isAdmin: false });
-    //   if (!errorLocalUser) {
-    //     const { data: client, error } = await supabase.from("clients").insert({
-    //       email: input.email,
-    //       name: input.name,
-    //       description: input.description,
-    //       address: input.address,
-    //       localuser_id: localUser[0].id,
-    //       user_id: localUser[0].user_id,
-    //     });
-    //     if (error) {
-    //       setError(error);
-    //     } else {
-    //       navigate("/clients");
-    //     }
-    //   } else {
-    //     setError(errorLocalUser);
-    //   }
-    // } else {
-    //   setError(errorCreatedUser);
-    // }
   };
   if (!isMounted) return <></>;
   if (isLoading || loading) return <Progress />;
@@ -90,49 +62,48 @@ const NewClient = () => {
     <section className="container p-2 my-2 border border-primary rounded-3">
       <p className="h4 text-capitalize">enter a new client</p>
       <form className="was-validated">
-        <div className="row">
-          <div className="col">
-            <label htmlFor="email" className="form-label">
-              Email:
-            </label>
-            <input
-              autoFocus
-              required
-              type="email"
-              className="form-control"
-              id="email"
-              placeholder="Enter email"
-              name="email"
-              value={input.email}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="col">
-            <label htmlFor="name" className="form-label">
-              Client Name:
-            </label>
-            <input
-              required
-              type="text"
-              className="form-control"
-              id="name"
-              placeholder="Enter client name"
-              name="name"
-              value={input.name}
-              onChange={handleChange}
-            />
-          </div>
+        <div className="col">
+          <label htmlFor="email" className="form-label">
+            Email:
+          </label>
+          <input
+            autoFocus
+            required
+            type="email"
+            className="form-control"
+            id="email"
+            placeholder="Enter the email"
+            name="email"
+            value={input.email}
+            onChange={handleChange}
+          />
         </div>
+        <div className="col">
+          <label htmlFor="name" className="form-label">
+            Name:
+          </label>
+          <input
+            required
+            type="text"
+            className="form-control"
+            id="name"
+            placeholder="Enter the client name"
+            name="name"
+            value={input.name}
+            onChange={handleChange}
+          />
+        </div>
+
         <div className="mb-3 mt-3">
           <label htmlFor="description" className="form-label">
-            Client Description:
+            Description:
           </label>
           <input
             required
             type="text"
             className="form-control"
             id="description"
-            placeholder="Enter client description"
+            placeholder="Enter the client description"
             name="description"
             value={input.description}
             onChange={handleChange}
@@ -140,14 +111,14 @@ const NewClient = () => {
         </div>
         <div className="mb-3 mt-3">
           <label htmlFor="address" className="form-label">
-            Client Address:
+            Address:
           </label>
           <input
             required
             type="text"
             className="form-control"
             id="address"
-            placeholder="Enter client address"
+            placeholder="Enter the client address"
             name="address"
             value={input.address}
             onChange={handleChange}

@@ -1,128 +1,141 @@
-import { useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { supabase } from "../../supabaseClient";
+import { axiosInstance } from "../../axiosInstance";
+import { defaultPassword } from "../../utils/constants";
 
 const NewEvent = () => {
   const isMounted = useIsMounted();
-  const { user, isLoading } = useSelector((store) => store.user);
   const navigate = useNavigate();
+  const { user, isLoading } = useSelector((store) => store.user);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [clients, setClients] = useState([]);
   const [input, setInput] = useState({
-    name: "",
-    description: "",
-    address: "",
-    email: "",
+    id: "",
+    ev_name: "",
+    ev_description: "",
+    ev_date: "",
+    client_id: -1,
+    user_id: "",
   });
-  if (!isMounted) return <></>;
-  if (isLoading) return <Progress />;
 
-  if (!user) navigate("/register");
-  if (!user.isAdmin) navigate("/events");
+  useEffect(() => {
+    if (!user.isAdmin) {
+      navigate("/events");
+      return;
+    }
+    const getData = async () => {
+      setLoading(true);
+      try {
+        const resp = await axiosInstance.get("/clients");
+        setClients(resp.data.clients);
+        setInput({ ...input, client_id: resp?.data?.clients[0]?.id });
+      } catch (error) {
+        console.log(error);
+        setClients([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getData();
+  }, []);
 
+  const handleChange = async (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+    if (error) setError(null);
+  };
   const handleCancel = async (e) => {
     e.preventDefault();
     navigate("/events");
-    setInput({
-      name: "",
-      description: "",
-      address: "",
-      email: "",
-    });
     setError(null);
   };
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const resp = await axios.post("/api/createUser", { email: input.email });
-      const { data, error } = await supabase.from("clients").insert({
-        email: input.email,
-        name: input.name,
-        description: input.description,
-        address: input.address,
-        localuser_id: resp.data.user.id,
-        user_id: resp.data.user.user_id,
+      setLoading(true);
+      const resp = await axiosInstance.post("/events", {
+        client_id: input.client_id,
+        ev_name: input.ev_name,
+        ev_description: input.ev_description,
+        ev_date: input.ev_date,
       });
-      if (error) {
-        setError(`insert clients err: ${error?.message}`);
-      } else {
-        navigate("/events");
-      }
+      navigate("/events");
     } catch (error) {
-      setError(`axios err: ${error?.response?.data?.error}`);
+      console.log(error);
+      setError(error);
+    } finally {
+      setLoading(false);
     }
   };
-  const handleChange = async (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
-    if (error) setError(null);
-  };
+  if (!isMounted) return <></>;
+  if (isLoading || loading) return <Progress />;
+
   return (
     <section className="container p-2 my-2 border border-primary rounded-3">
-      <p className="h4 text-capitalize">enter a new client</p>
+      <p className="h4 text-capitalize">enter a new event</p>
       <form className="was-validated">
         <div className="row">
           <div className="col">
-            <label htmlFor="email" className="form-label">
-              Email:
+            <label htmlFor="client_id" className="form-label">
+              Client:
             </label>
-            <input
-              required
-              type="email"
-              className="form-control"
-              id="email"
-              placeholder="Enter email"
-              name="email"
-              value={input.email}
-              onChange={handleChange}
-            />
+            <select class="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange}>
+              {clients.map((client) => {
+                return (
+                  <option key={client.id} value={client.id}>
+                    {client.name}
+                  </option>
+                );
+              })}
+            </select>
           </div>
           <div className="col">
-            <label htmlFor="name" className="form-label">
-              Client Name:
+            <label htmlFor="ev_name" className="form-label">
+              Event Name:
             </label>
             <input
               required
               type="text"
               className="form-control"
-              id="name"
-              placeholder="Enter client name"
-              name="name"
-              value={input.name}
+              id="ev_name"
+              placeholder="Enter the event name"
+              name="ev_name"
+              value={input.ev_name}
               onChange={handleChange}
             />
           </div>
         </div>
         <div className="mb-3 mt-3">
-          <label htmlFor="description" className="form-label">
-            Client Description:
+          <label htmlFor="ev_description" className="form-label">
+            Event Description:
           </label>
           <input
             required
             type="text"
             className="form-control"
-            id="description"
-            placeholder="Enter client description"
-            name="description"
-            value={input.description}
+            id="ev_description"
+            placeholder="Enter the event description"
+            name="ev_description"
+            value={input.ev_description}
             onChange={handleChange}
           />
         </div>
         <div className="mb-3 mt-3">
-          <label htmlFor="address" className="form-label">
-            Client Address:
+          <label htmlFor="ev_date" className="form-label">
+            Event Date:
           </label>
           <input
             required
-            type="text"
+            type="date"
             className="form-control"
-            id="address"
-            placeholder="Enter client address"
-            name="address"
-            value={input.address}
+            id="ev_date"
+            placeholder="Enter the event date"
+            name="ev_date"
+            value={input.ev_date}
             onChange={handleChange}
           />
         </div>
@@ -135,11 +148,11 @@ const NewEvent = () => {
           data-bs-toggle="tooltip"
           title="Save"
           onClick={handleSave}
-          disabled={!input.email || !input.name || !input.description || !input.address}
+          disabled={!input.ev_name || !input.ev_description || !input.ev_date || !input.client_id}
         >
           <i className="fa-solid fa-floppy-disk" />
         </button>
-        {error && <p className="text-danger">{error}</p>}
+        {error && <p className="text-center text-danger">{error.message}</p>}
       </form>
     </section>
   );

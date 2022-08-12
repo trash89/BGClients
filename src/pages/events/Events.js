@@ -1,15 +1,35 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { supabase } from "../../supabaseClient";
+import { axiosInstance } from "../../axiosInstance";
 
 const Events = () => {
   const isMounted = useIsMounted();
   const { user, isLoading } = useSelector((store) => store.user);
-  const events = [];
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      try {
+        const resp = await axiosInstance.get("/events");
+        setEvents(resp.data.events);
+      } catch (error) {
+        console.log(error);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getData();
+  }, []);
+
   if (!isMounted) return <></>;
-  if (isLoading) return <Progress />;
+  if (isLoading || loading) return <Progress />;
   if (user.isAdmin) {
     return (
       <div className="container p-2 my-2 border border-primary rounded-3">
@@ -19,17 +39,17 @@ const Events = () => {
         </Link>
         <div className="table-responsive">
           <table className="table table-bordered table-hover table-sm">
-            <thead>
+            <thead className="table-primary">
               <tr>
                 <th>Action</th>
-                <th>Client</th>
                 <th>Date</th>
+                <th>Client</th>
                 <th>Event</th>
                 <th>Description</th>
               </tr>
             </thead>
             <tbody>
-              {events.map((row) => {
+              {events?.map((row) => {
                 return (
                   <tr key={row.id}>
                     <td>
@@ -37,8 +57,8 @@ const Events = () => {
                         <i className="fa-solid fa-pen" />
                       </Link>
                     </td>
-                    <td>{row.name}</td>
                     <td>{row.ev_date}</td>
+                    <td>{row.clients.name}</td>
                     <td>{row.ev_name}</td>
                     <td>{row.ev_description}</td>
                   </tr>
@@ -55,21 +75,3 @@ const Events = () => {
 };
 
 export default Events;
-
-// export async function getServerSideProps({ req, res }) {
-//   const user = await getUserOnServer(req, res);
-//   let query = supabase.from("events").select("id,client_id,ev_name,ev_description,ev_date,user_id,clients(name)");
-//   if (!user.isAdmin) {
-//     query = query.eq("user_id", user.id);
-//   }
-//   const { data, error } = await query;
-//   if (error) {
-//     console.log("error Events getServerSideProps,", error);
-//     return {
-//       props: { events: [] },
-//     };
-//   }
-//   return {
-//     props: { events: data },
-//   };
-// }
