@@ -3,15 +3,15 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import { useIsMounted } from "../../hooks";
-import { Progress } from "../../components";
+import { Progress, TotalRows } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
 import moment from "moment";
-import { dateFormat } from "../../utils/constants";
+import { dateFormat, downloadAsCsv } from "../../utils/constants";
 
 const Events = () => {
   const isMounted = useIsMounted();
   const { user, isLoading } = useSelector((store) => store.user);
-  const [events, setEvents] = useState([]);
+  const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -19,10 +19,10 @@ const Events = () => {
       setLoading(true);
       try {
         const resp = await axiosInstance.get("/events");
-        setEvents(resp.data.events);
+        setData(resp.data);
       } catch (error) {
         console.log(error);
-        setEvents([]);
+        setData({});
       } finally {
         setLoading(false);
       }
@@ -30,15 +30,23 @@ const Events = () => {
     getData();
   }, []);
 
+  const handleDownloadCsv = () => {
+    const columns = [
+      { accessor: (item) => item.ev_date, name: "Event Date" },
+      { accessor: (item) => item.clients.name, name: "Client Name" },
+      { accessor: (item) => item.ev_name, name: "Event Name" },
+      { accessor: (item) => item.ev_description, name: "Event Description" },
+    ];
+    downloadAsCsv(columns, data.events, "Events");
+  };
+
   if (!isMounted) return <></>;
   if (isLoading || loading) return <Progress />;
   if (user.isAdmin) {
     return (
       <div className="container p-2 my-2 border border-primary rounded-3">
         <p className="h4 text-capitalize">Events list</p>
-        <Link to="/events/newEvent" className="btn btn-outline-primary btn-sm">
-          <i className="fa-solid fa-plus" />
-        </Link>
+        <TotalRows link="/events/newEvent" count={data.count} download={handleDownloadCsv} />
         <div className="table-responsive">
           <table className="table table-bordered table-hover table-sm">
             <thead className="table-primary">
@@ -51,7 +59,7 @@ const Events = () => {
               </tr>
             </thead>
             <tbody>
-              {events?.map((row) => {
+              {data?.events?.map((row) => {
                 const ev_date_formatted = new moment(row.ev_date).format(dateFormat);
                 return (
                   <tr key={row.id}>
@@ -73,7 +81,7 @@ const Events = () => {
       </div>
     );
   } else {
-    return <>for events</>;
+    return <></>;
   }
 };
 

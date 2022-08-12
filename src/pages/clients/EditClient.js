@@ -23,6 +23,10 @@ const EditClient = () => {
   });
 
   useEffect(() => {
+    if (!user.isAdmin) {
+      navigate("/clients");
+      return;
+    }
     const getData = async () => {
       setLoading(true);
       try {

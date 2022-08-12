@@ -3,24 +3,35 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import { useIsMounted } from "../../hooks";
-import { Progress } from "../../components";
+import { Progress, TotalRows } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
+import { downloadAsCsv } from "../../utils/constants";
 
 const Clients = () => {
   const isMounted = useIsMounted();
   const { user, isLoading } = useSelector((store) => store.user);
-  const [clients, setClients] = useState([]);
+  const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
+
+  const handleDownloadCsv = () => {
+    const columns = [
+      { accessor: (item) => item.email, name: "Email" },
+      { accessor: (item) => item.name, name: "Name" },
+      { accessor: (item) => item.description, name: "Description" },
+      { accessor: (item) => item.address, name: "Address" },
+    ];
+    downloadAsCsv(columns, data.clients, "Clients");
+  };
 
   useEffect(() => {
     const getData = async () => {
       setLoading(true);
       try {
         const resp = await axiosInstance.get("/clients");
-        setClients(resp.data.clients);
+        setData(resp.data);
       } catch (error) {
         console.log(error);
-        setClients([]);
+        setData({});
       } finally {
         setLoading(false);
       }
@@ -34,9 +45,7 @@ const Clients = () => {
     return (
       <div className="container p-2 my-2 border border-primary rounded-3">
         <p className="h4 text-capitalize">Clients list</p>
-        <Link to="/clients/newClient" className="btn btn-outline-primary btn-sm">
-          <i className="fa-solid fa-plus" />
-        </Link>
+        <TotalRows link="/clients/newClient" count={data.count} download={handleDownloadCsv} />
         <div className="table-responsive">
           <table className="table table-bordered table-hover table-sm">
             <thead className="table-primary">
@@ -49,7 +58,7 @@ const Clients = () => {
               </tr>
             </thead>
             <tbody>
-              {clients?.map((row) => {
+              {data?.clients?.map((row) => {
                 return (
                   <tr key={row.id}>
                     <td>
@@ -70,7 +79,7 @@ const Clients = () => {
       </div>
     );
   } else {
-    return <>for clients</>;
+    return <></>;
   }
 };
 
