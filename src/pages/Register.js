@@ -33,8 +33,8 @@ export default function Register() {
       setLoading(true);
       const resp = await axiosInstance.post("/auth/login", { email, password });
       const { user, session } = resp.data;
-      setCookie("sb-access-token", session.access_token, { path: "/", maxAge: 60 * 60 * 6, sameSite: "lax" });
-      setCookie("sb-refresh-token", session.refresh_token, { path: "/", maxAge: 60 * 60 * 6, sameSite: "lax" });
+      setCookie("sb-access-token", session.access_token, { path: "/", maxAge: 60 * 60 * 6 });
+      setCookie("sb-refresh-token", session.refresh_token, { path: "/", maxAge: 60 * 60 * 6 });
       const localObject = {
         access_token: session.access_token,
         id: user.id,
