@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
+import moment from "moment";
+import { dateFormat } from "../../utils/constants";
 
 const Events = () => {
   const isMounted = useIsMounted();
@@ -50,6 +52,7 @@ const Events = () => {
             </thead>
             <tbody>
               {events?.map((row) => {
+                const ev_date_formatted = new moment(row.ev_date).format(dateFormat);
                 return (
                   <tr key={row.id}>
                     <td>
@@ -57,7 +60,7 @@ const Events = () => {
                         <i className="fa-solid fa-pen" />
                       </Link>
                     </td>
-                    <td>{row.ev_date}</td>
+                    <td>{ev_date_formatted}</td>
                     <td>{row.clients.name}</td>
                     <td>{row.ev_name}</td>
                     <td>{row.ev_description}</td>

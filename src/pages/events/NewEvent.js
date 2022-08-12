@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
-import { defaultPassword } from "../../utils/constants";
 
 const NewEvent = () => {
   const isMounted = useIsMounted();
@@ -19,7 +18,7 @@ const NewEvent = () => {
     ev_name: "",
     ev_description: "",
     ev_date: "",
-    client_id: -1,
+    client_id: "",
     user_id: "",
   });
 
@@ -33,7 +32,7 @@ const NewEvent = () => {
       try {
         const resp = await axiosInstance.get("/clients");
         setClients(resp.data.clients);
-        setInput({ ...input, client_id: resp?.data?.clients[0]?.id });
+        if (resp?.data?.clients?.length > 0) setInput({ ...input, client_id: resp?.data?.clients[0]?.id });
       } catch (error) {
         console.log(error);
         setClients([]);
@@ -57,11 +56,12 @@ const NewEvent = () => {
     e.preventDefault();
     try {
       setLoading(true);
+      const ev_date_formatted = new Date(input.ev_date).toISOString();
       const resp = await axiosInstance.post("/events", {
         client_id: input.client_id,
         ev_name: input.ev_name,
         ev_description: input.ev_description,
-        ev_date: input.ev_date,
+        ev_date: ev_date_formatted,
       });
       navigate("/events");
     } catch (error) {
@@ -78,51 +78,19 @@ const NewEvent = () => {
     <section className="container p-2 my-2 border border-primary rounded-3">
       <p className="h4 text-capitalize">enter a new event</p>
       <form className="was-validated">
-        <div className="row">
-          <div className="col">
-            <label htmlFor="client_id" className="form-label">
-              Client:
-            </label>
-            <select class="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange}>
-              {clients.map((client) => {
-                return (
-                  <option key={client.id} value={client.id}>
-                    {client.name}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-          <div className="col">
-            <label htmlFor="ev_name" className="form-label">
-              Event Name:
-            </label>
-            <input
-              required
-              type="text"
-              className="form-control"
-              id="ev_name"
-              placeholder="Enter the event name"
-              name="ev_name"
-              value={input.ev_name}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-        <div className="mb-3 mt-3">
-          <label htmlFor="ev_description" className="form-label">
-            Event Description:
+        <div className="col">
+          <label htmlFor="client_id" className="form-label">
+            Client:
           </label>
-          <input
-            required
-            type="text"
-            className="form-control"
-            id="ev_description"
-            placeholder="Enter the event description"
-            name="ev_description"
-            value={input.ev_description}
-            onChange={handleChange}
-          />
+          <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange}>
+            {clients.map((client) => {
+              return (
+                <option key={client.id} value={client.id}>
+                  {client.name}
+                </option>
+              );
+            })}
+          </select>
         </div>
         <div className="mb-3 mt-3">
           <label htmlFor="ev_date" className="form-label">
@@ -136,6 +104,37 @@ const NewEvent = () => {
             placeholder="Enter the event date"
             name="ev_date"
             value={input.ev_date}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="mb-3 mt-3">
+          <label htmlFor="ev_name" className="form-label">
+            Event Name:
+          </label>
+          <input
+            required
+            type="text"
+            className="form-control"
+            id="ev_name"
+            placeholder="Enter the event name"
+            name="ev_name"
+            value={input.ev_name}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="mb-3 mt-3">
+          <label htmlFor="ev_description" className="form-label">
+            Event Description:
+          </label>
+          <input
+            required
+            type="text"
+            className="form-control"
+            id="ev_description"
+            placeholder="Enter the event description"
+            name="ev_description"
+            value={input.ev_description}
             onChange={handleChange}
           />
         </div>

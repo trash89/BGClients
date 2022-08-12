@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
-import { supabase } from "../supabaseClient";
-
 import { logoutUser } from "../features/user/userSlice";
 import { links } from "../utils/links";
 import Logo from "./Logo";
@@ -18,13 +16,12 @@ export default function Navbar() {
     removeCookie("sb-access-token", { path: "/" });
     removeCookie("sb-refresh-token", { path: "/" });
     dispatch(logoutUser());
-    await supabase.auth.signOut();
   };
 
   return (
-    <nav className="navbar navbar-expand-sm bg-primary navbar-dark sticky-top p-0 p-0">
+    <nav className="navbar navbar-expand-sm bg-primary navbar-dark sticky-top p-0 m-0">
       <div className="container-fluid">
-        <a href="/" className="navbar-brand pb-0 me-0">
+        <a href="/" className="navbar-brand">
           <Logo />
         </a>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
