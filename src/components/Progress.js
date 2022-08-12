@@ -1,9 +1,9 @@
 const Progress = () => {
   return (
-    <>
-      Loading...
-      <div className="spinner-border" />
-    </>
+    <div className="d-flex justify-content-start">
+      <p className="text-info">Loading...</p>
+      <div className="spinner-border text-info" />
+    </div>
   );
 };
 

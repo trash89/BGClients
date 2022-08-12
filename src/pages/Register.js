@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-//import { supabase } from "../supabaseClient";
 import { axiosInstance } from "../axiosInstance";
 import { useCookies } from "react-cookie";
 
@@ -9,11 +8,11 @@ import { Logo, Copyright, Progress } from "../components";
 import { loginUser } from "../features/user/userSlice";
 import { addUserToLocalStorage } from "../utils/localStorage";
 import { useIsMounted } from "../hooks";
-import { APISERVER } from "../utils/constants";
 
 export default function Register() {
   const [cookies, setCookie] = useCookies();
   const isMounted = useIsMounted();
+  const [loading, setLoading] = useState(false);
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -31,6 +30,7 @@ export default function Register() {
 
   const login = async (email, password) => {
     try {
+      setLoading(true);
       const resp = await axiosInstance.post("/auth/login", { email, password });
       const { user, session } = resp.data;
       setCookie("sb-access-token", session.access_token, { path: "/" });
@@ -46,6 +46,8 @@ export default function Register() {
     } catch (error) {
       setError(error);
       console.log("error signIn localuser=", error);
+    } finally {
+      setLoading(false);
     }
 
     // const { user, session, error } = await supabase.auth.signIn({ email, password });
@@ -108,7 +110,7 @@ export default function Register() {
   }, [user]);
 
   if (!isMounted) return <></>;
-  if (isLoading) return <Progress />;
+  if (isLoading || loading) return <Progress />;
   return (
     <div className="container mx-auto" style={{ width: "300px" }}>
       <div className="container-fluid p-2 my-4 shadow border border-primary rounded-3">

@@ -39,7 +39,7 @@ const Clients = () => {
         </Link>
         <div className="table-responsive">
           <table className="table table-bordered table-hover table-sm">
-            <thead>
+            <thead className="table-primary">
               <tr>
                 <th>Action</th>
                 <th>Email</th>
