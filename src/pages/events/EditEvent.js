@@ -12,13 +12,13 @@ const EditEvent = () => {
   const params = useParams();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState({});
   const [input, setInput] = useState({
     id: "",
-    name: "",
-    description: "",
-    address: "",
-    email: "",
-    localuser_id: -1,
+    client_id: "",
+    ev_name: "",
+    ev_description: "",
+    ev_date: "",
     user_id: "",
   });
 
@@ -30,20 +30,22 @@ const EditEvent = () => {
     const getData = async () => {
       setLoading(true);
       try {
-        const resp = await axiosInstance.get(`/clients/${params.idClient}`);
-        const { id, name, description, address, email, localuser_id, user_id } = resp.data.client;
+        const respClients = await axiosInstance.get("/clients");
+        setData(respClients.data);
+        const resp = await axiosInstance.get(`/events/${params.idEvent}`);
+        const { id, client_id, ev_name, ev_description, ev_date, user_id } = resp.data.event;
         setInput({
           id,
-          name,
-          description,
-          address,
-          email,
-          localuser_id,
+          client_id,
+          ev_name,
+          ev_description,
+          ev_date,
           user_id,
         });
       } catch (error) {
         console.log(error);
         setError(error);
+        setData({});
       } finally {
         setLoading(false);
       }
@@ -56,16 +58,15 @@ const EditEvent = () => {
 
   const handleCancel = async (e) => {
     e.preventDefault();
-    navigate("/clients");
+    navigate("/events");
     setError(null);
   };
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      const resp = await axiosInstance.delete(`/clients/${params.idClient}`);
-      console.log(resp);
-      navigate("/clients");
+      const resp = await axiosInstance.delete(`/events/${params.idEvent}`);
+      navigate("/events");
     } catch (error) {
       console.log(error);
     } finally {
@@ -77,16 +78,16 @@ const EditEvent = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const resp = await axiosInstance.patch(`/clients/${params.idClient}`, {
+
+      const resp = await axiosInstance.patch(`/events/${params.idEvent}`, {
         id: input.id,
-        email: input.email,
-        name: input.name,
-        description: input.description,
-        address: input.address,
+        client_id: input.client_id,
+        ev_name: input.ev_name,
+        ev_description: input.ev_description,
+        ev_date: input.ev_date,
         user_id: input.user_id,
-        localuser_id: input.localuser_id,
       });
-      navigate("/clients");
+      navigate("/events");
     } catch (error) {
       console.log(error);
       setError(error);
@@ -102,70 +103,58 @@ const EditEvent = () => {
   if (user.isAdmin) {
     return (
       <section className="container p-2 my-2 border border-primary rounded-3">
-        <p className="h4 text-capitalize">edit client</p>
+        <p className="h4 text-capitalize">edit event</p>
         <form className="was-validated">
-          <div className="row">
-            <div className="col">
-              <label htmlFor="email" className="form-label">
-                Email:
-              </label>
-              <input
-                required
-                type="email"
-                className="form-control"
-                id="email"
-                placeholder="Enter email"
-                name="email"
-                value={input.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col">
-              <label htmlFor="name" className="form-label">
-                Client Name:
-              </label>
-              <input
-                autoFocus
-                required
-                type="text"
-                className="form-control"
-                id="name"
-                placeholder="Enter client name"
-                name="name"
-                value={input.name}
-                onChange={handleChange}
-              />
-            </div>
+          <div className="form-floating mb-3 mt-3">
+            <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange}>
+              {data?.clients?.map((client) => {
+                return (
+                  <option key={client.id} value={client.id}>
+                    {client.name}
+                  </option>
+                );
+              })}
+            </select>
+            <label htmlFor="client_id">Client:</label>
           </div>
-          <div className="mb-3 mt-3">
-            <label htmlFor="description" className="form-label">
-              Client Description:
-            </label>
+          <div className="form-floating mb-3 mt-3">
+            <input
+              required
+              type="date"
+              className="form-control"
+              id="ev_date"
+              placeholder="Enter the event date"
+              name="ev_date"
+              value={input.ev_date}
+              onChange={handleChange}
+            />
+            <label htmlFor="ev_date">Event Date:</label>
+          </div>
+          <div className="form-floating mb-3 mt-3">
             <input
               required
               type="text"
               className="form-control"
-              id="description"
-              placeholder="Enter client description"
-              name="description"
-              value={input.description}
+              id="ev_name"
+              placeholder="Enter the event name"
+              name="ev_name"
+              value={input.ev_name}
               onChange={handleChange}
             />
+            <label htmlFor="ev_name">Event Name:</label>
           </div>
-          <div className="mb-3 mt-3">
-            <label htmlFor="address" className="form-label">
-              Client Address:
-            </label>
+          <div className="form-floating mb-3 mt-3">
             <input
               required
               type="text"
               className="form-control"
-              id="address"
-              placeholder="Enter client address"
-              name="address"
-              value={input.address}
+              id="ev_description"
+              placeholder="Enter the event description"
+              name="ev_description"
+              value={input.ev_description}
               onChange={handleChange}
             />
+            <label htmlFor="ev_description">Event Description:</label>
           </div>
           <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
             <i className="fa-solid fa-times" />
@@ -180,7 +169,7 @@ const EditEvent = () => {
             data-bs-toggle="tooltip"
             title="Save"
             onClick={handleSave}
-            disabled={!input.name || !input.description || !input.address}
+            disabled={!input.ev_name || !input.ev_description || !input.ev_date || !input.client_id}
           >
             <i className="fa-solid fa-floppy-disk" />
           </button>

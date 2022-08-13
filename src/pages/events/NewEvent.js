@@ -12,7 +12,7 @@ const NewEvent = () => {
   const { user, isLoading } = useSelector((store) => store.user);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [clients, setClients] = useState([]);
+  const [data, setData] = useState({});
   const [input, setInput] = useState({
     id: "",
     ev_name: "",
@@ -31,11 +31,11 @@ const NewEvent = () => {
       setLoading(true);
       try {
         const resp = await axiosInstance.get("/clients");
-        setClients(resp.data.clients);
+        setData(resp.data);
         if (resp?.data?.clients?.length > 0) setInput({ ...input, client_id: resp?.data?.clients[0]?.id });
       } catch (error) {
         console.log(error);
-        setClients([]);
+        setData([]);
       } finally {
         setLoading(false);
       }
@@ -78,12 +78,9 @@ const NewEvent = () => {
     <section className="container p-2 my-2 border border-primary rounded-3">
       <p className="h4 text-capitalize">enter a new event</p>
       <form className="was-validated">
-        <div className="col">
-          <label htmlFor="client_id" className="form-label">
-            Client:
-          </label>
+        <div className="form-floating mb-3 mt-3">
           <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange}>
-            {clients.map((client) => {
+            {data?.clients?.map((client) => {
               return (
                 <option key={client.id} value={client.id}>
                   {client.name}
@@ -91,11 +88,9 @@ const NewEvent = () => {
               );
             })}
           </select>
+          <label htmlFor="client_id">Client:</label>
         </div>
-        <div className="mb-3 mt-3">
-          <label htmlFor="ev_date" className="form-label">
-            Event Date:
-          </label>
+        <div className="form-floating mb-3 mt-3">
           <input
             required
             type="date"
@@ -106,12 +101,9 @@ const NewEvent = () => {
             value={input.ev_date}
             onChange={handleChange}
           />
+          <label htmlFor="ev_date">Event Date:</label>
         </div>
-
-        <div className="mb-3 mt-3">
-          <label htmlFor="ev_name" className="form-label">
-            Event Name:
-          </label>
+        <div className="form-floating mb-3 mt-3">
           <input
             required
             type="text"
@@ -122,11 +114,9 @@ const NewEvent = () => {
             value={input.ev_name}
             onChange={handleChange}
           />
+          <label htmlFor="ev_name">Event Name:</label>
         </div>
-        <div className="mb-3 mt-3">
-          <label htmlFor="ev_description" className="form-label">
-            Event Description:
-          </label>
+        <div className="form-floating mb-3 mt-3">
           <input
             required
             type="text"
@@ -137,6 +127,7 @@ const NewEvent = () => {
             value={input.ev_description}
             onChange={handleChange}
           />
+          <label htmlFor="ev_description">Event Description:</label>
         </div>
         <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
           <i className="fa-solid fa-times" />

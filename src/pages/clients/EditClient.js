@@ -104,43 +104,34 @@ const EditClient = () => {
       <section className="container p-2 my-2 border border-primary rounded-3">
         <p className="h4 text-capitalize">edit client</p>
         <form className="was-validated">
-          <div className="row">
-            <div className="col">
-              <label htmlFor="email" className="form-label">
-                Email:
-              </label>
-              <input
-                required
-                type="email"
-                className="form-control"
-                id="email"
-                placeholder="Enter email"
-                name="email"
-                value={input.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="col">
-              <label htmlFor="name" className="form-label">
-                Client Name:
-              </label>
-              <input
-                autoFocus
-                required
-                type="text"
-                className="form-control"
-                id="name"
-                placeholder="Enter client name"
-                name="name"
-                value={input.name}
-                onChange={handleChange}
-              />
-            </div>
+          <div className="form-floating mb-3 mt-3">
+            <input
+              required
+              type="email"
+              className="form-control"
+              id="email"
+              placeholder="Enter email"
+              name="email"
+              value={input.email}
+              onChange={handleChange}
+            />
+            <label htmlFor="email">Email:</label>
           </div>
-          <div className="mb-3 mt-3">
-            <label htmlFor="description" className="form-label">
-              Client Description:
-            </label>
+          <div className="form-floating mb-3 mt-3">
+            <input
+              autoFocus
+              required
+              type="text"
+              className="form-control"
+              id="name"
+              placeholder="Enter client name"
+              name="name"
+              value={input.name}
+              onChange={handleChange}
+            />
+            <label htmlFor="name">Name:</label>
+          </div>
+          <div className="form-floating mb-3 mt-3">
             <input
               required
               type="text"
@@ -151,11 +142,9 @@ const EditClient = () => {
               value={input.description}
               onChange={handleChange}
             />
+            <label htmlFor="description">Description:</label>
           </div>
-          <div className="mb-3 mt-3">
-            <label htmlFor="address" className="form-label">
-              Client Address:
-            </label>
+          <div className="form-floating mb-3 mt-3">
             <input
               required
               type="text"
@@ -166,6 +155,7 @@ const EditClient = () => {
               value={input.address}
               onChange={handleChange}
             />
+            <label htmlFor="address">Address:</label>
           </div>
           <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
             <i className="fa-solid fa-times" />
