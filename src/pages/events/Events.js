@@ -1,30 +1,31 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import { useIsMounted } from "../../hooks";
 import { Progress, TotalRows } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
 import moment from "moment";
 import { dateFormat, downloadAsCsv } from "../../utils/constants";
+import { setIsLoading, clearIsLoading, setData } from "../../features/event/eventSlice";
 
 const Events = () => {
   const isMounted = useIsMounted();
-  const { user, isLoading } = useSelector((store) => store.user);
-  const [data, setData] = useState({});
-  const [loading, setLoading] = useState(false);
+  const { user } = useSelector((store) => store.user);
+  const { data, isLoading } = useSelector((store) => store.event);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const getData = async () => {
-      setLoading(true);
+      dispatch(setIsLoading());
       try {
         const resp = await axiosInstance.get("/events");
-        setData(resp.data);
+        dispatch(setData(resp.data));
       } catch (error) {
         console.log(error);
-        setData({});
+        dispatch(setData({}));
       } finally {
-        setLoading(false);
+        dispatch(clearIsLoading());
       }
     };
     getData();
@@ -41,7 +42,7 @@ const Events = () => {
   };
 
   if (!isMounted) return <></>;
-  if (isLoading || loading) return <Progress />;
+  if (isLoading) return <Progress />;
   if (user.isAdmin) {
     return (
       <div className="container p-2 my-2 border border-primary rounded-3">

@@ -4,11 +4,10 @@ const initialState = {
   isLoading: false,
   input: {
     id: "",
-    name: "",
-    description: "",
-    address: "",
-    email: "",
-    localuser_id: "",
+    client_id: "",
+    ev_name: "",
+    ev_description: "",
+    ev_date: "",
     user_id: "",
   },
   data: {},
@@ -16,8 +15,8 @@ const initialState = {
   errorText: "",
 };
 
-const clientSlice = createSlice({
-  name: "client",
+const eventSlice = createSlice({
+  name: "event",
   initialState,
   reducers: {
     setIsLoading: (state) => {
@@ -47,6 +46,6 @@ const clientSlice = createSlice({
   },
 });
 
-export const { setInput, setIsLoading, clearIsLoading, setError, clearError, setData, clearValues, setEdit } = clientSlice.actions;
+export const { setInput, setIsLoading, clearIsLoading, setError, clearError, setData, clearValues, setEdit } = eventSlice.actions;
 
-export default clientSlice.reducer;
+export default eventSlice.reducer;

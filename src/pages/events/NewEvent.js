@@ -1,26 +1,29 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
+import { setInput, setIsLoading, clearIsLoading, setData, setError, clearError, clearValues } from "../../features/event/eventSlice";
 
 const NewEvent = () => {
   const isMounted = useIsMounted();
   const navigate = useNavigate();
-  const { user, isLoading } = useSelector((store) => store.user);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState({});
-  const [input, setInput] = useState({
-    id: "",
-    ev_name: "",
-    ev_description: "",
-    ev_date: "",
-    client_id: "",
-    user_id: "",
-  });
+  const dispatch = useDispatch();
+  const { user } = useSelector((store) => store.user);
+  const { input, data, isLoading, isError, errorText } = useSelector((store) => store.event);
+
+  const handleChange = async (e) => {
+    dispatch(setInput({ name: [e.target.name], value: e.target.value }));
+    if (isError) dispatch(clearError());
+  };
+  const handleCancel = async (e) => {
+    e.preventDefault();
+    dispatch(clearValues());
+    navigate("/events");
+    return;
+  };
 
   useEffect(() => {
     if (!user.isAdmin) {
@@ -28,36 +31,27 @@ const NewEvent = () => {
       return;
     }
     const getData = async () => {
-      setLoading(true);
+      dispatch(setIsLoading());
       try {
         const resp = await axiosInstance.get("/clients");
-        setData(resp.data);
-        if (resp?.data?.clients?.length > 0) setInput({ ...input, client_id: resp?.data?.clients[0]?.id });
+        dispatch(setData(resp.data));
+        if (resp?.data?.clients?.length > 0) dispatch(setInput({ ...input, client_id: resp?.data?.clients[0]?.id }));
       } catch (error) {
         console.log(error);
-        setData([]);
+        dispatch(setError(error.response.data.error.message));
       } finally {
-        setLoading(false);
+        dispatch(clearIsLoading());
       }
     };
     getData();
   }, []);
 
-  const handleChange = async (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
-    if (error) setError(null);
-  };
-  const handleCancel = async (e) => {
-    e.preventDefault();
-    navigate("/events");
-    setError(null);
-  };
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
+      dispatch(setIsLoading());
       const ev_date_formatted = new Date(input.ev_date).toISOString();
-      const resp = await axiosInstance.post("/events", {
+      await axiosInstance.post("/events", {
         client_id: input.client_id,
         ev_name: input.ev_name,
         ev_description: input.ev_description,
@@ -68,11 +62,11 @@ const NewEvent = () => {
       console.log(error);
       setError(error);
     } finally {
-      setLoading(false);
+      dispatch(clearIsLoading());
     }
   };
   if (!isMounted) return <></>;
-  if (isLoading || loading) return <Progress />;
+  if (isLoading) return <Progress />;
 
   return (
     <section className="container p-2 my-2 border border-primary rounded-3">
@@ -142,7 +136,7 @@ const NewEvent = () => {
         >
           <i className="fa-solid fa-floppy-disk" />
         </button>
-        {error && <p className="text-center text-danger">{error.message}</p>}
+        {isError && <p className="text-danger">{errorText}</p>}
       </form>
     </section>
   );

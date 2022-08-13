@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -6,16 +6,14 @@ import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
 import { defaultPassword } from "../../utils/constants";
-import { setInput, clearValues } from "../../features/client/clientSlice";
+import { setInput, setIsLoading, clearIsLoading, setError, clearError, clearValues } from "../../features/client/clientSlice";
 
 const NewClient = () => {
   const isMounted = useIsMounted();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, isLoading } = useSelector((store) => store.user);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const { input, isLoading: isLoadingClient } = useSelector((store) => store.client);
+  const { user } = useSelector((store) => store.user);
+  const { input, isLoading, isError, errorText } = useSelector((store) => store.client);
 
   useEffect(() => {
     if (!user.isAdmin) {
@@ -26,20 +24,19 @@ const NewClient = () => {
 
   const handleChange = async (e) => {
     dispatch(setInput({ name: [e.target.name], value: e.target.value }));
-    if (error) setError(null);
+    if (isError) dispatch(clearError());
   };
   const handleCancel = async (e) => {
     e.preventDefault();
     dispatch(clearValues());
-    setError(null);
     navigate("/clients");
     return;
   };
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      const resp = await axiosInstance.post("/clients", {
+      dispatch(setIsLoading());
+      await axiosInstance.post("/clients", {
         email: input.email,
         password: defaultPassword,
         name: input.name,
@@ -50,13 +47,13 @@ const NewClient = () => {
       navigate("/clients");
     } catch (error) {
       console.log(error);
-      setError(error);
+      dispatch(setError(error.response.data.error.message));
     } finally {
-      setLoading(false);
+      dispatch(clearIsLoading());
     }
   };
   if (!isMounted) return <></>;
-  if (isLoading || isLoadingClient || loading) return <Progress />;
+  if (isLoading) return <Progress />;
 
   return (
     <section className="container p-2 my-2 border border-primary rounded-3">
@@ -129,7 +126,7 @@ const NewClient = () => {
         >
           <i className="fa-solid fa-floppy-disk" />
         </button>
-        {error && <p className="text-center text-danger">{error.message}</p>}
+        {isError && <p className="text-danger">{errorText}</p>}
       </form>
     </section>
   );

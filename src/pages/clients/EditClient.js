@@ -1,20 +1,19 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { axiosInstance } from "../../axiosInstance";
 import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { setInput, setEdit, clearValues } from "../../features/client/clientSlice";
+import { setInput, setIsLoading, clearIsLoading, setError, clearError, setEdit, clearValues } from "../../features/client/clientSlice";
 
 const EditClient = () => {
   const isMounted = useIsMounted();
-  const { user, isLoading } = useSelector((store) => store.user);
+  const { user } = useSelector((store) => store.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const params = useParams();
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const { input, isLoading: isLoadingClient } = useSelector((store) => store.client);
+
+  const { input, isLoading, isError, errorText } = useSelector((store) => store.client);
 
   useEffect(() => {
     if (!user.isAdmin) {
@@ -22,13 +21,12 @@ const EditClient = () => {
       return;
     }
     const getData = async () => {
-      setLoading(true);
+      dispatch(setIsLoading());
       try {
         const resp = await axiosInstance.get(`/clients/${params.idClient}`);
         const { id, name, description, address, email, localuser_id, user_id } = resp.data.client;
         dispatch(
           setEdit({
-            editId: id,
             input: {
               id,
               name,
@@ -42,43 +40,40 @@ const EditClient = () => {
         );
       } catch (error) {
         console.log(error);
-        setError(error);
+        dispatch(setError(error.response.data.error.message));
       } finally {
-        setLoading(false);
+        dispatch(clearIsLoading());
       }
     };
     getData();
   }, []);
 
-  if (!isMounted) return <></>;
-  if (isLoading || isLoadingClient || loading) return <Progress />;
-
   const handleCancel = async (e) => {
     e.preventDefault();
     dispatch(clearValues());
-    setError(null);
     navigate("/clients");
     return;
   };
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      const resp = await axiosInstance.delete(`/clients/${params.idClient}`);
+      dispatch(setIsLoading());
+      await axiosInstance.delete(`/clients/${params.idClient}`);
       dispatch(clearValues());
       navigate("/clients");
     } catch (error) {
       console.log(error);
+      dispatch(setError(error.response.data.error.message));
     } finally {
-      setLoading(false);
+      dispatch(clearIsLoading());
     }
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      const resp = await axiosInstance.patch(`/clients/${params.idClient}`, {
+      dispatch(setIsLoading());
+      await axiosInstance.patch(`/clients/${params.idClient}`, {
         id: input.id,
         email: input.email,
         name: input.name,
@@ -91,15 +86,18 @@ const EditClient = () => {
       navigate("/clients");
     } catch (error) {
       console.log(error);
-      setError(error);
+      dispatch(setError(error.response.data.error.message));
     } finally {
-      setLoading(false);
+      dispatch(clearIsLoading());
     }
   };
   const handleChange = async (e) => {
     dispatch(setInput({ name: [e.target.name], value: e.target.value }));
-    if (error) setError(null);
+    if (isError) dispatch(clearError());
   };
+
+  if (!isMounted) return <></>;
+  if (isLoading) return <Progress />;
 
   if (user.isAdmin) {
     return (
@@ -176,7 +174,7 @@ const EditClient = () => {
           >
             <i className="fa-solid fa-floppy-disk" />
           </button>
-          {error && <p className="text-center text-danger">{error.message}</p>}
+          {isError && <p className="text-danger">{errorText}</p>}
         </form>
       </section>
     );
