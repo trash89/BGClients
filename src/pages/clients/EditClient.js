@@ -1,26 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { axiosInstance } from "../../axiosInstance";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
+import { setInput, setEdit, clearValues } from "../../features/client/clientSlice";
 
 const EditClient = () => {
   const isMounted = useIsMounted();
   const { user, isLoading } = useSelector((store) => store.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const params = useParams();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [input, setInput] = useState({
-    id: "",
-    name: "",
-    description: "",
-    address: "",
-    email: "",
-    localuser_id: -1,
-    user_id: "",
-  });
+  const { input, isLoading: isLoadingClient } = useSelector((store) => store.client);
 
   useEffect(() => {
     if (!user.isAdmin) {
@@ -32,15 +26,20 @@ const EditClient = () => {
       try {
         const resp = await axiosInstance.get(`/clients/${params.idClient}`);
         const { id, name, description, address, email, localuser_id, user_id } = resp.data.client;
-        setInput({
-          id,
-          name,
-          description,
-          address,
-          email,
-          localuser_id,
-          user_id,
-        });
+        dispatch(
+          setEdit({
+            editId: id,
+            input: {
+              id,
+              name,
+              description,
+              address,
+              email,
+              localuser_id,
+              user_id,
+            },
+          })
+        );
       } catch (error) {
         console.log(error);
         setError(error);
@@ -52,19 +51,21 @@ const EditClient = () => {
   }, []);
 
   if (!isMounted) return <></>;
-  if (isLoading || loading) return <Progress />;
+  if (isLoading || isLoadingClient || loading) return <Progress />;
 
   const handleCancel = async (e) => {
     e.preventDefault();
-    navigate("/clients");
+    dispatch(clearValues());
     setError(null);
+    navigate("/clients");
+    return;
   };
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
       const resp = await axiosInstance.delete(`/clients/${params.idClient}`);
-      console.log(resp);
+      dispatch(clearValues());
       navigate("/clients");
     } catch (error) {
       console.log(error);
@@ -86,6 +87,7 @@ const EditClient = () => {
         user_id: input.user_id,
         localuser_id: input.localuser_id,
       });
+      dispatch(clearValues());
       navigate("/clients");
     } catch (error) {
       console.log(error);
@@ -95,7 +97,7 @@ const EditClient = () => {
     }
   };
   const handleChange = async (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
+    dispatch(setInput({ name: [e.target.name], value: e.target.value }));
     if (error) setError(null);
   };
 
@@ -106,6 +108,7 @@ const EditClient = () => {
         <form className="was-validated">
           <div className="form-floating mb-3 mt-3">
             <input
+              autoFocus
               required
               type="email"
               className="form-control"
@@ -119,7 +122,6 @@ const EditClient = () => {
           </div>
           <div className="form-floating mb-3 mt-3">
             <input
-              autoFocus
               required
               type="text"
               className="form-control"

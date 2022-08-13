@@ -1,24 +1,21 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
 import { defaultPassword } from "../../utils/constants";
+import { setInput, clearValues } from "../../features/client/clientSlice";
 
 const NewClient = () => {
   const isMounted = useIsMounted();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { user, isLoading } = useSelector((store) => store.user);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [input, setInput] = useState({
-    name: "",
-    description: "",
-    address: "",
-    email: "",
-  });
+  const { input, isLoading: isLoadingClient } = useSelector((store) => store.client);
 
   useEffect(() => {
     if (!user.isAdmin) {
@@ -28,13 +25,15 @@ const NewClient = () => {
   }, []);
 
   const handleChange = async (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
+    dispatch(setInput({ name: [e.target.name], value: e.target.value }));
     if (error) setError(null);
   };
   const handleCancel = async (e) => {
     e.preventDefault();
-    navigate("/clients");
+    dispatch(clearValues());
     setError(null);
+    navigate("/clients");
+    return;
   };
   const handleSave = async (e) => {
     e.preventDefault();
@@ -47,6 +46,7 @@ const NewClient = () => {
         description: input.description,
         address: input.address,
       });
+      dispatch(clearValues());
       navigate("/clients");
     } catch (error) {
       console.log(error);
@@ -56,7 +56,7 @@ const NewClient = () => {
     }
   };
   if (!isMounted) return <></>;
-  if (isLoading || loading) return <Progress />;
+  if (isLoading || isLoadingClient || loading) return <Progress />;
 
   return (
     <section className="container p-2 my-2 border border-primary rounded-3">

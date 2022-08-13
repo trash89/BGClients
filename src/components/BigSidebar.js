@@ -10,8 +10,11 @@ const BigSidebar = () => {
     <Wrapper>
       <div className={isSidebarOpen ? "sidebar-container " : "sidebar-container show-sidebar"}>
         <div className="content">
-          <header>
+          <header className="d-flex flex-row align-items-center">
             <Logo />
+            <strong>
+              <div className="m-0 p-1">BG Clients</div>
+            </strong>
           </header>
           <NavLinks />
         </div>

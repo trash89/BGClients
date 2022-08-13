@@ -9,8 +9,8 @@ const Wrapper = styled.aside`
       background: var(--white);
       min-height: 100vh;
       height: 100%;
-      width: 150px;
-      margin-left: -150px;
+      width: 180px;
+      margin-left: -180px;
       transition: var(--transition);
     }
     .content {
