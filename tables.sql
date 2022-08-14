@@ -42,3 +42,5 @@ ON public.clients
 FOR SELECT USING (
   true
 );
+
+CREATE POLICY "Give users access to own folder aumbjm_0" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'clientsbucket' AND auth.uid()::text = (storage.foldername(name))[1]);

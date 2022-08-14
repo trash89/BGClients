@@ -23,9 +23,9 @@ const EditEvent = () => {
       dispatch(setIsLoading());
       try {
         const respClients = await axiosInstance.get("/clients");
-        dispatch(setData(respClients.data));
         const resp = await axiosInstance.get(`/events/${params.idEvent}`);
         const { id, client_id, ev_name, ev_description, ev_date, user_id } = resp.data.event;
+        dispatch(setData(respClients.data));
         dispatch(
           setEdit({
             input: {
@@ -75,7 +75,6 @@ const EditEvent = () => {
     e.preventDefault();
     try {
       dispatch(setIsLoading());
-
       await axiosInstance.patch(`/events/${params.idEvent}`, {
         id: input.id,
         client_id: input.client_id,
@@ -86,6 +85,7 @@ const EditEvent = () => {
       });
       dispatch(clearValues());
       navigate("/events");
+      return;
     } catch (error) {
       console.log(error);
       dispatch(setError(error.response.data.error.message));
