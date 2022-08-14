@@ -170,13 +170,11 @@ const EditEvent = () => {
               value={input.displayed}
               checked={input.displayed}
               onChange={(e) => {
-                console.log(e.target.value);
-                dispatch(setInput({ name: e.target.name, value: !e.target.value }));
+                dispatch(setInput({ name: e.target.name, value: !input.displayed }));
               }}
             />
             <label className="form-check-label">Displayed?</label>
           </div>
-          {input.displayed ? "true" : "false"}
           <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
             <i className="fa-solid fa-times" />
           </button>

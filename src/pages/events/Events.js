@@ -37,6 +37,7 @@ const Events = () => {
       { accessor: (item) => item.clients.name, name: "Client Name" },
       { accessor: (item) => item.ev_name, name: "Event Name" },
       { accessor: (item) => item.ev_description, name: "Event Description" },
+      { accessor: (item) => item.displayed, name: "Displayed?" },
     ];
     downloadAsCsv(columns, data.events, "Events");
   };
@@ -57,6 +58,7 @@ const Events = () => {
                 <th>Client</th>
                 <th>Event</th>
                 <th>Description</th>
+                <th>Displayed</th>
               </tr>
             </thead>
             <tbody>
@@ -73,6 +75,7 @@ const Events = () => {
                     <td>{row.clients.name}</td>
                     <td>{row.ev_name}</td>
                     <td>{row.ev_description}</td>
+                    <td>{row.displayed ? "Yes" : "No"}</td>
                   </tr>
                 );
               })}
