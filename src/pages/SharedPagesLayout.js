@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-const SharedPagesLayout = ({ title = "" }) => {
+const SharedPagesLayout = () => {
   return <Outlet />;
 };
 export default SharedPagesLayout;

@@ -35,7 +35,9 @@ const NewEvent = () => {
       try {
         const resp = await axiosInstance.get("/clients");
         dispatch(setData(resp.data));
-        if (resp?.data?.clients?.length > 0) dispatch(setInput({ ...input, client_id: resp?.data?.clients[0]?.id }));
+        if (resp?.data?.clients?.length > 0) {
+          dispatch(setInput({ ...input, name: "client_id", value: resp.data.clients[0].id }));
+        }
       } catch (error) {
         console.log(error);
         dispatch(setError(error.response.data.error.message));

@@ -3,12 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isLoading: false,
   input: {
-    id: "",
-    client_id: "",
+    id: 0,
+    client_id: 0,
     ev_name: "",
     ev_description: "",
     ev_date: "",
     user_id: "",
+    displayed: false,
   },
   data: {},
   isError: false,

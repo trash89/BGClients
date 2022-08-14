@@ -24,7 +24,7 @@ const EditEvent = () => {
       try {
         const respClients = await axiosInstance.get("/clients");
         const resp = await axiosInstance.get(`/events/${params.idEvent}`);
-        const { id, client_id, ev_name, ev_description, ev_date, user_id } = resp.data.event;
+        const { id, client_id, ev_name, ev_description, ev_date, user_id, displayed } = resp.data.event;
         dispatch(setData(respClients.data));
         dispatch(
           setEdit({
@@ -35,6 +35,7 @@ const EditEvent = () => {
               ev_description,
               ev_date,
               user_id,
+              displayed,
             },
           })
         );
@@ -82,6 +83,7 @@ const EditEvent = () => {
         ev_description: input.ev_description,
         ev_date: input.ev_date,
         user_id: input.user_id,
+        displayed: input.displayed,
       });
       dispatch(clearValues());
       navigate("/events");
@@ -94,7 +96,9 @@ const EditEvent = () => {
     }
   };
   const handleChange = async (e) => {
-    dispatch(setInput({ name: [e.target.name], value: e.target.value }));
+    console.log({ name: e.target.name, value: e.target.value });
+    dispatch(setInput({ name: e.target.name, value: e.target.value }));
+
     if (isError) dispatch(clearError());
   };
 
@@ -157,6 +161,22 @@ const EditEvent = () => {
             />
             <label htmlFor="ev_description">Event Description:</label>
           </div>
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="displayed"
+              name="displayed"
+              value={input.displayed}
+              checked={input.displayed}
+              onChange={(e) => {
+                console.log(e.target.value);
+                dispatch(setInput({ name: e.target.name, value: !e.target.value }));
+              }}
+            />
+            <label className="form-check-label">Displayed?</label>
+          </div>
+          {input.displayed ? "true" : "false"}
           <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
             <i className="fa-solid fa-times" />
           </button>
