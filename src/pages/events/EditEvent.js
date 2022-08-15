@@ -16,7 +16,7 @@ const EditEvent = () => {
 
   useEffect(() => {
     if (!user.isAdmin) {
-      navigate("/clients");
+      navigate("/events", { replace: true });
       return;
     }
     const getData = async () => {
@@ -51,19 +51,16 @@ const EditEvent = () => {
   }, []);
 
   const handleCancel = async (e) => {
-    e.preventDefault();
     dispatch(clearValues());
-    navigate("/events");
-    return;
+    navigate("/events", { replace: true });
   };
 
   const handleDelete = async (e) => {
-    e.preventDefault();
     try {
       dispatch(setIsLoading());
       await axiosInstance.delete(`/events/${params.idEvent}`);
       dispatch(clearValues());
-      navigate("/events");
+      navigate("/events", { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error.response.data.error.message));
@@ -73,7 +70,6 @@ const EditEvent = () => {
   };
 
   const handleSave = async (e) => {
-    e.preventDefault();
     try {
       dispatch(setIsLoading());
       await axiosInstance.patch(`/events/${params.idEvent}`, {
@@ -85,9 +81,8 @@ const EditEvent = () => {
         user_id: input.user_id,
         displayed: input.displayed,
       });
+      navigate("/events", { replace: true });
       dispatch(clearValues());
-      navigate("/events");
-      return;
     } catch (error) {
       console.log(error);
       dispatch(setError(error.response.data.error.message));
@@ -96,9 +91,7 @@ const EditEvent = () => {
     }
   };
   const handleChange = async (e) => {
-    console.log({ name: e.target.name, value: e.target.value });
     dispatch(setInput({ name: e.target.name, value: e.target.value }));
-
     if (isError) dispatch(clearError());
   };
 

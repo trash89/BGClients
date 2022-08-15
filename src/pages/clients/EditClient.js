@@ -49,13 +49,11 @@ const EditClient = () => {
   }, []);
 
   const handleCancel = async (e) => {
-    e.preventDefault();
     dispatch(clearValues());
     navigate("/clients");
     return;
   };
   const handleDelete = async (e) => {
-    e.preventDefault();
     try {
       dispatch(setIsLoading());
       await axiosInstance.delete(`/clients/${params.idClient}`);
@@ -70,7 +68,6 @@ const EditClient = () => {
   };
 
   const handleSave = async (e) => {
-    e.preventDefault();
     try {
       dispatch(setIsLoading());
       await axiosInstance.patch(`/clients/${params.idClient}`, {
@@ -92,7 +89,7 @@ const EditClient = () => {
     }
   };
   const handleChange = async (e) => {
-    dispatch(setInput({ name: [e.target.name], value: e.target.value }));
+    dispatch(setInput({ name: e.target.name, value: e.target.value }));
     if (isError) dispatch(clearError());
   };
 
