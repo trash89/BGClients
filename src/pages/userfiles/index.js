@@ -1,5 +1,5 @@
-import Files from "./Files";
-import NewFile from "./NewFile";
-import EditFile from "./EditFile";
+import UserFiles from "./UserFiles";
+import NewUserFile from "./NewUserFile";
+import EditUserFile from "./EditUserFile";
 
-export { Files, NewFile, EditFile };
+export { UserFiles, NewUserFile, EditUserFile };

@@ -12,9 +12,9 @@ import {
   Events,
   NewEvent,
   EditEvent,
-  Files,
-  NewFile,
-  EditFile,
+  UserFiles,
+  NewUserFile,
+  EditUserFile,
 } from "./pages";
 
 function App() {
@@ -41,10 +41,10 @@ function App() {
             <Route path=":idEvent" element={<EditEvent />} />
             <Route path="newevent" element={<NewEvent />} />
           </Route>
-          <Route path="files" element={<SharedPagesLayout />}>
-            <Route index element={<Files />} />
-            <Route path=":idFile" element={<EditFile />} />
-            <Route path="newfile" element={<NewFile />} />
+          <Route path="userfiles" element={<SharedPagesLayout />}>
+            <Route index element={<UserFiles />} />
+            <Route path=":idFile" element={<EditUserFile />} />
+            <Route path="newfile" element={<NewUserFile />} />
           </Route>
         </Route>
         <Route path="register" element={<Register />} />
