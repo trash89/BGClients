@@ -6,7 +6,7 @@ import { useIsMounted } from "../../hooks";
 import { Progress, TotalRows } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
 import { downloadAsCsv } from "../../utils/constants";
-import { setIsLoading, clearIsLoading, setData } from "../../features/client/clientSlice";
+import { setIsLoading, clearIsLoading, setData, clearValues } from "../../features/client/clientSlice";
 
 const Clients = () => {
   const isMounted = useIsMounted();
@@ -25,6 +25,7 @@ const Clients = () => {
   };
 
   useEffect(() => {
+    dispatch(clearValues());
     const getData = async () => {
       dispatch(setIsLoading());
       try {

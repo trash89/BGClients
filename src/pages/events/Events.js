@@ -7,7 +7,7 @@ import { Progress, TotalRows } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
 import moment from "moment";
 import { dateFormat, downloadAsCsv } from "../../utils/constants";
-import { setIsLoading, clearIsLoading, setData } from "../../features/event/eventSlice";
+import { setIsLoading, clearIsLoading, setData, clearValues } from "../../features/event/eventSlice";
 
 const Events = () => {
   const isMounted = useIsMounted();
@@ -16,6 +16,7 @@ const Events = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(clearValues());
     const getData = async () => {
       dispatch(setIsLoading());
       try {

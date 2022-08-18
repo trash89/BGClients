@@ -48,22 +48,26 @@ const UserFiles = () => {
                 <th>Client</th>
                 <th>File</th>
                 <th>Description</th>
+                <th>Size(bytes)</th>
+                <th>Type</th>
                 <th>Displayed</th>
               </tr>
             </thead>
             <tbody>
               {data?.userfiles?.map((row) => {
                 return (
-                  <tr key={row.id}>
+                  <tr key={row?.id}>
                     <td>
-                      <Link to={`/userfiles/${row.id}`} className="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Edit Event">
+                      <Link to={`/userfiles/${row?.id}`} className="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Edit Event">
                         <i className="fa-solid fa-pen" />
                       </Link>
                     </td>
-                    <td>{row.clients.name}</td>
-                    <td>{row.file_name}</td>
-                    <td>{row.file_description}</td>
-                    <td>{row.displayed ? "Yes" : "No"}</td>
+                    <td>{row?.clients.name}</td>
+                    <td>{row?.file_name}</td>
+                    <td>{row?.file_description}</td>
+                    <td>{row?.size}</td>
+                    <td>{row?.mimetype}</td>
+                    <td>{row?.displayed ? "Yes" : "No"}</td>
                   </tr>
                 );
               })}
