@@ -47,7 +47,6 @@ const NewUserFile = () => {
       }
     };
     getData();
-    console.log(data);
   }, []);
 
   const handleSave = async (e) => {
@@ -58,7 +57,7 @@ const NewUserFile = () => {
       formData.append("client_id", input.client_id);
       formData.append("file_name", input.file_name);
       formData.append("file_description", input.file_description);
-      formData.append("files", myFile);
+      formData.append("file", myFile);
       await axiosInstance.post("/userfiles", formData, { headers: { "Content-Type": `multipart/form-data; boundary=${formData._boundary}` } });
       navigate("/userfiles");
     } catch (error) {
@@ -126,9 +125,7 @@ const NewUserFile = () => {
             name="file"
             accept=".pdf"
             onChange={(e) => {
-              console.log("e.target.files[0]=", e.target.files[0]);
               setMyFile(e.target.files[0]);
-              console.log("myFile=", myFile);
             }}
           />
         </div>

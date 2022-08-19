@@ -5,8 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress, TotalRows } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
-import moment from "moment";
-import { dateFormat } from "../../utils/constants";
 import { setIsLoading, clearIsLoading, setData, clearValues } from "../../features/event/eventSlice";
 
 const UserFiles = () => {
