@@ -62,7 +62,7 @@ const NewEvent = () => {
       navigate("/events");
     } catch (error) {
       console.log(error);
-      setError(error);
+      dispatch(setError(error.response.data.error.message));
     } finally {
       dispatch(clearIsLoading());
     }

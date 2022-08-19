@@ -49,11 +49,13 @@ const EditClient = () => {
   }, []);
 
   const handleCancel = async (e) => {
+    e.preventDefault();
     dispatch(clearValues());
     navigate("/clients");
     return;
   };
   const handleDelete = async (e) => {
+    e.preventDefault();
     try {
       dispatch(setIsLoading());
       await axiosInstance.delete(`/clients/${params.idClient}`);
@@ -68,6 +70,7 @@ const EditClient = () => {
   };
 
   const handleSave = async (e) => {
+    e.preventDefault();
     try {
       dispatch(setIsLoading());
       await axiosInstance.patch(`/clients/${params.idClient}`, {

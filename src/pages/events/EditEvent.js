@@ -51,11 +51,13 @@ const EditEvent = () => {
   }, []);
 
   const handleCancel = async (e) => {
+    e.preventDefault();
     dispatch(clearValues());
     navigate("/events", { replace: true });
   };
 
   const handleDelete = async (e) => {
+    e.preventDefault();
     try {
       dispatch(setIsLoading());
       await axiosInstance.delete(`/events/${params.idEvent}`);
@@ -70,6 +72,7 @@ const EditEvent = () => {
   };
 
   const handleSave = async (e) => {
+    e.preventDefault();
     try {
       dispatch(setIsLoading());
       await axiosInstance.patch(`/events/${params.idEvent}`, {

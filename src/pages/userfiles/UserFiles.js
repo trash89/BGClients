@@ -45,7 +45,7 @@ const UserFiles = () => {
                 <th>Client</th>
                 <th>File</th>
                 <th>Description</th>
-                <th>Size(bytes)</th>
+                <th>Size(Mb)</th>
                 <th>Type</th>
                 <th>Displayed</th>
               </tr>
@@ -62,7 +62,7 @@ const UserFiles = () => {
                     <td>{row?.clients.name}</td>
                     <td>{row?.file_name}</td>
                     <td>{row?.file_description}</td>
-                    <td>{row?.size}</td>
+                    <td align="right">{row?.size}</td>
                     <td>{row?.mimetype}</td>
                     <td>{row?.displayed ? "Yes" : "No"}</td>
                   </tr>
