@@ -86,18 +86,22 @@ const EditUserFile = () => {
     e.preventDefault();
     try {
       dispatch(setIsLoading());
-      await axiosInstance.patch(`/userfiles/${params.idFile}`, {
-        id: input.id,
-        client_id: input.client_id,
-        file_description: input.file_description,
-        user_id: input.user_id,
-        displayed: input.displayed,
+      const formData = new FormData();
+      formData.append("id", input.id);
+      formData.append("client_id", input.client_id);
+      formData.append("file_description", input.file_description);
+      formData.append("displayed", input.displayed);
+      if (myFile && myFile !== "") {
+        formData.append("file", myFile);
+      }
+      const resp = await axiosInstance.patch(`/userfiles/${params.idFile}`, formData, {
+        headers: { "Content-Type": `multipart/form-data; boundary=${formData._boundary}` },
       });
+      //console.log(resp.data);
       navigate("/userfiles", { replace: true });
-      dispatch(clearValues());
     } catch (error) {
       console.log(error);
-      dispatch(setError(error.response.data.error.message));
+      dispatch(setError(error?.response?.data?.error?.message));
     } finally {
       dispatch(clearIsLoading());
     }
