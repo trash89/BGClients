@@ -101,7 +101,7 @@ const EditUserFile = () => {
       navigate("/userfiles", { replace: true });
     } catch (error) {
       console.log(error);
-      dispatch(setError(error?.response?.data?.error?.message));
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
       dispatch(clearIsLoading());
     }
