@@ -7,7 +7,6 @@ const initialState = {
     client_id: 0,
     file_name: "",
     file_description: "",
-    bucketId: "",
     user_id: "",
     displayed: false,
   },

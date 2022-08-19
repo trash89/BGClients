@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -12,8 +12,8 @@ const NewUserFile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.user);
-  const { input, data, isLoading, isError, errorText } = useSelector((store) => store.event);
-
+  const { input, data, isLoading, isError, errorText } = useSelector((store) => store.userfile);
+  const [myFile, setMyFile] = useState(null);
   const handleChange = async (e) => {
     dispatch(setInput({ name: [e.target.name], value: e.target.value }));
     if (isError) dispatch(clearError());
@@ -30,6 +30,7 @@ const NewUserFile = () => {
       navigate("/userfiles");
       return;
     }
+    dispatch(clearValues());
     const getData = async () => {
       dispatch(setIsLoading());
       try {
@@ -46,20 +47,20 @@ const NewUserFile = () => {
       }
     };
     getData();
+    console.log(data);
   }, []);
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
       dispatch(setIsLoading());
-      const ev_date_formatted = new Date(input.ev_date).toISOString();
-      await axiosInstance.post("/events", {
-        client_id: input.client_id,
-        ev_name: input.ev_name,
-        ev_description: input.ev_description,
-        ev_date: ev_date_formatted,
-      });
-      navigate("/events");
+      const formData = new FormData();
+      formData.append("client_id", input.client_id);
+      formData.append("file_name", input.file_name);
+      formData.append("file_description", input.file_description);
+      formData.append("files", myFile);
+      await axiosInstance.post("/userfiles", formData, { headers: { "Content-Type": `multipart/form-data; boundary=${formData._boundary}` } });
+      navigate("/userfiles");
     } catch (error) {
       console.log(error);
       setError(error);
@@ -72,8 +73,8 @@ const NewUserFile = () => {
 
   return (
     <section className="container p-2 my-2 border border-primary rounded-3">
-      <p className="h4 text-capitalize">enter a new event</p>
-      <form className="was-validated">
+      <p className="h4 text-capitalize">enter a new file</p>
+      <form className="was-validated" encType="multipart/form-data" onSubmit={handleSave}>
         <div className="form-floating mb-3 mt-3">
           <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange}>
             {data?.clients?.map((client) => {
@@ -116,19 +117,31 @@ const NewUserFile = () => {
           <label htmlFor="ev_description" className="form-label">
             File:
           </label>
-          <input required type="file" className="form-control" id="file" placeholder="Upload the file" name="file" accept=".pdf" onChange={handleChange} />
+          <input
+            required
+            type="file"
+            className="form-control"
+            id="file"
+            placeholder="Upload the file"
+            name="file"
+            accept=".pdf"
+            onChange={(e) => {
+              console.log("e.target.files[0]=", e.target.files[0]);
+              setMyFile(e.target.files[0]);
+              console.log("myFile=", myFile);
+            }}
+          />
         </div>
 
         <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
           <i className="fa-solid fa-times" />
         </button>
         <button
-          type="button"
+          type="submit"
           className="btn btn-primary me-2"
           data-bs-toggle="tooltip"
           title="Save"
-          onClick={handleSave}
-          disabled={!input.file_name || !input.file_description || !input.client_id}
+          disabled={!input.file_name || !input.file_description || !input.client_id || !myFile}
         >
           <i className="fa-solid fa-floppy-disk" />
         </button>

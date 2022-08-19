@@ -21,7 +21,6 @@ const UserFiles = () => {
       dispatch(setIsLoading());
       try {
         const resp = await axiosInstance.get("/userfiles");
-        console.log(resp.data);
         dispatch(setData(resp.data));
       } catch (error) {
         console.log(error);
