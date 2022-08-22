@@ -5,7 +5,7 @@ import { axiosInstance } from "../axiosInstance";
 import { useCookies } from "react-cookie";
 
 import { Logo, Copyright, Progress } from "../components";
-import { loginUser, setIsLoading, clearIsLoading, setInput, setError, clearError } from "../features/user/userSlice";
+import { loginUser, setIsLoading, clearIsLoading, setInput, setError, clearError, clearValues } from "../features/user/userSlice";
 import { addUserToLocalStorage } from "../utils/localStorage";
 import { useIsMounted } from "../hooks";
 
@@ -61,6 +61,7 @@ export default function Register() {
       return;
     }
     // eslint-disable-next-line
+    dispatch(clearValues());
   }, [user]);
 
   if (!isMounted) return <></>;

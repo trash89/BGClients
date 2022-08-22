@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
@@ -11,7 +10,6 @@ export default function Navbar() {
   const [cookies, setCookie, removeCookie] = useCookies();
   const { user: userRedux } = useSelector((store) => store.user);
   const dispatch = useDispatch();
-
   const logout = async () => {
     removeCookie("sb-access-token", { path: "/" });
     removeCookie("sb-refresh-token", { path: "/" });
@@ -29,15 +27,25 @@ export default function Navbar() {
         </button>
         <div className="collapse navbar-collapse text-align-start" id="collapsibleNavbar">
           <ul className="navbar-nav">
-            {links.map((page) => {
-              return (
-                <li key={page.id} className="nav-item text-capitalize">
-                  <Link to={page.path} className="nav-link">
-                    {page.text}
-                  </Link>
-                </li>
-              );
-            })}
+            {userRedux.isAdmin ? (
+              <>
+                {links.map((page) => {
+                  return (
+                    <li key={page.id} className="nav-item text-capitalize">
+                      <Link to={page.path} className="nav-link">
+                        {page.text}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </>
+            ) : (
+              <li key="0" className="nav-item text-capitalize">
+                <Link to="/clients/clientView" className="nav-link">
+                  Client View
+                </Link>
+              </li>
+            )}
           </ul>
           <ul className="nav align-content-start justify-content-sm-start justify-content-md-end flex-sm-grow-1">
             <li className="nav-item dropdown m-0 p-0">

@@ -6,5 +6,5 @@ import Logo from "./Logo";
 import Navbar from "./Navbar";
 import Progress from "./Progress";
 import TotalRows from "./TotalRows";
-
-export { Copyright, SmallSidebar, BigSidebar, Logo, Navbar, NavLinks, Progress, TotalRows };
+import ClientViewComponent from "./ClientViewComponent";
+export { Copyright, SmallSidebar, BigSidebar, Logo, Navbar, NavLinks, Progress, TotalRows, ClientViewComponent };

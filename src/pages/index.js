@@ -1,7 +1,7 @@
 import ProtectedRoute from "./ProtectedRoute";
 import SharedLayout from "./SharedLayout";
 import SharedPagesLayout from "./SharedPagesLayout";
-import { Clients, EditClient, NewClient } from "./clients";
+import { Clients, EditClient, NewClient, ClientView } from "./clients";
 import { Events, EditEvent, NewEvent } from "./events";
 import { UserFiles, EditUserFile, NewUserFile } from "./userfiles";
 import Register from "./Register";
@@ -16,6 +16,7 @@ export {
   Clients,
   EditClient,
   NewClient,
+  ClientView,
   Events,
   NewEvent,
   EditEvent,
