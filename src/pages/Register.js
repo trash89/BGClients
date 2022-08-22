@@ -57,7 +57,7 @@ export default function Register() {
 
   useEffect(() => {
     if (user) {
-      navigate("/clients", { replace: true });
+      navigate("/", { replace: true });
       return;
     }
     // eslint-disable-next-line

@@ -3,7 +3,7 @@ import { axiosInstance } from "../axiosInstance";
 import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../hooks";
 import { Progress } from "../components";
-import { setData, setIsLoading, clearIsLoading, setError, clearError, setEdit, clearValues } from "../features/client/clientSlice";
+import { setData, setIsLoading, clearIsLoading, setError } from "../features/client/clientSlice";
 import moment from "moment";
 import { dateFormat } from "../utils/constants";
 
@@ -11,7 +11,7 @@ const ClientViewComponent = ({ user }) => {
   const isMounted = useIsMounted();
   const dispatch = useDispatch();
 
-  const { input, data, isLoading, isError, errorText } = useSelector((store) => store.client);
+  const { data, isLoading } = useSelector((store) => store.client);
 
   useEffect(() => {
     const getData = async () => {
