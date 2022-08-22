@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
 import { useIsMounted } from "../../hooks";
 import { Progress, TotalRows } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
 import { downloadAsCsv } from "../../utils/constants";
 import { setIsLoading, clearIsLoading, setData, clearValues } from "../../features/client/clientSlice";
+import { ClientViewComponent } from "../../components";
 
 const Clients = () => {
   const isMounted = useIsMounted();
@@ -88,7 +89,7 @@ const Clients = () => {
       </div>
     );
   } else {
-    return <></>;
+    return <ClientViewComponent user={user} />;
   }
 };
 
