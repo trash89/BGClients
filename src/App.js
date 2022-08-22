@@ -32,11 +32,11 @@ function App() {
         >
           <Route index element={<Clients />} />
 
+          <Route path="clientView" element={<ClientView />} />
           <Route path="clients" element={<SharedPagesLayout />}>
             <Route index element={<Clients />} />
             <Route path=":idClient" element={<EditClient />} />
             <Route path="newclient" element={<NewClient />} />
-            <Route path="clientView" element={<ClientView />} />
           </Route>
           <Route path="events" element={<SharedPagesLayout />}>
             <Route index element={<Events />} />

@@ -29,7 +29,7 @@ const NavLinks = ({ toggleSidebar }) => {
         </>
       ) : (
         <NavLink
-          to="/clients/clientView"
+          to="/clientView"
           className={({ isActive }) => {
             return isActive ? "nav-link active" : "nav-link";
           }}

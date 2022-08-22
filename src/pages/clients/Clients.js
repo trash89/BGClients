@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { useIsMounted } from "../../hooks";
 import { Progress, TotalRows } from "../../components";
@@ -13,6 +14,7 @@ const Clients = () => {
   const { user } = useSelector((store) => store.user);
   const { data, isLoading } = useSelector((store) => store.client);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleDownloadCsv = () => {
     const columns = [
@@ -25,6 +27,11 @@ const Clients = () => {
   };
 
   useEffect(() => {
+    if (!user) {
+      navigate("/register", { replace: true });
+      return;
+    }
+
     dispatch(clearValues());
     const getData = async () => {
       dispatch(setIsLoading());

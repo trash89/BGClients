@@ -1,8 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
-import { logoutUser } from "../features/user/userSlice";
+import { logoutUser, clearValues } from "../features/user/userSlice";
 import { links } from "../utils/links";
 import Logo from "./Logo";
 
@@ -10,10 +11,14 @@ export default function Navbar() {
   const [cookies, setCookie, removeCookie] = useCookies();
   const { user: userRedux } = useSelector((store) => store.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const logout = async () => {
     removeCookie("sb-access-token", { path: "/" });
     removeCookie("sb-refresh-token", { path: "/" });
     dispatch(logoutUser());
+    dispatch(clearValues());
+    navigate("/register", { replace: true });
+    return;
   };
 
   return (
@@ -41,7 +46,7 @@ export default function Navbar() {
               </>
             ) : (
               <li key="0" className="nav-item text-capitalize">
-                <Link to="/clients/clientView" className="nav-link">
+                <Link to="/clientView" className="nav-link">
                   Client View
                 </Link>
               </li>
