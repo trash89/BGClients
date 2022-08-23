@@ -15,21 +15,17 @@ const NewEvent = () => {
   const { input, data, isLoading, isError, errorText } = useSelector((store) => store.event);
 
   const handleChange = async (e) => {
-    dispatch(setInput({ name: [e.target.name], value: e.target.value }));
+    dispatch(setInput({ name: e.target.name, value: e.target.value }));
     if (isError) dispatch(clearError());
-  };
-  const handleCancel = async (e) => {
-    e.preventDefault();
-    dispatch(clearValues());
-    navigate("/events");
-    return;
   };
 
   useEffect(() => {
     if (!user.isAdmin) {
-      navigate("/events");
-      return;
+      navigate("/events", { replace: true });
     }
+  }, [user]);
+
+  useEffect(() => {
     const getData = async () => {
       dispatch(setIsLoading());
       try {
@@ -40,13 +36,19 @@ const NewEvent = () => {
         }
       } catch (error) {
         console.log(error);
-        dispatch(setError(error.response.data.error.message));
+        dispatch(setError(error?.response?.data?.error?.message || error?.message));
       } finally {
         dispatch(clearIsLoading());
       }
     };
     getData();
   }, []);
+
+  const handleCancel = async (e) => {
+    e.preventDefault();
+    dispatch(clearValues());
+    navigate("/events", { replace: true });
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -59,14 +61,16 @@ const NewEvent = () => {
         ev_description: input.ev_description,
         ev_date: ev_date_formatted,
       });
-      navigate("/events");
+      dispatch(clearValues());
+      navigate("/events", { replace: true });
     } catch (error) {
       console.log(error);
-      dispatch(setError(error.response.data.error.message));
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
       dispatch(clearIsLoading());
     }
   };
+
   if (!isMounted) return <></>;
   if (isLoading) return <Progress />;
 

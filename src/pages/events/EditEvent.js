@@ -17,31 +17,39 @@ const EditEvent = () => {
   useEffect(() => {
     if (!user.isAdmin) {
       navigate("/events", { replace: true });
-      return;
     }
+  }, [user]);
+
+  useEffect(() => {
     const getData = async () => {
       dispatch(setIsLoading());
       try {
         const respClients = await axiosInstance.get("/clients");
-        const resp = await axiosInstance.get(`/events/${params.idEvent}`);
-        const { id, client_id, ev_name, ev_description, ev_date, user_id, displayed } = resp.data.event;
-        dispatch(setData(respClients.data));
-        dispatch(
-          setEdit({
-            input: {
-              id,
-              client_id,
-              ev_name,
-              ev_description,
-              ev_date,
-              user_id,
-              displayed,
-            },
-          })
-        );
+        try {
+          const resp = await axiosInstance.get(`/events/${params.idEvent}`);
+          const { id, client_id, ev_name, ev_description, ev_date, user_id, displayed } = resp.data.event;
+          dispatch(setData(respClients.data));
+          dispatch(
+            setEdit({
+              input: {
+                id,
+                client_id,
+                ev_name,
+                ev_description,
+                ev_date,
+                user_id,
+                displayed,
+              },
+            })
+          );
+        } catch (error) {
+          console.log(error);
+          dispatch(setError(error?.response?.data?.error?.message || error?.message));
+          dispatch(setData({}));
+        }
       } catch (error) {
         console.log(error);
-        dispatch(setError(error.response.data.error.message));
+        dispatch(setError(error?.response?.data?.error?.message || error?.message));
         dispatch(setData({}));
       } finally {
         dispatch(clearIsLoading());
@@ -65,7 +73,7 @@ const EditEvent = () => {
       navigate("/events", { replace: true });
     } catch (error) {
       console.log(error);
-      dispatch(setError(error.response.data.error.message));
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
       dispatch(clearIsLoading());
     }
@@ -88,7 +96,7 @@ const EditEvent = () => {
       dispatch(clearValues());
     } catch (error) {
       console.log(error);
-      dispatch(setError(error.response.data.error.message));
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
       dispatch(clearIsLoading());
     }
@@ -144,19 +152,6 @@ const EditEvent = () => {
             />
             <label htmlFor="ev_name">Event Name:</label>
           </div>
-          <div className="form-floating mb-3 mt-3">
-            <input
-              required
-              type="text"
-              className="form-control"
-              id="ev_description"
-              placeholder="Enter the event description"
-              name="ev_description"
-              value={input.ev_description}
-              onChange={handleChange}
-            />
-            <label htmlFor="ev_description">Event Description:</label>
-          </div>
           <div className="form-check">
             <input
               className="form-check-input"
@@ -171,10 +166,23 @@ const EditEvent = () => {
             />
             <label className="form-check-label">Displayed?</label>
           </div>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
+          <div className="form-floating mb-3 mt-3">
+            <input
+              required
+              type="text"
+              className="form-control"
+              id="ev_description"
+              placeholder="Enter the event description"
+              name="ev_description"
+              value={input.ev_description}
+              onChange={handleChange}
+            />
+            <label htmlFor="ev_description">Event Description:</label>
+          </div>
+          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isLoading}>
             <i className="fa-solid fa-times" />
           </button>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Delete" onClick={handleDelete}>
+          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Delete" onClick={handleDelete} disabled={isLoading}>
             <i className="fa-solid fa-trash" />
           </button>
 
@@ -184,7 +192,7 @@ const EditEvent = () => {
             data-bs-toggle="tooltip"
             title="Save"
             onClick={handleSave}
-            disabled={!input.ev_name || !input.ev_description || !input.ev_date || !input.client_id}
+            disabled={isLoading || !input.ev_name || !input.ev_description || !input.ev_date || !input.client_id}
           >
             <i className="fa-solid fa-floppy-disk" />
           </button>

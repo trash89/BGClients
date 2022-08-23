@@ -5,7 +5,7 @@ import { axiosInstance } from "../axiosInstance";
 import { useCookies } from "react-cookie";
 
 import { Logo, Copyright, Progress } from "../components";
-import { loginUser, setIsLoading, clearIsLoading, setInput, setError, clearError, clearValues } from "../features/user/userSlice";
+import { loginUser, setIsLoading, clearIsLoading, setInput, setError, clearError } from "../features/user/userSlice";
 import { useIsMounted } from "../hooks";
 
 export default function Register() {
@@ -31,9 +31,10 @@ export default function Register() {
         isAdmin: user.isAdmin,
       };
       dispatch(loginUser(localObject));
+      navigate("/", { replace: true });
     } catch (error) {
       console.log("error signIn localuser=", error);
-      dispatch(setError(error.response.data.error.message));
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
       dispatch(clearIsLoading());
     }
@@ -49,7 +50,7 @@ export default function Register() {
   };
 
   const handleChange = async (e) => {
-    dispatch(setInput({ name: [e.target.name], value: e.target.value }));
+    dispatch(setInput({ name: e.target.name, value: e.target.value }));
     if (isError) dispatch(clearError());
   };
 
@@ -59,7 +60,6 @@ export default function Register() {
       return;
     }
     // eslint-disable-next-line
-    dispatch(clearValues());
   }, [user]);
 
   if (!isMounted) return <></>;

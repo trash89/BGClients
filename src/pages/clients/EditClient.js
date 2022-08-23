@@ -17,9 +17,11 @@ const EditClient = () => {
 
   useEffect(() => {
     if (!user.isAdmin) {
-      navigate("/clients");
-      return;
+      navigate("/clients", { replace: true });
     }
+  }, [user]);
+
+  useEffect(() => {
     const getData = async () => {
       dispatch(setIsLoading());
       try {
@@ -40,7 +42,7 @@ const EditClient = () => {
         );
       } catch (error) {
         console.log(error);
-        dispatch(setError(error.response.data.error.message));
+        dispatch(setError(error?.response?.data?.error?.message || error?.message));
       } finally {
         dispatch(clearIsLoading());
       }
@@ -51,19 +53,19 @@ const EditClient = () => {
   const handleCancel = async (e) => {
     e.preventDefault();
     dispatch(clearValues());
-    navigate("/clients");
-    return;
+    navigate("/clients", { replace: true });
   };
+
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
       dispatch(setIsLoading());
       await axiosInstance.delete(`/clients/${params.idClient}`);
       dispatch(clearValues());
-      navigate("/clients");
+      navigate("/clients", { replace: true });
     } catch (error) {
       console.log(error);
-      dispatch(setError(error.response.data.error.message));
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
       dispatch(clearIsLoading());
     }
@@ -83,10 +85,10 @@ const EditClient = () => {
         localuser_id: input.localuser_id,
       });
       dispatch(clearValues());
-      navigate("/clients");
+      navigate("/clients", { replace: true });
     } catch (error) {
       console.log(error);
-      dispatch(setError(error.response.data.error.message));
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
       dispatch(clearIsLoading());
     }

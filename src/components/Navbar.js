@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
 import { logoutUser, clearValues } from "../features/user/userSlice";
@@ -8,14 +8,16 @@ import Logo from "./Logo";
 
 export default function Navbar() {
   const [cookies, setCookie, removeCookie] = useCookies();
-  const { user: userRedux } = useSelector((store) => store.user);
+  const { user } = useSelector((store) => store.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const logout = () => {
     dispatch(logoutUser());
     dispatch(clearValues());
     removeCookie("sb-access-token", { path: "/" });
     removeCookie("sb-refresh-token", { path: "/" });
+    navigate("/register", { replace: true });
   };
 
   return (
@@ -29,7 +31,7 @@ export default function Navbar() {
         </button>
         <div className="collapse navbar-collapse text-align-start" id="collapsibleNavbar">
           <ul className="navbar-nav">
-            {userRedux.isAdmin ? (
+            {user.isAdmin ? (
               <>
                 {links.map((page) => {
                   return (
@@ -42,23 +44,19 @@ export default function Navbar() {
                 })}
               </>
             ) : (
-              <li key="0" className="nav-item text-capitalize">
-                <Link to="/clients/clientView" className="nav-link">
-                  Client View
-                </Link>
-              </li>
+              <></>
             )}
           </ul>
           <ul className="nav align-content-start justify-content-sm-start justify-content-md-end flex-sm-grow-1">
             <li className="nav-item dropdown m-0 p-0">
-              <Link to="/register" className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
-                {userRedux?.email}
-              </Link>
+              <a href="/" className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
+                {user?.email}
+              </a>
               <ul className="dropdown-menu">
                 <li>
-                  <Link to="/register" className="dropdown-item text-capitalize" onClick={logout}>
+                  <a href="/register" className="dropdown-item text-capitalize" onClick={logout}>
                     logout
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </li>

@@ -17,21 +17,20 @@ const NewClient = () => {
 
   useEffect(() => {
     if (!user.isAdmin) {
-      navigate("/clients");
-      return;
+      navigate("/clients", { replace: true });
     }
-  }, []);
+  }, [user]);
 
   const handleChange = async (e) => {
-    dispatch(setInput({ name: [e.target.name], value: e.target.value }));
+    dispatch(setInput({ name: e.target.name, value: e.target.value }));
     if (isError) dispatch(clearError());
   };
   const handleCancel = async (e) => {
     e.preventDefault();
     dispatch(clearValues());
-    navigate("/clients");
-    return;
+    navigate("/clients", { replace: true });
   };
+
   const handleSave = async (e) => {
     e.preventDefault();
     try {
@@ -44,10 +43,10 @@ const NewClient = () => {
         address: input.address,
       });
       dispatch(clearValues());
-      navigate("/clients");
+      navigate("/clients", { replace: true });
     } catch (error) {
       console.log(error);
-      dispatch(setError(error.response.data.error.message));
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
       dispatch(clearIsLoading());
     }

@@ -31,7 +31,9 @@ const Clients = () => {
       navigate("/register", { replace: true });
       return;
     }
+  }, [user]);
 
+  useEffect(() => {
     dispatch(clearValues());
     const getData = async () => {
       dispatch(setIsLoading());
@@ -77,16 +79,6 @@ const Clients = () => {
                     <Link to={`/clients/${row.id}`} className="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Edit Client">
                       <i className="fa-solid fa-pen" />
                     </Link>
-                    <a
-                      href="/clients/clientView"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="btn btn-outline-primary btn-sm"
-                      data-bs-toggle="tooltip"
-                      title="View As Client"
-                    >
-                      <i className="fa-solid fa-eye"></i>
-                    </a>
                   </td>
                   <td>{row.email}</td>
                   <td>{row.name}</td>

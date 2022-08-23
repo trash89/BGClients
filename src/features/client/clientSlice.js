@@ -28,7 +28,6 @@ const clientSlice = createSlice({
     },
     setInput: (state, { payload: { name, value } }) => {
       state.input[name] = value;
-      return { ...state };
     },
     clearValues: () => {
       return { ...initialState };

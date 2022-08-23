@@ -21,10 +21,10 @@ const eventSlice = createSlice({
   initialState,
   reducers: {
     setIsLoading: (state) => {
-      state.isLoading = true;
+      return { ...state, isLoading: true };
     },
     clearIsLoading: (state) => {
-      state.isLoading = false;
+      return { ...state, isLoading: false };
     },
     setInput: (state, { payload: { name, value } }) => {
       state.input[name] = value;
