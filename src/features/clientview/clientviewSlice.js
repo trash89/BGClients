@@ -16,8 +16,8 @@ const initialState = {
   errorText: "",
 };
 
-const clientSlice = createSlice({
-  name: "client",
+const clientviewSlice = createSlice({
+  name: "clientview",
   initialState,
   reducers: {
     setIsLoading: (state) => {
@@ -48,6 +48,6 @@ const clientSlice = createSlice({
   },
 });
 
-export const { setInput, setIsLoading, clearIsLoading, setError, clearError, setData, clearValues, setEdit } = clientSlice.actions;
+export const { setInput, setIsLoading, clearIsLoading, setError, clearError, setData, clearValues, setEdit } = clientviewSlice.actions;
 
-export default clientSlice.reducer;
+export default clientviewSlice.reducer;

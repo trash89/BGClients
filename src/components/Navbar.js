@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useCookies } from "react-cookie";
-import { useNavigate } from "react-router-dom";
 
 import { logoutUser, clearValues } from "../features/user/userSlice";
 import { links } from "../utils/links";
@@ -11,14 +10,12 @@ export default function Navbar() {
   const [cookies, setCookie, removeCookie] = useCookies();
   const { user: userRedux } = useSelector((store) => store.user);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const logout = async () => {
+
+  const logout = () => {
     removeCookie("sb-access-token", { path: "/" });
     removeCookie("sb-refresh-token", { path: "/" });
     dispatch(logoutUser());
     dispatch(clearValues());
-    navigate("/register", { replace: true });
-    return;
   };
 
   return (
@@ -46,7 +43,7 @@ export default function Navbar() {
               </>
             ) : (
               <li key="0" className="nav-item text-capitalize">
-                <Link to="/clientView" className="nav-link">
+                <Link to="/clients/clientView" className="nav-link">
                   Client View
                 </Link>
               </li>
@@ -54,7 +51,7 @@ export default function Navbar() {
           </ul>
           <ul className="nav align-content-start justify-content-sm-start justify-content-md-end flex-sm-grow-1">
             <li className="nav-item dropdown m-0 p-0">
-              <Link to="/" className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
+              <Link to="/register" className="nav-link dropdown-toggle text-light" role="button" data-bs-toggle="dropdown">
                 {userRedux?.email}
               </Link>
               <ul className="dropdown-menu">
