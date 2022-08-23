@@ -6,7 +6,6 @@ import { useCookies } from "react-cookie";
 
 import { Logo, Copyright, Progress } from "../components";
 import { loginUser, setIsLoading, clearIsLoading, setInput, setError, clearError, clearValues } from "../features/user/userSlice";
-import { addUserToLocalStorage } from "../utils/localStorage";
 import { useIsMounted } from "../hooks";
 
 export default function Register() {
@@ -31,7 +30,6 @@ export default function Register() {
         email: user.email,
         isAdmin: user.isAdmin,
       };
-      addUserToLocalStorage(localObject);
       dispatch(loginUser(localObject));
     } catch (error) {
       console.log("error signIn localuser=", error);

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUserFromLocalStorage, removeUserFromLocalStorage } from "../../utils/localStorage";
+import { getUserFromLocalStorage, removeUserFromLocalStorage, addUserToLocalStorage } from "../../utils/localStorage";
 
 const initialState = {
   isSidebarOpen: false,
@@ -41,6 +41,7 @@ const userSlice = createSlice({
     loginUser: (state, { payload }) => {
       state.user = payload;
       state.isSidebarOpen = false;
+      addUserToLocalStorage(state.user);
     },
     logoutUser: (state) => {
       state.user = null;

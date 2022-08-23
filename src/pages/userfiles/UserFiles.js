@@ -5,12 +5,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress, TotalRows } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
-import { setIsLoading, clearIsLoading, setData, clearValues } from "../../features/event/eventSlice";
+import { setIsLoading, clearIsLoading, setData, clearValues } from "../../features/userfile/userfileSlice";
 
 const UserFiles = () => {
   const isMounted = useIsMounted();
   const { user } = useSelector((store) => store.user);
-  const { data, isLoading } = useSelector((store) => store.event);
+  const { data, isLoading } = useSelector((store) => store.userfile);
   const dispatch = useDispatch();
 
   useEffect(() => {

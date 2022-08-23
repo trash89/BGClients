@@ -12,10 +12,10 @@ export default function Navbar() {
   const dispatch = useDispatch();
 
   const logout = () => {
-    removeCookie("sb-access-token", { path: "/" });
-    removeCookie("sb-refresh-token", { path: "/" });
     dispatch(logoutUser());
     dispatch(clearValues());
+    removeCookie("sb-access-token", { path: "/" });
+    removeCookie("sb-refresh-token", { path: "/" });
   };
 
   return (
