@@ -14,10 +14,10 @@ import { CookiesProvider } from "react-cookie";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <CookiesProvider>
+    <CookiesProvider>
+      <Provider store={store}>
         <App />
-      </CookiesProvider>
-    </Provider>
+      </Provider>
+    </CookiesProvider>
   </React.StrictMode>
 );

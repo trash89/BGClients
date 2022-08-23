@@ -14,12 +14,14 @@ const ClientViewComponent = ({ user }) => {
   const { data, isLoading } = useSelector((store) => store.client);
 
   useEffect(() => {
+    console.log("useEffect");
+
     const getData = async () => {
       dispatch(setIsLoading());
       try {
         const resp = await axiosInstance.post("/clientview", { id: user.id, email: user.email });
-        dispatch(setData(resp.data));
-        console.log(resp.data);
+        //dispatch(setData(resp.data));
+        console.log(resp);
       } catch (error) {
         console.log(error);
         dispatch(setError(error?.response?.data?.error?.message || error?.message));

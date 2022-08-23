@@ -2,12 +2,8 @@ import { useSelector } from "react-redux";
 import { ClientViewComponent } from "../../components";
 
 const ClientView = () => {
-  const { user: userRedux } = useSelector((store) => store.user);
-  if (!userRedux.isAdmin) {
-    return <ClientViewComponent user={userRedux} />;
-  } else {
-    return <></>;
-  }
+  const { user } = useSelector((store) => store.user);
+  return <>{user.isAdmin ? <></> : <ClientViewComponent user={user} />}</>;
 };
 
 export default ClientView;
