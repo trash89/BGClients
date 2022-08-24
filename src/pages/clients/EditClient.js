@@ -31,6 +31,7 @@ const EditClient = () => {
     if (!user.isAdmin) {
       navigate("/clients", { replace: true });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
@@ -60,6 +61,7 @@ const EditClient = () => {
       }
     };
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCancel = async (e) => {

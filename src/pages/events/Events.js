@@ -22,6 +22,7 @@ const Events = () => {
       navigate("/register", { replace: true });
       return;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const Events = () => {
       }
     };
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleDownloadCsv = () => {
