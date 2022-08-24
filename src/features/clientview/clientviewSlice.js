@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoading: false,
+  isEditing: false,
   data: {},
   isError: false,
   errorText: "",
@@ -16,6 +17,12 @@ const clientviewSlice = createSlice({
     },
     clearIsLoading: (state) => {
       return { ...state, isLoading: false };
+    },
+    setIsEditing: (state) => {
+      return { ...state, isEditing: true };
+    },
+    clearIsEditing: (state) => {
+      return { ...state, isEditing: false };
     },
     clearValues: () => {
       return { ...initialState };
@@ -32,6 +39,6 @@ const clientviewSlice = createSlice({
   },
 });
 
-export const { setIsLoading, clearIsLoading, setError, clearError, setData, clearValues } = clientviewSlice.actions;
+export const { setIsLoading, clearIsLoading, setIsEditing, clearIsEditing, setError, clearError, setData, clearValues } = clientviewSlice.actions;
 
 export default clientviewSlice.reducer;

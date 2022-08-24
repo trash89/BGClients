@@ -87,33 +87,35 @@ const NewClient = () => {
           <label htmlFor="name">Name:</label>
         </div>
 
-        <div className="form-floating mb-3 mt-3">
-          <input
+        <div className="mb-3 mt-3">
+          <label htmlFor="description" className="form-label">
+            Client Description:
+          </label>
+          <textarea
             required
-            type="text"
-            className="form-control"
+            className="form-control form-control-sm"
+            rows="5"
             id="description"
-            placeholder="Enter the client description"
             name="description"
             value={input.description}
             onChange={handleChange}
             disabled={isEditing}
           />
-          <label htmlFor="description">Description:</label>
         </div>
-        <div className="form-floating mb-3 mt-3">
-          <input
+        <div className="mb-3 mt-3">
+          <label htmlFor="address" className="form-label">
+            Client Address:
+          </label>
+          <textarea
             required
-            type="text"
-            className="form-control"
+            className="form-control form-control-sm"
+            rows="5"
             id="address"
-            placeholder="Enter the client address"
             name="address"
             value={input.address}
             onChange={handleChange}
             disabled={isEditing}
           />
-          <label htmlFor="address">Address:</label>
         </div>
         <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
           <i className="fa-solid fa-times" />

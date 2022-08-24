@@ -4,6 +4,7 @@ import { axiosInstance } from "../../axiosInstance";
 import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
+import { defaultPassword } from "../../utils/constants";
 import {
   setInput,
   setIsLoading,
@@ -82,6 +83,21 @@ const EditClient = () => {
     }
   };
 
+  const handleReset = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(setIsEditing());
+      await axiosInstance.put(`/clients/${params.idClient}`, { password: defaultPassword });
+      toast.success(`Successfully resetted the password for client ${input.name}...`);
+      navigate("/clients", { replace: true });
+    } catch (error) {
+      console.log(error);
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
+    } finally {
+      dispatch(clearIsEditing());
+    }
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     try {
@@ -135,6 +151,25 @@ const EditClient = () => {
             </div>
           </div>
         </div>
+        <div className="modal" id="resetClient">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h4 className="modal-title">Resetting the password for a client</h4>
+              </div>
+              <div className="modal-body">Are you sure to reset the password for client {input.name} ?</div>
+              <div className="modal-body">His default password will be {defaultPassword}</div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleReset}>
+                  Reset
+                </button>
+                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
         <form className="was-validated">
           <div className="form-floating mb-3 mt-3">
             <input
@@ -165,34 +200,37 @@ const EditClient = () => {
             />
             <label htmlFor="name">Name:</label>
           </div>
-          <div className="form-floating mb-3 mt-3">
-            <input
+          <div className="mb-3 mt-3">
+            <label htmlFor="description" className="form-label">
+              Client Description:
+            </label>
+            <textarea
               required
-              type="text"
-              className="form-control"
+              className="form-control form-control-sm"
+              rows="5"
               id="description"
-              placeholder="Enter client description"
               name="description"
               value={input.description}
               onChange={handleChange}
               disabled={isEditing}
             />
-            <label htmlFor="description">Description:</label>
           </div>
-          <div className="form-floating mb-3 mt-3">
-            <input
+          <div className="mb-3 mt-3">
+            <label htmlFor="address" className="form-label">
+              Client Address:
+            </label>
+            <textarea
               required
-              type="text"
-              className="form-control"
+              className="form-control form-control-sm"
+              rows="5"
               id="address"
-              placeholder="Enter client address"
               name="address"
               value={input.address}
               onChange={handleChange}
               disabled={isEditing}
             />
-            <label htmlFor="address">Address:</label>
           </div>
+
           <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
             <i className="fa-solid fa-times" />
           </button>
@@ -207,6 +245,17 @@ const EditClient = () => {
           >
             <i className="fa-solid fa-trash" />
           </button>
+          <button
+            type="button"
+            className="btn btn-primary me-2"
+            title="Reset Password"
+            disabled={isEditing}
+            data-bs-toggle="modal"
+            data-bs-target="#resetClient"
+            data-bs-keyboard="false"
+          >
+            <i className="fa-solid fa-unlock-keyhole"></i>
+          </button>
 
           <button
             type="button"
@@ -218,6 +267,7 @@ const EditClient = () => {
           >
             <i className="fa-solid fa-floppy-disk" />
           </button>
+
           {isError && <p className="text-danger">{errorText}</p>}
         </form>
       </section>

@@ -3,15 +3,16 @@ import { axiosInstance } from "../axiosInstance";
 import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../hooks";
 import { Progress } from "../components";
-import { setData, setIsLoading, clearIsLoading, setError, clearValues } from "../features/clientview/clientviewSlice";
+import { setData, setIsLoading, clearIsLoading, setIsEditing, clearIsEditing, setError, clearValues } from "../features/clientview/clientviewSlice";
 import moment from "moment";
 import { dateFormat } from "../utils/constants";
+import { toast } from "react-toastify";
 
 const ClientViewComponent = ({ user }) => {
   const isMounted = useIsMounted();
   const dispatch = useDispatch();
 
-  const { data, isLoading } = useSelector((store) => store.clientview);
+  const { data, isLoading, isEditing } = useSelector((store) => store.clientview);
 
   useEffect(() => {
     dispatch(clearValues());
@@ -30,12 +31,62 @@ const ClientViewComponent = ({ user }) => {
     getData();
   }, []);
 
+  const handleSend = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(setIsEditing());
+      await axiosInstance.put(`/clients/${data?.client?.id}`, { email: data.client?.email });
+      toast.success("Password recovery email has been sent.");
+    } catch (error) {
+      console.log(error);
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
+    } finally {
+      dispatch(clearIsEditing());
+    }
+  };
+
   if (!isMounted) return <></>;
   if (isLoading) return <Progress />;
 
   return (
     <section className="container p-2 my-2 border border-primary rounded-3">
-      <p className="h5">{data.client?.email}</p>
+      <div className="d-flex">
+        <div className="flex-grow-1">
+          <p className="h5">{data.client?.email}</p>
+        </div>
+        <div className="flex-shrink-1">
+          <button
+            type="button"
+            className="btn btn-primary me-2"
+            title="Change Password"
+            disabled={isEditing}
+            data-bs-toggle="modal"
+            data-bs-target="#resetPassword"
+            data-bs-keyboard="false"
+          >
+            <i className="fa-solid fa-key"></i>
+          </button>
+        </div>
+      </div>
+      <div className="modal" id="resetPassword">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h4 className="modal-title">Change Password</h4>
+            </div>
+            <div className="modal-body">Are you sure to change the password ?</div>
+            <div className="modal-body">A reset link will be sent to your email address.</div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleSend}>
+                Send
+              </button>
+              <button type="button" className="btn btn-primary" data-bs-dismiss="modal">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       <p className="h6">{data.client?.address}</p>
       <div className="mb-1 mt-1">
         {data.events?.length > 0 ? (

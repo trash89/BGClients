@@ -127,7 +127,6 @@ const NewUserFile = () => {
             disabled={isEditing}
           />
         </div>
-
         <div className="mb-3 mt-3">
           <label htmlFor="file_description" className="form-label">
             File Description:

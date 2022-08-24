@@ -130,19 +130,20 @@ const NewEvent = () => {
           />
           <label htmlFor="ev_name">Event Name:</label>
         </div>
-        <div className="form-floating mb-3 mt-3">
-          <input
+        <div className="mb-3 mt-3">
+          <label htmlFor="ev_description" className="form-label">
+            Event Description:
+          </label>
+          <textarea
             required
-            type="text"
-            className="form-control"
+            className="form-control form-control-sm"
+            rows="5"
             id="ev_description"
-            placeholder="Enter the event description"
             name="ev_description"
             value={input.ev_description}
             onChange={handleChange}
             disabled={isEditing}
           />
-          <label htmlFor="ev_description">Event Description:</label>
         </div>
         <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
           <i className="fa-solid fa-times" />
