@@ -5,14 +5,26 @@ import { useNavigate } from "react-router-dom";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
-import { setInput, setIsLoading, clearIsLoading, setData, setError, clearError, clearValues } from "../../features/event/eventSlice";
+import {
+  setInput,
+  setIsLoading,
+  clearIsLoading,
+  setIsEditing,
+  clearIsEditing,
+  setData,
+  setError,
+  clearError,
+  clearValues,
+} from "../../features/event/eventSlice";
+
+import { toast } from "react-toastify";
 
 const NewEvent = () => {
   const isMounted = useIsMounted();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.user);
-  const { input, data, isLoading, isError, errorText } = useSelector((store) => store.event);
+  const { input, data, isLoading, isEditing, isError, errorText } = useSelector((store) => store.event);
 
   const handleChange = async (e) => {
     dispatch(setInput({ name: e.target.name, value: e.target.value }));
@@ -53,7 +65,7 @@ const NewEvent = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      dispatch(setIsLoading());
+      dispatch(setIsEditing());
       const ev_date_formatted = new Date(input.ev_date).toISOString();
       await axiosInstance.post("/events", {
         client_id: input.client_id,
@@ -61,13 +73,13 @@ const NewEvent = () => {
         ev_description: input.ev_description,
         ev_date: ev_date_formatted,
       });
-      dispatch(clearValues());
+      toast.success(`Successfully saved event ${input.ev_name}`);
       navigate("/events", { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
-      dispatch(clearIsLoading());
+      dispatch(clearIsEditing());
     }
   };
 
@@ -79,7 +91,7 @@ const NewEvent = () => {
       <p className="h4 text-capitalize">enter a new event</p>
       <form className="was-validated">
         <div className="form-floating mb-3 mt-3">
-          <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange}>
+          <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange} disabled={isEditing}>
             {data?.clients?.map((client) => {
               return (
                 <option key={client.id} value={client.id}>
@@ -100,6 +112,7 @@ const NewEvent = () => {
             name="ev_date"
             value={input.ev_date}
             onChange={handleChange}
+            disabled={isEditing}
           />
           <label htmlFor="ev_date">Event Date:</label>
         </div>
@@ -113,6 +126,7 @@ const NewEvent = () => {
             name="ev_name"
             value={input.ev_name}
             onChange={handleChange}
+            disabled={isEditing}
           />
           <label htmlFor="ev_name">Event Name:</label>
         </div>
@@ -126,10 +140,11 @@ const NewEvent = () => {
             name="ev_description"
             value={input.ev_description}
             onChange={handleChange}
+            disabled={isEditing}
           />
           <label htmlFor="ev_description">Event Description:</label>
         </div>
-        <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
+        <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
           <i className="fa-solid fa-times" />
         </button>
         <button
@@ -138,7 +153,7 @@ const NewEvent = () => {
           data-bs-toggle="tooltip"
           title="Save"
           onClick={handleSave}
-          disabled={!input.ev_name || !input.ev_description || !input.ev_date || !input.client_id}
+          disabled={isEditing || !input.ev_name || !input.ev_description || !input.ev_date || !input.client_id}
         >
           <i className="fa-solid fa-floppy-disk" />
         </button>

@@ -5,14 +5,25 @@ import { useNavigate } from "react-router-dom";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
-import { setInput, setIsLoading, clearIsLoading, setData, setError, clearError, clearValues } from "../../features/userfile/userfileSlice";
+import {
+  setInput,
+  setIsLoading,
+  clearIsLoading,
+  setIsEditing,
+  clearIsEditing,
+  setData,
+  setError,
+  clearError,
+  clearValues,
+} from "../../features/userfile/userfileSlice";
+import { toast } from "react-toastify";
 
 const NewUserFile = () => {
   const isMounted = useIsMounted();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.user);
-  const { input, data, isLoading, isError, errorText } = useSelector((store) => store.userfile);
+  const { input, data, isLoading, isEditing, isError, errorText } = useSelector((store) => store.userfile);
   const [myFile, setMyFile] = useState(null);
 
   const handleChange = async (e) => {
@@ -54,19 +65,20 @@ const NewUserFile = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      dispatch(setIsLoading());
+      dispatch(setIsEditing());
       const formData = new FormData();
       formData.append("client_id", input.client_id);
       formData.append("file_description", input.file_description);
       formData.append("file", myFile);
       const resp = await axiosInstance.post("/userfiles", formData, { headers: { "Content-Type": `multipart/form-data; boundary=${formData._boundary}` } });
-      //console.log(resp.data);
+      const file_name = resp?.data?.file[0]?.file_name;
+      toast.success(`Successfully saved file ${file_name}`);
       navigate("/userfiles", { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
-      dispatch(clearIsLoading());
+      dispatch(clearIsEditing());
     }
   };
   if (!isMounted) return <></>;
@@ -80,7 +92,15 @@ const NewUserFile = () => {
           <label htmlFor="client_id" className="form-label">
             For the Client:
           </label>
-          <select required className="form-select form-control-sm" id="client_id" name="client_id" value={input.client_id} onChange={handleChange}>
+          <select
+            required
+            className="form-select form-control-sm"
+            id="client_id"
+            name="client_id"
+            value={input.client_id}
+            onChange={handleChange}
+            disabled={isEditing}
+          >
             {data?.clients?.map((client) => {
               return (
                 <option key={client.id} value={client.id}>
@@ -104,6 +124,7 @@ const NewUserFile = () => {
             onChange={(e) => {
               setMyFile(e.target.files[0]);
             }}
+            disabled={isEditing}
           />
         </div>
 
@@ -119,10 +140,11 @@ const NewUserFile = () => {
             name="file_description"
             value={input.file_description}
             onChange={handleChange}
+            disabled={isEditing}
           />
         </div>
 
-        <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
+        <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
           <i className="fa-solid fa-times" />
         </button>
         <button
@@ -130,7 +152,7 @@ const NewUserFile = () => {
           className="btn btn-primary me-2"
           data-bs-toggle="tooltip"
           title="Save"
-          disabled={!input.file_description || !input.client_id || !myFile}
+          disabled={isEditing || !input.file_description || !input.client_id || !myFile}
           onClick={handleSave}
         >
           <i className="fa-solid fa-floppy-disk" />

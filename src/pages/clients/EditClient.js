@@ -4,7 +4,18 @@ import { axiosInstance } from "../../axiosInstance";
 import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { setInput, setIsLoading, clearIsLoading, setError, clearError, setEdit, clearValues } from "../../features/client/clientSlice";
+import {
+  setInput,
+  setIsLoading,
+  clearIsLoading,
+  setIsEditing,
+  clearIsEditing,
+  setError,
+  clearError,
+  setEdit,
+  clearValues,
+} from "../../features/client/clientSlice";
+import { toast } from "react-toastify";
 
 const EditClient = () => {
   const isMounted = useIsMounted();
@@ -13,7 +24,7 @@ const EditClient = () => {
   const dispatch = useDispatch();
   const params = useParams();
 
-  const { input, isLoading, isError, errorText } = useSelector((store) => store.client);
+  const { input, isLoading, isEditing, isError, errorText } = useSelector((store) => store.client);
 
   useEffect(() => {
     if (!user.isAdmin) {
@@ -59,22 +70,22 @@ const EditClient = () => {
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
-      dispatch(setIsLoading());
+      dispatch(setIsEditing());
       await axiosInstance.delete(`/clients/${params.idClient}`);
-      dispatch(clearValues());
+      toast.success(`Successfully deleted client ${input.name}...`);
       navigate("/clients", { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
-      dispatch(clearIsLoading());
+      dispatch(clearIsEditing());
     }
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      dispatch(setIsLoading());
+      dispatch(setIsEditing());
       await axiosInstance.patch(`/clients/${params.idClient}`, {
         id: input.id,
         email: input.email,
@@ -84,13 +95,13 @@ const EditClient = () => {
         user_id: input.user_id,
         localuser_id: input.localuser_id,
       });
-      dispatch(clearValues());
+      toast.success(`Successfully saved client ${input.name}...`);
       navigate("/clients", { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
-      dispatch(clearIsLoading());
+      dispatch(clearIsEditing());
     }
   };
   const handleChange = async (e) => {
@@ -117,6 +128,7 @@ const EditClient = () => {
               name="email"
               value={input.email}
               onChange={handleChange}
+              disabled={isEditing}
             />
             <label htmlFor="email">Email:</label>
           </div>
@@ -130,6 +142,7 @@ const EditClient = () => {
               name="name"
               value={input.name}
               onChange={handleChange}
+              disabled={isEditing}
             />
             <label htmlFor="name">Name:</label>
           </div>
@@ -143,6 +156,7 @@ const EditClient = () => {
               name="description"
               value={input.description}
               onChange={handleChange}
+              disabled={isEditing}
             />
             <label htmlFor="description">Description:</label>
           </div>
@@ -156,13 +170,14 @@ const EditClient = () => {
               name="address"
               value={input.address}
               onChange={handleChange}
+              disabled={isEditing}
             />
             <label htmlFor="address">Address:</label>
           </div>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
+          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
             <i className="fa-solid fa-times" />
           </button>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Delete" onClick={handleDelete}>
+          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Delete" onClick={handleDelete} disabled={isEditing}>
             <i className="fa-solid fa-trash" />
           </button>
 
@@ -172,7 +187,7 @@ const EditClient = () => {
             data-bs-toggle="tooltip"
             title="Save"
             onClick={handleSave}
-            disabled={!input.name || !input.description || !input.address}
+            disabled={isEditing || !input.name || !input.description || !input.address}
           >
             <i className="fa-solid fa-floppy-disk" />
           </button>

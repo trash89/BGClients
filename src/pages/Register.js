@@ -22,10 +22,11 @@ export default function Register() {
       dispatch(setIsLoading());
       const resp = await axiosInstance.post("/auth/login", { email, password });
       const { user, session } = resp.data;
-      setCookie("sb-access-token", session.access_token, { path: "/", maxAge: 60 * 60 * 6, sameSite: "lax" });
-      setCookie("sb-refresh-token", session.refresh_token, { path: "/", maxAge: 60 * 60 * 6, sameSite: "lax" });
+      setCookie("sb-access-token", session.access_token, { path: "/", maxAge: 60 * 60 * 6 });
+      setCookie("sb-refresh-token", session.refresh_token, { path: "/", maxAge: 60 * 60 * 6 });
       const localObject = {
         access_token: session.access_token,
+        refresh_token: session.refresh_token,
         id: user.id,
         email: user.email,
         isAdmin: user.isAdmin,
@@ -46,7 +47,6 @@ export default function Register() {
       return;
     }
     await login(email, password);
-    return;
   };
 
   const handleChange = async (e) => {
@@ -57,7 +57,6 @@ export default function Register() {
   useEffect(() => {
     if (user) {
       navigate("/", { replace: true });
-      return;
     }
     // eslint-disable-next-line
   }, [user]);

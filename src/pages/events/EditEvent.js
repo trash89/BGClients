@@ -4,7 +4,19 @@ import { axiosInstance } from "../../axiosInstance";
 import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { setInput, setData, setIsLoading, clearIsLoading, setError, clearError, setEdit, clearValues } from "../../features/event/eventSlice";
+import {
+  setInput,
+  setData,
+  setIsLoading,
+  clearIsLoading,
+  setIsEditing,
+  clearIsEditing,
+  setError,
+  clearError,
+  setEdit,
+  clearValues,
+} from "../../features/event/eventSlice";
+import { toast } from "react-toastify";
 
 const EditEvent = () => {
   const isMounted = useIsMounted();
@@ -12,7 +24,7 @@ const EditEvent = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const params = useParams();
-  const { input, data, isLoading, isError, errorText } = useSelector((store) => store.event);
+  const { input, data, isLoading, isEditing, isError, errorText } = useSelector((store) => store.event);
 
   useEffect(() => {
     if (!user.isAdmin) {
@@ -67,7 +79,7 @@ const EditEvent = () => {
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
-      dispatch(setIsLoading());
+      dispatch(setIsEditing());
       await axiosInstance.delete(`/events/${params.idEvent}`);
       dispatch(clearValues());
       navigate("/events", { replace: true });
@@ -75,14 +87,14 @@ const EditEvent = () => {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
-      dispatch(clearIsLoading());
+      dispatch(clearIsEditing());
     }
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      dispatch(setIsLoading());
+      dispatch(setIsEditing());
       await axiosInstance.patch(`/events/${params.idEvent}`, {
         id: input.id,
         client_id: input.client_id,
@@ -92,13 +104,13 @@ const EditEvent = () => {
         user_id: input.user_id,
         displayed: input.displayed,
       });
+      toast.success(`Successfully saved event ${input.ev_name}`);
       navigate("/events", { replace: true });
-      dispatch(clearValues());
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
-      dispatch(clearIsLoading());
+      dispatch(clearIsEditing());
     }
   };
   const handleChange = async (e) => {
@@ -115,7 +127,7 @@ const EditEvent = () => {
         <p className="h4 text-capitalize">edit event</p>
         <form className="was-validated">
           <div className="form-floating mb-3 mt-3">
-            <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange}>
+            <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange} disabled={isEditing}>
               {data?.clients?.map((client) => {
                 return (
                   <option key={client.id} value={client.id}>
@@ -136,6 +148,7 @@ const EditEvent = () => {
               name="ev_date"
               value={input.ev_date}
               onChange={handleChange}
+              disabled={isEditing}
             />
             <label htmlFor="ev_date">Event Date:</label>
           </div>
@@ -149,6 +162,7 @@ const EditEvent = () => {
               name="ev_name"
               value={input.ev_name}
               onChange={handleChange}
+              disabled={isEditing}
             />
             <label htmlFor="ev_name">Event Name:</label>
           </div>
@@ -163,6 +177,7 @@ const EditEvent = () => {
               onChange={(e) => {
                 dispatch(setInput({ name: e.target.name, value: !input.displayed }));
               }}
+              disabled={isEditing}
             />
             <label className="form-check-label">Displayed?</label>
           </div>
@@ -176,13 +191,14 @@ const EditEvent = () => {
               name="ev_description"
               value={input.ev_description}
               onChange={handleChange}
+              disabled={isEditing}
             />
             <label htmlFor="ev_description">Event Description:</label>
           </div>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isLoading}>
+          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
             <i className="fa-solid fa-times" />
           </button>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Delete" onClick={handleDelete} disabled={isLoading}>
+          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Delete" onClick={handleDelete} disabled={isEditing}>
             <i className="fa-solid fa-trash" />
           </button>
 
@@ -192,7 +208,7 @@ const EditEvent = () => {
             data-bs-toggle="tooltip"
             title="Save"
             onClick={handleSave}
-            disabled={isLoading || !input.ev_name || !input.ev_description || !input.ev_date || !input.client_id}
+            disabled={isEditing || !input.ev_name || !input.ev_description || !input.ev_date || !input.client_id}
           >
             <i className="fa-solid fa-floppy-disk" />
           </button>

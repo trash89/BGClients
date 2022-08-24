@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getUserFromLocalStorage, removeUserFromLocalStorage, addUserToLocalStorage } from "../../utils/localStorage";
+import { toast } from "react-toastify";
 
 const initialState = {
   isSidebarOpen: false,
@@ -42,6 +43,7 @@ const userSlice = createSlice({
       //state.user = payload;
       //state.isSidebarOpen = false;
       addUserToLocalStorage(payload);
+      toast.success(`Hello There ${payload.email}`);
       return { ...state, user: payload, isSidebarOpen: false };
     },
     logoutUser: (state) => {

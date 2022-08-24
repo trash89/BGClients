@@ -42,13 +42,13 @@ const ClientViewComponent = ({ user }) => {
           <>
             <p className="h6">Events</p>
             {data.events?.map((event) => {
-              const ev_date_formatted = new moment(event.ev_date).format(dateFormat);
+              const ev_date_formatted = new moment(event?.ev_date).format(dateFormat);
               return (
-                <div className="card" key={event.id}>
+                <div className="card" key={event?.id}>
                   <div className="card-header">
-                    {ev_date_formatted} - {event.ev_name}
+                    {ev_date_formatted} - {event?.ev_name}
                   </div>
-                  <div className="card-body">{event.ev_description}</div>
+                  <div className="card-body">{event?.ev_description}</div>
                 </div>
               );
             })}
@@ -63,11 +63,11 @@ const ClientViewComponent = ({ user }) => {
             <p className="h6">Files</p>
             {data.userfiles?.map((file) => {
               return (
-                <div className="card" key={file.id}>
-                  <div className="card-header">{file.file_description}</div>
+                <div className="card" key={file?.id}>
+                  <div className="card-header">{file?.file_description}</div>
                   <div className="card-body">
-                    <a href={file.signedURL} target="_blank" rel="noreferrer">
-                      {file.file_name}
+                    <a href={file?.signedURL} target="_blank" rel="noreferrer">
+                      {file?.file_name}
                     </a>
                   </div>
                 </div>

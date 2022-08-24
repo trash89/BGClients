@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoading: false,
+  isEditing: false,
   input: {
     id: 0,
     client_id: 0,
@@ -31,6 +32,12 @@ const userfileSlice = createSlice({
     clearIsLoading: (state) => {
       return { ...state, isLoading: false };
     },
+    setIsEditing: (state) => {
+      return { ...state, isEditing: true };
+    },
+    clearIsEditing: (state) => {
+      return { ...state, isEditing: false };
+    },
     setInput: (state, { payload: { name, value } }) => {
       state.input[name] = value;
     },
@@ -52,6 +59,7 @@ const userfileSlice = createSlice({
   },
 });
 
-export const { setInput, setIsLoading, clearIsLoading, setError, clearError, setData, clearValues, setEdit } = userfileSlice.actions;
+export const { setInput, setIsLoading, clearIsLoading, setIsEditing, clearIsEditing, setError, clearError, setData, clearValues, setEdit } =
+  userfileSlice.actions;
 
 export default userfileSlice.reducer;

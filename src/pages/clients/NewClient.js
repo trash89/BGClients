@@ -3,17 +3,17 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { useIsMounted } from "../../hooks";
-import { Progress } from "../../components";
 import { axiosInstance } from "../../axiosInstance";
 import { defaultPassword } from "../../utils/constants";
-import { setInput, setIsLoading, clearIsLoading, setError, clearError, clearValues } from "../../features/client/clientSlice";
+import { setInput, setIsEditing, clearIsEditing, setError, clearError, clearValues } from "../../features/client/clientSlice";
+import { toast } from "react-toastify";
 
 const NewClient = () => {
   const isMounted = useIsMounted();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.user);
-  const { input, isLoading, isError, errorText } = useSelector((store) => store.client);
+  const { input, isEditing, isError, errorText } = useSelector((store) => store.client);
 
   useEffect(() => {
     if (!user.isAdmin) {
@@ -34,7 +34,7 @@ const NewClient = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      dispatch(setIsLoading());
+      dispatch(setIsEditing());
       await axiosInstance.post("/clients", {
         email: input.email,
         password: defaultPassword,
@@ -42,17 +42,16 @@ const NewClient = () => {
         description: input.description,
         address: input.address,
       });
-      dispatch(clearValues());
+      toast.success(`Successfully saved client ${input.name}`);
       navigate("/clients", { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
-      dispatch(clearIsLoading());
+      dispatch(clearIsEditing());
     }
   };
   if (!isMounted) return <></>;
-  if (isLoading) return <Progress />;
 
   return (
     <section className="container p-2 my-2 border border-primary rounded-3">
@@ -69,6 +68,7 @@ const NewClient = () => {
             name="email"
             value={input.email}
             onChange={handleChange}
+            disabled={isEditing}
           />
           <label htmlFor="email">Email:</label>
         </div>
@@ -82,6 +82,7 @@ const NewClient = () => {
             name="name"
             value={input.name}
             onChange={handleChange}
+            disabled={isEditing}
           />
           <label htmlFor="name">Name:</label>
         </div>
@@ -96,6 +97,7 @@ const NewClient = () => {
             name="description"
             value={input.description}
             onChange={handleChange}
+            disabled={isEditing}
           />
           <label htmlFor="description">Description:</label>
         </div>
@@ -109,10 +111,11 @@ const NewClient = () => {
             name="address"
             value={input.address}
             onChange={handleChange}
+            disabled={isEditing}
           />
           <label htmlFor="address">Address:</label>
         </div>
-        <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
+        <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
           <i className="fa-solid fa-times" />
         </button>
         <button
@@ -121,7 +124,7 @@ const NewClient = () => {
           data-bs-toggle="tooltip"
           title="Save"
           onClick={handleSave}
-          disabled={!input.email || !input.name || !input.description || !input.address}
+          disabled={isEditing || !input.email || !input.name || !input.description || !input.address}
         >
           <i className="fa-solid fa-floppy-disk" />
         </button>

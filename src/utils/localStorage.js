@@ -3,6 +3,7 @@ import { USER } from "./constants";
 export const addUserToLocalStorage = (user) => {
   const obj = {
     access_token: user?.access_token,
+    refresh_token: user?.refresh_token,
     id: user?.id,
     email: user?.email,
     isAdmin: user?.isAdmin,

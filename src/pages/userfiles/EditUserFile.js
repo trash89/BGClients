@@ -4,8 +4,20 @@ import { axiosInstance } from "../../axiosInstance";
 import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
-import { setInput, setData, setIsLoading, clearIsLoading, setError, clearError, setEdit, clearValues } from "../../features/userfile/userfileSlice";
+import {
+  setInput,
+  setData,
+  setIsLoading,
+  clearIsLoading,
+  setIsEditing,
+  clearIsEditing,
+  setError,
+  clearError,
+  setEdit,
+  clearValues,
+} from "../../features/userfile/userfileSlice";
 import moment from "moment";
+import { toast } from "react-toastify";
 
 const EditUserFile = () => {
   const isMounted = useIsMounted();
@@ -13,7 +25,7 @@ const EditUserFile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const params = useParams();
-  const { input, data, isLoading, isError, errorText } = useSelector((store) => store.userfile);
+  const { input, data, isLoading, isEditing, isError, errorText } = useSelector((store) => store.userfile);
   const [myFile, setMyFile] = useState(null);
 
   useEffect(() => {
@@ -78,22 +90,23 @@ const EditUserFile = () => {
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
-      dispatch(setIsLoading());
-      await axiosInstance.delete(`/userfiles/${params.idFile}`);
-      dispatch(clearValues());
+      dispatch(setIsEditing());
+      const resp = await axiosInstance.delete(`/userfiles/${params.idFile}`);
+      const file_name = resp?.data?.userfile[0]?.file_name;
+      toast.success(`Successfully deteled file ${file_name}`);
       navigate("/userfiles", { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
-      dispatch(clearIsLoading());
+      dispatch(clearIsEditing());
     }
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      dispatch(setIsLoading());
+      dispatch(setIsEditing());
       const formData = new FormData();
       formData.append("id", input.id);
       formData.append("client_id", input.client_id);
@@ -105,14 +118,14 @@ const EditUserFile = () => {
       const resp = await axiosInstance.patch(`/userfiles/${params.idFile}`, formData, {
         headers: { "Content-Type": `multipart/form-data; boundary=${formData._boundary}` },
       });
-      //console.log(resp.data);
+      const file_name = resp?.data?.userfile[0]?.file_name;
+      toast.success(`Successfully saved file ${file_name}`);
       navigate("/userfiles", { replace: true });
-      dispatch(clearValues());
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
-      dispatch(clearIsLoading());
+      dispatch(clearIsEditing());
     }
   };
   const handleChange = async (e) => {
@@ -132,7 +145,14 @@ const EditUserFile = () => {
             <label htmlFor="client_id" className="form-label">
               For the Client:
             </label>
-            <select className="form-select form-control-sm" id="client_id" name="client_id" value={input.client_id} onChange={handleChange}>
+            <select
+              className="form-select form-control-sm"
+              id="client_id"
+              name="client_id"
+              value={input.client_id}
+              onChange={handleChange}
+              disabled={isEditing}
+            >
               {data?.clients?.map((client) => {
                 return (
                   <option key={client.id} value={client.id}>
@@ -167,6 +187,7 @@ const EditUserFile = () => {
               onChange={(e) => {
                 dispatch(setInput({ name: e.target.name, value: !input.displayed }));
               }}
+              disabled={isEditing}
             />
             <label className="form-check-label">Displayed to Client?</label>
           </div>
@@ -184,6 +205,7 @@ const EditUserFile = () => {
               onChange={(e) => {
                 setMyFile(e.target.files[0]);
               }}
+              disabled={isEditing}
             />
           </div>
           <div className="mb-3 mt-3">
@@ -198,12 +220,13 @@ const EditUserFile = () => {
               name="file_description"
               value={input.file_description}
               onChange={handleChange}
+              disabled={isEditing}
             />
           </div>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel}>
+          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
             <i className="fa-solid fa-times" />
           </button>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Delete" onClick={handleDelete}>
+          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Delete" onClick={handleDelete} disabled={isEditing}>
             <i className="fa-solid fa-trash" />
           </button>
           <button
@@ -212,7 +235,7 @@ const EditUserFile = () => {
             data-bs-toggle="tooltip"
             title="Save"
             onClick={handleSave}
-            disabled={!input.file_description || !input.client_id}
+            disabled={isEditing || !input.file_description || !input.client_id}
           >
             <i className="fa-solid fa-floppy-disk" />
           </button>
