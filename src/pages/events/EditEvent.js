@@ -125,6 +125,24 @@ const EditEvent = () => {
     return (
       <section className="container p-2 my-2 border border-primary rounded-3">
         <p className="h4 text-capitalize">edit event</p>
+        <div className="modal" id="deleteEvent">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h4 className="modal-title">Deleting Event</h4>
+              </div>
+              <div className="modal-body">Are you sure to delete the event {input.ev_name} ?</div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleDelete}>
+                  Delete
+                </button>
+                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
         <form className="was-validated">
           <div className="form-floating mb-3 mt-3">
             <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange} disabled={isEditing}>
@@ -198,7 +216,15 @@ const EditEvent = () => {
           <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
             <i className="fa-solid fa-times" />
           </button>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Delete" onClick={handleDelete} disabled={isEditing}>
+          <button
+            type="button"
+            className="btn btn-primary me-2"
+            title="Delete"
+            disabled={isEditing}
+            data-bs-toggle="modal"
+            data-bs-target="#deleteEvent"
+            data-bs-keyboard="false"
+          >
             <i className="fa-solid fa-trash" />
           </button>
 

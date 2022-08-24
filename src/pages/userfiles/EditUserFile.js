@@ -140,6 +140,24 @@ const EditUserFile = () => {
     return (
       <section className="container p-2 my-2 border border-primary rounded-3">
         <p className="h4 text-capitalize">edit a userfile</p>
+        <div className="modal" id="deleteFile">
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h4 className="modal-title">Deleting a Userfile</h4>
+              </div>
+              <div className="modal-body">Are you sure to delete the file {input.file_name} ?</div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleDelete}>
+                  Delete
+                </button>
+                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
         <form className="was-validated">
           <div className="mb-3 mt-3">
             <label htmlFor="client_id" className="form-label">
@@ -226,7 +244,15 @@ const EditUserFile = () => {
           <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
             <i className="fa-solid fa-times" />
           </button>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Delete" onClick={handleDelete} disabled={isEditing}>
+          <button
+            type="button"
+            className="btn btn-primary me-2"
+            title="Delete"
+            disabled={isEditing}
+            data-bs-toggle="modal"
+            data-bs-target="#deleteFile"
+            data-bs-keyboard="false"
+          >
             <i className="fa-solid fa-trash" />
           </button>
           <button
