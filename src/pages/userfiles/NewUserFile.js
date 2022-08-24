@@ -16,7 +16,7 @@ const NewUserFile = () => {
   const [myFile, setMyFile] = useState(null);
 
   const handleChange = async (e) => {
-    dispatch(setInput({ name: [e.target.name], value: e.target.value }));
+    dispatch(setInput({ name: e.target.name, value: e.target.value }));
     if (isError) dispatch(clearError());
   };
 
@@ -24,15 +24,15 @@ const NewUserFile = () => {
     e.preventDefault();
     dispatch(clearValues());
     navigate("/userfiles", { replace: true });
-    return;
   };
 
   useEffect(() => {
-    dispatch(clearValues());
     if (!user.isAdmin) {
       navigate("/userfiles", { replace: true });
-      return;
     }
+  }, [user]);
+
+  useEffect(() => {
     const getData = async () => {
       dispatch(setIsLoading());
       try {
@@ -43,7 +43,7 @@ const NewUserFile = () => {
         }
       } catch (error) {
         console.log(error);
-        dispatch(setError(error.response.data.error.message));
+        dispatch(setError(error?.response?.data?.error?.message || error?.message));
       } finally {
         dispatch(clearIsLoading());
       }
@@ -64,7 +64,7 @@ const NewUserFile = () => {
       navigate("/userfiles", { replace: true });
     } catch (error) {
       console.log(error);
-      dispatch(setError(error.response.data.error.message));
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
       dispatch(clearIsLoading());
     }
