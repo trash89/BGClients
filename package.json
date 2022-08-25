@@ -42,5 +42,5 @@
       "last 1 safari version"
     ]
   },
-    "proxy": "https://bg-clients.vercel.app"
-  }
+  "proxy": "https://bgclients.herokuapp.com"
+}
