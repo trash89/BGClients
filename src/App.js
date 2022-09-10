@@ -7,6 +7,7 @@ import {
   SharedPagesLayout,
   Error,
   Register,
+  PasswordReset,
   ProtectedRoute,
   Clients,
   EditClient,
@@ -50,6 +51,7 @@ function App() {
             <Route path=":idFile" element={<EditUserFile />} />
             <Route path="newfile" element={<NewUserFile />} />
           </Route>
+          <Route path="passwordReset" element={<PasswordReset />} />
         </Route>
         <Route path="register" element={<Register />} />
         <Route path="*" element={<Error />} />

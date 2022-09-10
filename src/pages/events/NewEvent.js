@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import { useIsMounted } from "../../hooks";
 import { Progress } from "../../components";
@@ -22,6 +22,13 @@ import { toast } from "react-toastify";
 const NewEvent = () => {
   const isMounted = useIsMounted();
   const navigate = useNavigate();
+  const location = useLocation();
+  let from = "/events";
+  let client_id = null;
+  if (location.state) {
+    from = location.state.from;
+    client_id = location.state.client_id;
+  } else from = "/events";
   const dispatch = useDispatch();
   const { user } = useSelector((store) => store.user);
   const { input, data, isLoading, isEditing, isError, errorText } = useSelector((store) => store.event);
@@ -33,7 +40,7 @@ const NewEvent = () => {
 
   useEffect(() => {
     if (!user.isAdmin) {
-      navigate("/events", { replace: true });
+      navigate(from, { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -44,7 +51,9 @@ const NewEvent = () => {
       try {
         const resp = await axiosInstance.get("/clients");
         dispatch(setData(resp.data));
-        if (resp?.data?.clients?.length > 0) {
+        if (client_id) {
+          dispatch(setInput({ ...input, name: "client_id", value: client_id }));
+        } else if (resp?.data?.clients?.length > 0) {
           dispatch(setInput({ ...input, name: "client_id", value: resp.data.clients[0].id }));
         }
       } catch (error) {
@@ -61,7 +70,7 @@ const NewEvent = () => {
   const handleCancel = async (e) => {
     e.preventDefault();
     dispatch(clearValues());
-    navigate("/events", { replace: true });
+    navigate(from, { replace: true });
   };
 
   const handleSave = async (e) => {
@@ -76,7 +85,7 @@ const NewEvent = () => {
         ev_date: ev_date_formatted,
       });
       toast.success(`Successfully saved event ${input.ev_name}`);
-      navigate("/events", { replace: true });
+      navigate(from, { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
@@ -89,10 +98,18 @@ const NewEvent = () => {
   if (isLoading) return <Progress />;
 
   return (
-    <section className="container p-2 my-2 border border-primary rounded-3">
-      <p className="h4 text-capitalize">enter a new event</p>
+    <section className="container p-2 my-2 border border-primary rounded-3 bg-success bg-opacity-10">
+      <p className="h4 text-capitalize">
+        enter a new event{" "}
+        <Link to={from} className="mx-1">
+          <i className="fa-solid fa-arrow-left" />
+        </Link>
+      </p>
       <form className="was-validated">
-        <div className="form-floating mb-3 mt-3">
+        <div className="mb-3 mt-3">
+          <label htmlFor="client_id" className="form-label">
+            Client:
+          </label>
           <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange} disabled={isEditing}>
             {data?.clients?.map((client) => {
               return (
@@ -102,9 +119,11 @@ const NewEvent = () => {
               );
             })}
           </select>
-          <label htmlFor="client_id">Client:</label>
         </div>
-        <div className="form-floating mb-3 mt-3">
+        <div className="mb-3 mt-3">
+          <label htmlFor="ev_date" className="form-label">
+            Event Date:
+          </label>
           <input
             required
             type="date"
@@ -116,9 +135,11 @@ const NewEvent = () => {
             onChange={handleChange}
             disabled={isEditing}
           />
-          <label htmlFor="ev_date">Event Date:</label>
         </div>
-        <div className="form-floating mb-3 mt-3">
+        <div className="mb-3 mt-3">
+          <label htmlFor="ev_name" className="form-label">
+            Event Name:
+          </label>
           <input
             required
             type="text"
@@ -130,7 +151,6 @@ const NewEvent = () => {
             onChange={handleChange}
             disabled={isEditing}
           />
-          <label htmlFor="ev_name">Event Name:</label>
         </div>
         <div className="mb-3 mt-3">
           <label htmlFor="ev_description" className="form-label">
@@ -147,12 +167,12 @@ const NewEvent = () => {
             disabled={isEditing}
           />
         </div>
-        <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
+        <button type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
           <i className="fa-solid fa-times" />
         </button>
         <button
           type="button"
-          className="btn btn-primary me-2"
+          className="btn btn-primary btn-sm me-2"
           data-bs-toggle="tooltip"
           title="Save"
           onClick={handleSave}
@@ -162,6 +182,7 @@ const NewEvent = () => {
         </button>
         {isError && <p className="text-danger">{errorText}</p>}
       </form>
+      <br />
     </section>
   );
 };

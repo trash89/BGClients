@@ -9,7 +9,6 @@
     "moment": "^2.29.4",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
-    "react-cookie": "^4.1.1",
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
     "react-redux": "^8.0.2",
@@ -20,7 +19,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "CI= react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -42,5 +41,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://bgclients.herokuapp.com"
+  "proxy": "https://bgclients.vercel.app"
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { axiosInstance } from "../../axiosInstance";
 import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
@@ -24,13 +24,19 @@ const EditUserFile = () => {
   const { user } = useSelector((store) => store.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  let from = "/userfiles";
+  if (location.state) {
+    from = location.state.from;
+  } else from = "/userfiles";
+
   const params = useParams();
   const { input, data, isLoading, isEditing, isError, errorText } = useSelector((store) => store.userfile);
   const [myFile, setMyFile] = useState(null);
 
   useEffect(() => {
     if (!user.isAdmin) {
-      navigate("/userfiles", { replace: true });
+      navigate(from, { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -86,7 +92,7 @@ const EditUserFile = () => {
   const handleCancel = async (e) => {
     e.preventDefault();
     dispatch(clearValues());
-    navigate("/userfiles", { replace: true });
+    navigate(from, { replace: true });
   };
 
   const handleDelete = async (e) => {
@@ -96,7 +102,7 @@ const EditUserFile = () => {
       const resp = await axiosInstance.delete(`/userfiles/${params.idFile}`);
       const file_name = resp?.data?.userfile[0]?.file_name;
       toast.success(`Successfully deteled file ${file_name}`);
-      navigate("/userfiles", { replace: true });
+      navigate(from, { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
@@ -122,7 +128,7 @@ const EditUserFile = () => {
       });
       const file_name = resp?.data?.userfile[0]?.file_name;
       toast.success(`Successfully saved file ${file_name}`);
-      navigate("/userfiles", { replace: true });
+      navigate(from, { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
@@ -140,13 +146,18 @@ const EditUserFile = () => {
 
   if (user.isAdmin) {
     return (
-      <section className="container p-2 my-2 border border-primary rounded-3">
-        <p className="h4 text-capitalize">edit a userfile</p>
+      <section className="container p-2 my-2 border border-primary rounded-3 bg-success bg-opacity-10">
+        <p className="h4 text-capitalize">
+          edit a file
+          <Link to={from} className="mx-1">
+            <i className="fa-solid fa-arrow-left" />
+          </Link>
+        </p>
         <div className="modal" id="deleteFile">
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
-                <h4 className="modal-title">Deleting a Userfile</h4>
+                <h4 className="modal-title">Deleting a File</h4>
               </div>
               <div className="modal-body">Are you sure to delete the file {input.file_name} ?</div>
               <div className="modal-footer">
@@ -183,18 +194,18 @@ const EditUserFile = () => {
             </select>
           </div>
           <div className="mb-3 mt-3">
-            <p className="text-primary mb-1 mt-1">
+            <p className="text-dark mb-1 mt-1">
               File Name:{" "}
               <a href={input.signedURL} target="_blank" rel="noreferrer">
                 {input.file_name}
               </a>
             </p>
-            <p className="text-primary mb-1 mt-1">
+            <p className="text-dark mb-1 mt-1">
               Type:{input.mimetype}, Size: {input.size}Mb
             </p>
-            <p className="text-primary mb-1 mt-1">Created at: {input.created_at}</p>
-            <p className="text-primary mb-1 mt-1">Updated at: {input.updated_at}</p>
-            <p className="text-primary mb-1 mt-1">Last accessed at: {input.last_accessed_at}</p>
+            <p className="text-dark mb-1 mt-1">Created at: {input.created_at}</p>
+            <p className="text-dark mb-1 mt-1">Updated at: {input.updated_at}</p>
+            <p className="text-dark mb-1 mt-1">Last accessed at: {input.last_accessed_at}</p>
           </div>
           <div className="form-check">
             <input
@@ -243,12 +254,12 @@ const EditUserFile = () => {
               disabled={isEditing}
             />
           </div>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
+          <button type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
             <i className="fa-solid fa-times" />
           </button>
           <button
             type="button"
-            className="btn btn-primary me-2"
+            className="btn btn-primary btn-sm me-2"
             title="Delete"
             disabled={isEditing}
             data-bs-toggle="modal"
@@ -259,7 +270,7 @@ const EditUserFile = () => {
           </button>
           <button
             type="button"
-            className="btn btn-primary me-2"
+            className="btn btn-primary btn-sm me-2"
             data-bs-toggle="tooltip"
             title="Save"
             onClick={handleSave}
@@ -269,6 +280,7 @@ const EditUserFile = () => {
           </button>
           {isError && <p className="text-danger">{errorText}</p>}
         </form>
+        <br />
       </section>
     );
   }

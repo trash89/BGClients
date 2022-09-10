@@ -3,6 +3,12 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isLoading: false,
   isEditing: false,
+  input: {
+    password1: "",
+    password2: "",
+    hash: null,
+    access_token: "",
+  },
   data: {},
   isError: false,
   errorText: "",
@@ -17,6 +23,9 @@ const clientviewSlice = createSlice({
     },
     clearIsLoading: (state) => {
       return { ...state, isLoading: false };
+    },
+    setInput: (state, { payload: { name, value } }) => {
+      state.input[name] = value;
     },
     setIsEditing: (state) => {
       return { ...state, isEditing: true };
@@ -39,6 +48,6 @@ const clientviewSlice = createSlice({
   },
 });
 
-export const { setIsLoading, clearIsLoading, setIsEditing, clearIsEditing, setError, clearError, setData, clearValues } = clientviewSlice.actions;
+export const { setIsLoading, clearIsLoading, setIsEditing, clearIsEditing, setError, clearError, setData, clearValues, setInput } = clientviewSlice.actions;
 
 export default clientviewSlice.reducer;

@@ -2,14 +2,12 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../axiosInstance";
-import { useCookies } from "react-cookie";
 
-import { Logo, Copyright, Progress } from "../components";
+import { Logo, Footer, Progress } from "../components";
 import { loginUser, setIsLoading, clearIsLoading, setInput, setError, clearError } from "../features/user/userSlice";
 import { useIsMounted } from "../hooks";
 
 export default function Register() {
-  const [cookies, setCookie] = useCookies();
   const isMounted = useIsMounted();
 
   const { user, input, isLoading, isError, errorText } = useSelector((store) => store.user);
@@ -21,20 +19,21 @@ export default function Register() {
     try {
       dispatch(setIsLoading());
       const resp = await axiosInstance.post("/auth/login", { email, password });
-      const { user, session } = resp.data;
-      setCookie("sb-access-token", session.access_token, { path: "/", maxAge: 60 * 60 * 6 });
-      setCookie("sb-refresh-token", session.refresh_token, { path: "/", maxAge: 60 * 60 * 6 });
-      const localObject = {
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
-        id: user.id,
-        email: user.email,
-        isAdmin: user.isAdmin,
-      };
-      dispatch(loginUser(localObject));
-      navigate("/", { replace: true });
+      if (resp?.data || resp?.data?.session) {
+        const { user, session } = resp.data;
+        const localObject = {
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+          id: user.id,
+          email: user.email,
+          isAdmin: user.isAdmin,
+        };
+        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${localObject.access_token}`;
+        dispatch(loginUser(localObject));
+        navigate("/", { replace: true });
+      }
     } catch (error) {
-      console.log("error signIn localuser=", error);
+      console.log("error signIn=", error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
     } finally {
       dispatch(clearIsLoading());
@@ -47,6 +46,11 @@ export default function Register() {
       return;
     }
     await login(email, password);
+  };
+
+  const handleDemo = async (e) => {
+    e.preventDefault();
+    await login("demo@demo.com", "secret123");
   };
 
   const handleChange = async (e) => {
@@ -65,12 +69,12 @@ export default function Register() {
   if (isLoading) return <Progress />;
   return (
     <div className="container mx-auto" style={{ width: "300px" }}>
-      <div className="container-fluid p-2 my-4 shadow border border-primary rounded-3">
+      <div className="container-fluid p-2 my-4 shadow border border-primary rounded-3 bg-success bg-opacity-10">
         <div className="d-flex flex-row justify-content-center align-content-center align-items-center p-0 m-0">
           <Logo />
           <p className="h4 text-center text-capitalize flex-grow-1">BG Clients</p>
         </div>
-        <form className="was-validated">
+        <form>
           <p className="h6 text-center text-capitalize pt-2">Login</p>
           <div className="mb-3 mt-3">
             <label htmlFor="email" className="form-label">
@@ -93,10 +97,13 @@ export default function Register() {
             >
               {isLoading ? "loading..." : "connect"}
             </button>
+            <button type="button" className="btn btn-primary text-capitalize flex-fill m-1" disabled={isLoading} onClick={handleDemo}>
+              {isLoading ? "loading..." : "demo app"}
+            </button>
           </div>
           {isError && <p className="text-center text-danger">{errorText}</p>}
         </form>
-        <Copyright />
+        <Footer />
       </div>
     </div>
   );

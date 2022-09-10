@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import { axiosInstance } from "../../axiosInstance";
 import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
@@ -23,12 +23,18 @@ const EditEvent = () => {
   const { user } = useSelector((store) => store.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  let from = "/events";
+  if (location.state) {
+    from = location.state.from;
+  } else from = "/events";
+
   const params = useParams();
   const { input, data, isLoading, isEditing, isError, errorText } = useSelector((store) => store.event);
 
   useEffect(() => {
     if (!user.isAdmin) {
-      navigate("/events", { replace: true });
+      navigate(from, { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
@@ -75,7 +81,7 @@ const EditEvent = () => {
   const handleCancel = async (e) => {
     e.preventDefault();
     dispatch(clearValues());
-    navigate("/events", { replace: true });
+    navigate(from, { replace: true });
   };
 
   const handleDelete = async (e) => {
@@ -84,7 +90,7 @@ const EditEvent = () => {
       dispatch(setIsEditing());
       await axiosInstance.delete(`/events/${params.idEvent}`);
       dispatch(clearValues());
-      navigate("/events", { replace: true });
+      navigate(from, { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
@@ -107,7 +113,7 @@ const EditEvent = () => {
         displayed: input.displayed,
       });
       toast.success(`Successfully saved event ${input.ev_name}`);
-      navigate("/events", { replace: true });
+      navigate(from, { replace: true });
     } catch (error) {
       console.log(error);
       dispatch(setError(error?.response?.data?.error?.message || error?.message));
@@ -125,8 +131,13 @@ const EditEvent = () => {
 
   if (user.isAdmin) {
     return (
-      <section className="container p-2 my-2 border border-primary rounded-3">
-        <p className="h4 text-capitalize">edit event</p>
+      <section className="container p-2 my-2 border border-primary rounded-3 bg-success bg-opacity-10">
+        <p className="h4 text-capitalize">
+          edit event
+          <Link to={from} className="mx-1">
+            <i className="fa-solid fa-arrow-left" />
+          </Link>
+        </p>
         <div className="modal" id="deleteEvent">
           <div className="modal-dialog">
             <div className="modal-content">
@@ -146,7 +157,10 @@ const EditEvent = () => {
           </div>
         </div>
         <form className="was-validated">
-          <div className="form-floating mb-3 mt-3">
+          <div className="mb-3 mt-3">
+            <label htmlFor="client_id" className="form-label">
+              Client:
+            </label>
             <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange} disabled={isEditing}>
               {data?.clients?.map((client) => {
                 return (
@@ -156,9 +170,11 @@ const EditEvent = () => {
                 );
               })}
             </select>
-            <label htmlFor="client_id">Client:</label>
           </div>
-          <div className="form-floating mb-3 mt-3">
+          <div className="mb-3 mt-3">
+            <label htmlFor="ev_date" className="form-label">
+              Event Date:
+            </label>
             <input
               required
               type="date"
@@ -170,9 +186,11 @@ const EditEvent = () => {
               onChange={handleChange}
               disabled={isEditing}
             />
-            <label htmlFor="ev_date">Event Date:</label>
           </div>
-          <div className="form-floating mb-3 mt-3">
+          <div className="mb-3 mt-3">
+            <label htmlFor="ev_name" className="form-label">
+              Event Name:
+            </label>
             <input
               required
               type="text"
@@ -184,7 +202,6 @@ const EditEvent = () => {
               onChange={handleChange}
               disabled={isEditing}
             />
-            <label htmlFor="ev_name">Event Name:</label>
           </div>
           <div className="form-check">
             <input
@@ -216,12 +233,12 @@ const EditEvent = () => {
               disabled={isEditing}
             />
           </div>
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
+          <button type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
             <i className="fa-solid fa-times" />
           </button>
           <button
             type="button"
-            className="btn btn-primary me-2"
+            className="btn btn-primary btn-sm me-2"
             title="Delete"
             disabled={isEditing}
             data-bs-toggle="modal"
@@ -233,7 +250,7 @@ const EditEvent = () => {
 
           <button
             type="button"
-            className="btn btn-primary me-2"
+            className="btn btn-primary btn-sm me-2"
             data-bs-toggle="tooltip"
             title="Save"
             onClick={handleSave}
@@ -243,6 +260,7 @@ const EditEvent = () => {
           </button>
           {isError && <p className="text-danger">{errorText}</p>}
         </form>
+        <br />
       </section>
     );
   }

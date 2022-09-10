@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { axiosInstance } from "../../axiosInstance";
 import { useSelector, useDispatch } from "react-redux";
 import { useIsMounted } from "../../hooks";
-import { Progress } from "../../components";
-import { defaultPassword } from "../../utils/constants";
+import { Progress, TotalRows } from "../../components";
+import { defaultPassword, dateFormat } from "../../utils/constants";
 import {
   setInput,
   setIsLoading,
@@ -14,18 +15,21 @@ import {
   setError,
   clearError,
   setEdit,
+  setData,
   clearValues,
 } from "../../features/client/clientSlice";
 import { toast } from "react-toastify";
+import moment from "moment";
 
 const EditClient = () => {
   const isMounted = useIsMounted();
   const { user } = useSelector((store) => store.user);
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const params = useParams();
 
-  const { input, isLoading, isEditing, isError, errorText } = useSelector((store) => store.client);
+  const { input, data, isLoading, isEditing, isError, errorText } = useSelector((store) => store.client);
 
   useEffect(() => {
     if (!user.isAdmin) {
@@ -39,6 +43,7 @@ const EditClient = () => {
       dispatch(setIsLoading());
       try {
         const resp = await axiosInstance.get(`/clients/${params.idClient}`);
+        dispatch(setData({ events: resp.data.events, userfiles: resp.data.userfiles }));
         const { id, name, description, address, email, localuser_id, user_id } = resp.data.client;
         dispatch(
           setEdit({
@@ -132,8 +137,13 @@ const EditClient = () => {
 
   if (user.isAdmin) {
     return (
-      <section className="container p-2 my-2 border border-primary rounded-3">
-        <p className="h4 text-capitalize">edit client</p>
+      <section className="container p-2 my-2 border border-primary rounded-3 bg-success bg-opacity-10">
+        <p className="h4 text-capitalize">
+          edit client
+          <Link to={"/clients"} className="mx-1">
+            <i className="fa-solid fa-arrow-left" />
+          </Link>
+        </p>
         <div className="modal" id="deleteClient">
           <div className="modal-dialog">
             <div className="modal-content">
@@ -173,72 +183,79 @@ const EditClient = () => {
           </div>
         </div>
         <form className="was-validated">
-          <div className="form-floating mb-3 mt-3">
-            <input
-              autoFocus
-              required
-              type="email"
-              className="form-control"
-              id="email"
-              placeholder="Enter email"
-              name="email"
-              value={input.email}
-              onChange={handleChange}
-              disabled={isEditing}
-            />
-            <label htmlFor="email">Email:</label>
+          <div className="row mb-3 mt-3">
+            <div className="col">
+              <label htmlFor="email" className="form-label">
+                Email:
+              </label>
+              <input
+                autoFocus
+                required
+                type="email"
+                className="form-control"
+                id="email"
+                placeholder="Enter email"
+                name="email"
+                value={input.email}
+                onChange={handleChange}
+                disabled={isEditing}
+              />
+            </div>
+            <div className="col">
+              <label htmlFor="name" className="form-label">
+                Name:
+              </label>
+              <input
+                required
+                type="text"
+                className="form-control"
+                id="name"
+                placeholder="Enter client name"
+                name="name"
+                value={input.name}
+                onChange={handleChange}
+                disabled={isEditing}
+              />
+            </div>
           </div>
-          <div className="form-floating mb-3 mt-3">
-            <input
-              required
-              type="text"
-              className="form-control"
-              id="name"
-              placeholder="Enter client name"
-              name="name"
-              value={input.name}
-              onChange={handleChange}
-              disabled={isEditing}
-            />
-            <label htmlFor="name">Name:</label>
+          <div className="row mb-3 mt-3">
+            <div className="col">
+              <label htmlFor="description" className="form-label">
+                Client Description:
+              </label>
+              <textarea
+                required
+                className="form-control form-control-sm"
+                rows="5"
+                id="description"
+                name="description"
+                value={input.description}
+                onChange={handleChange}
+                disabled={isEditing}
+              />
+            </div>
+            <div className="col">
+              <label htmlFor="address" className="form-label">
+                Client Address:
+              </label>
+              <textarea
+                required
+                className="form-control form-control-sm"
+                rows="5"
+                id="address"
+                name="address"
+                value={input.address}
+                onChange={handleChange}
+                disabled={isEditing}
+              />
+            </div>
           </div>
-          <div className="mb-3 mt-3">
-            <label htmlFor="description" className="form-label">
-              Client Description:
-            </label>
-            <textarea
-              required
-              className="form-control form-control-sm"
-              rows="5"
-              id="description"
-              name="description"
-              value={input.description}
-              onChange={handleChange}
-              disabled={isEditing}
-            />
-          </div>
-          <div className="mb-3 mt-3">
-            <label htmlFor="address" className="form-label">
-              Client Address:
-            </label>
-            <textarea
-              required
-              className="form-control form-control-sm"
-              rows="5"
-              id="address"
-              name="address"
-              value={input.address}
-              onChange={handleChange}
-              disabled={isEditing}
-            />
-          </div>
-
-          <button type="button" className="btn btn-primary me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
+          <button type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
             <i className="fa-solid fa-times" />
           </button>
           <button
             type="button"
-            className="btn btn-primary me-2"
+            className="btn btn-primary btn-sm me-2"
             title="Delete"
             disabled={isEditing}
             data-bs-toggle="modal"
@@ -249,7 +266,7 @@ const EditClient = () => {
           </button>
           <button
             type="button"
-            className="btn btn-primary me-2"
+            className="btn btn-primary btn-sm me-2"
             title="Reset Password"
             disabled={isEditing}
             data-bs-toggle="modal"
@@ -258,10 +275,9 @@ const EditClient = () => {
           >
             <i className="fa-solid fa-unlock-keyhole"></i>
           </button>
-
           <button
             type="button"
-            className="btn btn-primary me-2"
+            className="btn btn-primary btn-sm me-2"
             data-bs-toggle="tooltip"
             title="Save"
             onClick={handleSave}
@@ -269,9 +285,50 @@ const EditClient = () => {
           >
             <i className="fa-solid fa-floppy-disk" />
           </button>
-
+          <div className="row mb-3 mt-3">
+            <div className="col">
+              <TotalRows link="/events/newEvent" count={data?.events?.count} title="Events" state={{ from: location.pathname, client_id: input.id }} />
+              <ul className="list-group">
+                {data?.events?.events?.map((row) => {
+                  const ev_date_formatted = new moment(row.ev_date).format(dateFormat);
+                  return (
+                    <Link
+                      to={`/events/${row.id}`}
+                      state={{ from: location.pathname, client_id: input.id }}
+                      className="list-group-item btn btn-light btn-sm"
+                      data-bs-toggle="tooltip"
+                      title="Edit Event"
+                      key={row.id}
+                    >
+                      {ev_date_formatted}, {row.ev_name}, {row.ev_description},{row.displayed ? "Yes" : "No"}
+                    </Link>
+                  );
+                })}
+              </ul>
+            </div>
+            <div className="col">
+              <TotalRows link="/userfiles/newFile" count={data?.userfiles?.count} title="Files" state={{ from: location.pathname, client_id: input.id }} />
+              <ul className="list-group">
+                {data?.userfiles?.userfiles?.map((row) => {
+                  return (
+                    <Link
+                      to={`/userfiles/${row.id}`}
+                      state={{ from: location.pathname, client_id: input.id }}
+                      className="list-group-item btn btn-light btn-sm"
+                      data-bs-toggle="tooltip"
+                      title="Edit Userfile"
+                      key={row.id}
+                    >
+                      {row.file_name}, {row.file_description},{row.displayed ? "Yes" : "No"}
+                    </Link>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
           {isError && <p className="text-danger">{errorText}</p>}
         </form>
+        <br />
       </section>
     );
   }

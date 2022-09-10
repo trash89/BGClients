@@ -1,17 +1,17 @@
 import { Outlet } from "react-router-dom";
-import { SmallSidebar, BigSidebar, Navbar, Copyright } from "../components";
+import { SmallSidebar, BigSidebar, Navbar, Footer } from "../components";
 const SharedLayout = () => {
   return (
     <main className="principal">
       <SmallSidebar />
       <BigSidebar />
-      <div>
+      <div className="principal-page">
         <Navbar />
-        <div className="principal-page">
+        <div>
           <Outlet />
         </div>
       </div>
-      <Copyright />
+      <Footer />
     </main>
   );
 };

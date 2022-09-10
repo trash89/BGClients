@@ -1,4 +1,4 @@
-import Copyright from "./Copyright";
+import Footer from "./Footer";
 import SmallSidebar from "./SmallSidebar";
 import BigSidebar from "./BigSidebar";
 import NavLinks from "./NavLinks";
@@ -7,4 +7,4 @@ import Navbar from "./Navbar";
 import Progress from "./Progress";
 import TotalRows from "./TotalRows";
 import ClientViewComponent from "./ClientViewComponent";
-export { Copyright, SmallSidebar, BigSidebar, Logo, Navbar, NavLinks, Progress, TotalRows, ClientViewComponent };
+export { Footer, SmallSidebar, BigSidebar, Logo, Navbar, NavLinks, Progress, TotalRows, ClientViewComponent };

@@ -50,7 +50,7 @@ const ClientViewComponent = ({ user }) => {
   if (isLoading) return <Progress />;
 
   return (
-    <section className="container p-2 my-2 border border-primary rounded-3">
+    <section className="container p-2 my-2 border border-primary rounded-3 bg-success bg-opacity-10">
       <div className="d-flex">
         <div className="flex-grow-1">
           <p className="h5">{data.client?.email}</p>
@@ -58,7 +58,7 @@ const ClientViewComponent = ({ user }) => {
         <div className="flex-shrink-1">
           <button
             type="button"
-            className="btn btn-primary me-2"
+            className="btn btn-primary btn-sm me-2"
             title="Change Password"
             disabled={isEditing}
             data-bs-toggle="modal"
@@ -78,10 +78,10 @@ const ClientViewComponent = ({ user }) => {
             <div className="modal-body">Are you sure to change the password ?</div>
             <div className="modal-body">A reset link will be sent to your email address.</div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleSend}>
+              <button type="button" className="btn btn-primary btn-sm" data-bs-dismiss="modal" onClick={handleSend}>
                 Send
               </button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal">
+              <button type="button" className="btn btn-secondary btn-sm" data-bs-dismiss="modal">
                 Cancel
               </button>
             </div>
@@ -118,7 +118,7 @@ const ClientViewComponent = ({ user }) => {
                 <div className="card" key={file?.id}>
                   <div className="card-header">{file?.file_description}</div>
                   <div className="card-body">
-                    <a href={file?.signedURL} target="_blank" rel="noreferrer">
+                    <a href={file?.signedURL} target="_blank" rel="noopener noreferrer">
                       {file?.file_name}
                     </a>
                   </div>
@@ -130,6 +130,7 @@ const ClientViewComponent = ({ user }) => {
           <></>
         )}
       </div>
+      <br />
     </section>
   );
 };

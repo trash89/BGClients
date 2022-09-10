@@ -6,7 +6,7 @@ const Wrapper = styled.aside`
     display: block;
     box-shadow: 1px 0px 0px 0px rgba(0, 0, 0, 0.1);
     .sidebar-container {
-      background: var(--white);
+      background: rgba(25, 135, 84, 0.1);
       min-height: 100vh;
       height: 100%;
       width: 180px;
@@ -21,10 +21,10 @@ const Wrapper = styled.aside`
       margin-left: 0;
     }
     header {
-      height: 6rem;
+      height: 3rem;
       display: flex;
       align-items: center;
-      padding-left: 2.5rem;
+      padding-left: 1rem;
     }
     .nav-links {
       padding-top: 2rem;

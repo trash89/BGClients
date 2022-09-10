@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { links } from "../utils/links";
 import { useSelector } from "react-redux";
+import { BsPersonLinesFill } from "react-icons/bs";
 
 const NavLinks = ({ toggleSidebar }) => {
   const { user } = useSelector((store) => store.user);
@@ -27,7 +28,20 @@ const NavLinks = ({ toggleSidebar }) => {
           })}
         </>
       ) : (
-        <></>
+        <>
+          <NavLink
+            to="/clients/clientView"
+            className={({ isActive }) => {
+              return isActive ? "nav-link active" : "nav-link";
+            }}
+            onClick={toggleSidebar}
+          >
+            <span className="icon">
+              <BsPersonLinesFill />
+            </span>
+            Client
+          </NavLink>
+        </>
       )}
     </div>
   );
