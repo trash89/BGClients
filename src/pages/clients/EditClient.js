@@ -40,6 +40,7 @@ const EditClient = () => {
 
   useEffect(() => {
     const getData = async () => {
+      dispatch(clearValues());
       dispatch(setIsLoading());
       try {
         const resp = await axiosInstance.get(`/clients/${params.idClient}`);

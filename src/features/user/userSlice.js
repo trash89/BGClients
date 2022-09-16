@@ -40,15 +40,11 @@ const userSlice = createSlice({
       state.isSidebarOpen = !state.isSidebarOpen;
     },
     loginUser: (state, { payload }) => {
-      //state.user = payload;
-      //state.isSidebarOpen = false;
       addUserToLocalStorage(payload);
       toast.success(`Hello There ${payload.email}`);
       return { ...state, user: payload, isSidebarOpen: false };
     },
     logoutUser: (state) => {
-      //state.user = null;
-      //state.isSidebarOpen = false;
       removeUserFromLocalStorage();
       return { ...state, user: null, isSidebarOpen: false };
     },

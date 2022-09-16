@@ -28,9 +28,7 @@ export default function Register() {
           email: user.email,
           isAdmin: user.isAdmin,
         };
-        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${localObject.access_token}`;
         dispatch(loginUser(localObject));
-        navigate("/", { replace: true });
       }
     } catch (error) {
       console.log("error signIn=", error);

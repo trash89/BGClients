@@ -41,6 +41,7 @@ const EditEvent = () => {
 
   useEffect(() => {
     const getData = async () => {
+      dispatch(clearValues());
       dispatch(setIsLoading());
       try {
         const respClients = await axiosInstance.get("/clients");
