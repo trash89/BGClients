@@ -6,7 +6,7 @@ It allows the creation of a private secured area for clients in order to communi
 
 Once the application administrator creates a client, an user is created on Supabase with his email and a default password.
 
-The administrator can enter events and files for clients.
+The administrator can publish events and files for clients.
 
 When a client connects, he can view his informations on his secured area and download his files. He can also change his own password and the administrator can also reset his password to the default one.
 
@@ -18,4 +18,4 @@ The application is built with three components:
 - the API REST server, built with Express.
 - the frontend application, built with ReactJS, Redux and Bootstrap5, relaying on the underlying API REST server to communicate with the database.
 
-This repository contains the API REST server for the BG Clients application and the React frontend client.
+This repository contains the frontend application developped with ReactJS, ReduxToolkit and Bootstrap5.
