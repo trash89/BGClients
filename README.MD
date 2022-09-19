@@ -18,4 +18,4 @@ The application is built with three components:
 - the API REST server, built with Express.
 - the frontend application, built with ReactJS, Redux and Bootstrap5, relaying on the underlying API REST server to communicate with the database.
 
-This repository contains the frontend application developped with ReactJS, ReduxToolkit and Bootstrap5.
+This repository contains the frontend application.
