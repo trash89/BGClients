@@ -36,7 +36,7 @@ const ClientViewComponent = ({ user }) => {
     e.preventDefault();
     try {
       dispatch(setIsEditing());
-      await axiosInstance.put(`/clients/${data?.client?.id}`, { email: data.client?.email });
+      await axiosInstance.patch(`/clients/pwd/${data?.client?.id}`, { email: data.client?.email });
       toast.success("Password recovery email has been sent.");
     } catch (error) {
       console.log(error);

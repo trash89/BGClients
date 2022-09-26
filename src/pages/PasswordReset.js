@@ -116,7 +116,7 @@ function PasswordReset() {
       if (input.access_token && input.access_token !== "" && data.client) {
         dispatch(setIsEditing());
         axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${input.access_token}`;
-        await axiosInstance.put(`/clients/${data.client.id}`, {
+        await axiosInstance.put(`/clients/pwd/${data.client.id}`, {
           id: data.client.id,
           email: data.client.email,
           password1: input.password1,

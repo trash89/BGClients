@@ -95,7 +95,7 @@ const EditClient = () => {
     e.preventDefault();
     try {
       dispatch(setIsEditing());
-      await axiosInstance.put(`/clients/${params.idClient}`, { password: defaultPassword });
+      await axiosInstance.post(`/clients/pwd/${params.idClient}`, { password: defaultPassword });
       toast.success(`Successfully resetted the password for client ${input.name}...`);
       navigate("/clients", { replace: true });
     } catch (error) {
