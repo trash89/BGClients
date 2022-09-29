@@ -21,7 +21,7 @@
     "start": "react-scripts start",
     "build": "CI= react-scripts build",
     "cypress:open": "NODE_ENV=test cypress open --e2e --browser Brave",
-    "test": "NODE_ENV=test cypress run --browser Brave --e2e --spec cypress/e2e/BGClients"
+    "test": "NODE_ENV=test cypress run --browser Brave --e2e --spec cypress/e2e/3-BGClients"
   },
   "browserslist": {
     "production": [
@@ -37,7 +37,7 @@
   },
   "proxy": "https://bgclients.vercel.app",
   "devDependencies": {
-    "@faker-js/faker": "github:faker-js/faker",
+    "@faker-js/faker": "^7.5.0",
     "cypress": "^10.9.0"
   }
 }

@@ -38,7 +38,9 @@ module.exports = defineConfig({
   video: false,
   videoUploadOnPasses: false,
   screenshotOnRunFailure: false,
-
+  experimentalStudio: true,
+  defaultCommandTimeout: 7000,
+  requestTimeout: 7000,
   component: {
     devServer: {
       framework: "create-react-app",

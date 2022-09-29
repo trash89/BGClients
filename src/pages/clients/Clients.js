@@ -63,7 +63,14 @@ const Clients = () => {
       <div className="list-group">
         {data?.clients?.map((row) => {
           return (
-            <Link to={`/clients/${row.id}`} className="list-group-item btn btn-light btn-sm" data-bs-toggle="tooltip" title="Edit Client" key={row.id}>
+            <Link
+              to={`/clients/${row.id}`}
+              className="list-group-item btn btn-light btn-sm"
+              data-bs-toggle="tooltip"
+              data-test="clientsList"
+              title="Edit Client"
+              key={row.id}
+            >
               {row.name}, {row.email}
             </Link>
           );
