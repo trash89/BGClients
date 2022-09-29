@@ -20,8 +20,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "CI= react-scripts build",
-    "cypress:open": "NODE_ENV=test cypress open --e2e --browser chromium",
-    "test": "NODE_ENV=test cypress run --browser chromium --e2e --spec cypress/e2e/BGClients"
+    "cypress:open": "NODE_ENV=test cypress open --e2e --browser Brave",
+    "test": "NODE_ENV=test cypress run --browser Brave --e2e --spec cypress/e2e/BGClients"
   },
   "browserslist": {
     "production": [

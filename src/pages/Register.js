@@ -87,6 +87,7 @@ export default function Register() {
           </div>
           <div className="d-flex justify-content-center align-content-center align-items-center">
             <button
+              id="connect"
               type="submit"
               className="btn btn-primary text-capitalize flex-fill m-1"
               disabled={isLoading || !input.email || !input.password}
@@ -94,7 +95,7 @@ export default function Register() {
             >
               {isLoading ? "loading..." : "connect"}
             </button>
-            <button type="button" className="btn btn-primary text-capitalize flex-fill m-1" disabled={isLoading} onClick={handleDemo}>
+            <button id="demoapp" type="button" className="btn btn-primary text-capitalize flex-fill m-1" disabled={isLoading} onClick={handleDemo}>
               {isLoading ? "loading..." : "demo app"}
             </button>
           </div>
