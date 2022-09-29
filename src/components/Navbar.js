@@ -21,7 +21,7 @@ export default function Navbar() {
     <nav className="navbar navbar-expand-sm bg-success navbar-dark sticky-top p-0 m-0">
       <div className="container-fluid">
         <a href="/" className="navbar-brand">
-          <Logo />
+          <Logo height={25} width={25} />
         </a>
 
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">

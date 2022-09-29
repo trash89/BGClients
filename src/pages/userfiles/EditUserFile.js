@@ -101,7 +101,7 @@ const EditUserFile = () => {
     try {
       dispatch(setIsEditing());
       const resp = await axiosInstance.delete(`/userfiles/${params.idFile}`);
-      const file_name = resp?.data?.userfile[0]?.file_name;
+      const file_name = resp?.data?.file[0]?.file_name;
       toast.success(`Successfully deteled file ${file_name}`);
       navigate(from, { replace: true });
     } catch (error) {
@@ -127,7 +127,7 @@ const EditUserFile = () => {
       const resp = await axiosInstance.patch(`/userfiles/${params.idFile}`, formData, {
         headers: { "Content-Type": `multipart/form-data; boundary=${formData._boundary}` },
       });
-      const file_name = resp?.data?.userfile[0]?.file_name;
+      const file_name = resp?.data?.file[0]?.file_name;
       toast.success(`Successfully saved file ${file_name}`);
       navigate(from, { replace: true });
     } catch (error) {

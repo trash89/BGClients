@@ -69,7 +69,7 @@ export default function Register() {
     <div className="container mx-auto" style={{ width: "300px" }}>
       <div className="container-fluid p-2 my-4 shadow border border-primary rounded-3 bg-success bg-opacity-10">
         <div className="d-flex flex-row justify-content-center align-content-center align-items-center p-0 m-0">
-          <Logo />
+          <Logo height={32} width={32} />
           <p className="h4 text-center text-capitalize flex-grow-1">BG Clients</p>
         </div>
         <form>
