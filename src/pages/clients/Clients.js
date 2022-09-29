@@ -31,7 +31,6 @@ const Clients = () => {
       navigate("/register", { replace: true });
       return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
@@ -49,7 +48,6 @@ const Clients = () => {
       }
     };
     getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isMounted) return <></>;

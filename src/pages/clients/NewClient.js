@@ -19,7 +19,6 @@ const NewClient = () => {
     if (!user.isAdmin) {
       navigate("/clients", { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const handleChange = async (e) => {

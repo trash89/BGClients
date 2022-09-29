@@ -20,14 +20,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "CI= react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "cypress:open": "NODE_ENV=test cypress open --e2e --browser chromium",
+    "test": "NODE_ENV=test cypress run --browser chromium --e2e --spec cypress/e2e/BGClients"
   },
   "browserslist": {
     "production": [
@@ -41,5 +35,9 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://bgclients.vercel.app"
+  "proxy": "https://bgclients.vercel.app",
+  "devDependencies": {
+    "@faker-js/faker": "github:faker-js/faker",
+    "cypress": "^10.9.0"
+  }
 }

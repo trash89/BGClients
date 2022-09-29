@@ -38,7 +38,6 @@ const EditUserFile = () => {
     if (!user.isAdmin) {
       navigate(from, { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
@@ -87,7 +86,6 @@ const EditUserFile = () => {
       }
     };
     getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCancel = async (e) => {

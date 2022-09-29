@@ -49,7 +49,6 @@ const NewUserFile = () => {
     if (!user.isAdmin) {
       navigate(from, { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
@@ -72,7 +71,6 @@ const NewUserFile = () => {
       }
     };
     getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSave = async (e) => {

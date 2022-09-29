@@ -20,7 +20,6 @@ const UserFiles = () => {
       navigate("/register", { replace: true });
       return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
@@ -38,7 +37,6 @@ const UserFiles = () => {
       }
     };
     getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!isMounted) return <></>;

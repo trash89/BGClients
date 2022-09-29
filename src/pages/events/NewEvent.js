@@ -42,7 +42,6 @@ const NewEvent = () => {
     if (!user.isAdmin) {
       navigate(from, { replace: true });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
@@ -65,7 +64,6 @@ const NewEvent = () => {
       }
     };
     getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCancel = async (e) => {

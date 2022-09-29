@@ -60,7 +60,6 @@ export default function Register() {
     if (user) {
       navigate("/", { replace: true });
     }
-    // eslint-disable-next-line
   }, [user]);
 
   if (!isMounted) return <></>;
