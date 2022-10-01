@@ -34,11 +34,13 @@ describe("Login and Register", function () {
       cy.intercept("GET", "**/clients/*").as("getOneClient");
       cy.get('[data-test="clientsList"]').contains(email).click();
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
-      cy.get("#email")
-        .clear()
-        .then(() => cy.get("#email").should("be.empty"))
-        .then(() => cy.get("#email").type(newEmail))
-        .then(() => cy.get("#email").should("have.value", newEmail));
+
+      cy.get('input[name="email"]').as("email");
+      cy.get('input[name="email"]').clear();
+      cy.get('input[name="email"]').should("be.empty");
+      cy.get('input[name="email"]').type(newEmail);
+      cy.get('input[name="email"]').should("have.value", newEmail);
+
       cy.get('[title="Save"]').should("be.enabled");
       cy.intercept("GET", "**/clients").as("getNewClients");
       cy.get('[title="Save"]').click();
@@ -50,11 +52,11 @@ describe("Login and Register", function () {
       cy.intercept("GET", "**/clients/*").as("getOneClient");
       cy.get('[data-test="clientsList"]').contains(newEmail).click();
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
-      cy.get("#name")
-        .clear()
-        .then(() => cy.get("#name").should("be.empty"))
-        .then(() => cy.get("#name").type(newName))
-        .then(() => cy.get("#name").should("have.value", newName));
+      cy.get('input[name="name"]').as("name");
+      cy.get('input[name="name"]').as("name").clear();
+      cy.get('input[name="name"]').as("name").should("be.empty");
+      cy.get('input[name="name"]').as("name").type(newName);
+      cy.get('input[name="name"]').as("name").should("have.value", newName);
       cy.get('[title="Save"]').should("be.enabled");
       cy.intercept("GET", "**/clients").as("getNewClients");
       cy.get('[title="Save"]').click();
