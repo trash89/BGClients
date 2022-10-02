@@ -33,8 +33,9 @@ describe("Login and Register", function () {
     it("edit the new client, change email", function () {
       cy.intercept("GET", "**/clients/*").as("getOneClient");
       cy.get('[data-test="clientsList"]').contains(email).click();
-      cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
       cy.wait(5000);
+      cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
+
       cy.get('input[name="email"]').as("email");
       cy.get('input[name="email"]').clear();
       cy.get('input[name="email"]').should("be.empty");
@@ -42,7 +43,6 @@ describe("Login and Register", function () {
       cy.get('input[name="email"]').should("have.value", newEmail);
       cy.wait(5000);
       cy.get('[title="Save"]').should("be.enabled");
-
       cy.intercept("GET", "**/clients").as("getNewClients");
       cy.get('[title="Save"]').click();
       cy.wait(5000);
