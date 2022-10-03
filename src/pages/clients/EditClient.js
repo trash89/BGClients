@@ -150,7 +150,7 @@ const EditClient = () => {
                 <h4 className="modal-title">Deleting Client</h4>
               </div>
               <div className="modal-body">Are you sure to delete the client {input.name} ?</div>
-              <div className="modal-body">All Events,Files and details associated with this client will be deleted too !!!</div>
+              <div className="modal-body">All Events, Files and other details associated with this client will be deleted too !!!</div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-danger" data-cy="confirmDelete" data-bs-dismiss="modal" onClick={handleDelete}>
                   Delete
@@ -301,7 +301,13 @@ const EditClient = () => {
           </button>
           <div className="row mb-3 mt-3">
             <div className="col">
-              <TotalRows link="/events/newEvent" count={data?.events?.count} title="Events" state={{ from: location.pathname, client_id: input.id }} />
+              <TotalRows
+                link="/events/newEvent"
+                count={data?.events?.count}
+                title="Events"
+                state={{ from: location.pathname, client_id: input.id }}
+                datacy="newEvent"
+              />
               <ul className="list-group">
                 {data?.events?.events?.map((row) => {
                   const ev_date_formatted = new moment(row.ev_date).format(dateFormat);
@@ -312,6 +318,7 @@ const EditClient = () => {
                       className="list-group-item btn btn-light btn-sm"
                       data-bs-toggle="tooltip"
                       title="Edit Event"
+                      data-cy="clientsEvents"
                       key={row.id}
                     >
                       {ev_date_formatted}, {row.ev_name}, {row.ev_description},{row.displayed ? "Yes" : "No"}
@@ -321,7 +328,13 @@ const EditClient = () => {
               </ul>
             </div>
             <div className="col">
-              <TotalRows link="/userfiles/newFile" count={data?.userfiles?.count} title="Files" state={{ from: location.pathname, client_id: input.id }} />
+              <TotalRows
+                link="/userfiles/newFile"
+                count={data?.userfiles?.count}
+                title="Files"
+                state={{ from: location.pathname, client_id: input.id }}
+                datacy="newFile"
+              />
               <ul className="list-group">
                 {data?.userfiles?.userfiles?.map((row) => {
                   return (
@@ -331,6 +344,7 @@ const EditClient = () => {
                       className="list-group-item btn btn-light btn-sm"
                       data-bs-toggle="tooltip"
                       title="Edit Userfile"
+                      data-cy="clientsFiles"
                       key={row.id}
                     >
                       {row.file_name}, {row.file_description},{row.displayed ? "Yes" : "No"}

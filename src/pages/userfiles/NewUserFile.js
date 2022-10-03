@@ -137,6 +137,7 @@ const NewUserFile = () => {
             id="file"
             name="file"
             accept=".pdf"
+            data-cy="file"
             onChange={(e) => {
               setMyFile(e.target.files[0]);
             }}
@@ -153,13 +154,22 @@ const NewUserFile = () => {
             rows="5"
             id="file_description"
             name="file_description"
+            data-cy="file_description"
             value={input.file_description}
             onChange={handleChange}
             disabled={isEditing}
           />
         </div>
 
-        <button type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
+        <button
+          type="button"
+          className="btn btn-primary btn-sm me-2"
+          data-bs-toggle="tooltip"
+          title="Cancel"
+          data-cy="cancel"
+          onClick={handleCancel}
+          disabled={isEditing}
+        >
           <i className="fa-solid fa-times" />
         </button>
         <button
@@ -167,6 +177,7 @@ const NewUserFile = () => {
           className="btn btn-primary btn-sm me-2"
           data-bs-toggle="tooltip"
           title="Save"
+          data-cy="save"
           disabled={isEditing || !input.file_description || !input.client_id || !myFile}
           onClick={handleSave}
         >

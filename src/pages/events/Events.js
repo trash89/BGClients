@@ -61,13 +61,20 @@ const Events = () => {
 
   return (
     <div className="container p-2 my-2 border border-primary rounded-3 bg-success bg-opacity-10">
-      <TotalRows link="/events/newEvent" count={data.count} download={handleDownloadCsv} title="Events List" />
+      <TotalRows link="/events/newEvent" count={data.count} download={handleDownloadCsv} title="Events List" datacy="newEvent" />
 
       <ul className="list-group">
         {data?.events?.map((row) => {
           const ev_date_formatted = new moment(row.ev_date).format(dateFormat);
           return (
-            <Link to={`/events/${row.id}`} className="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Edit Event" key={row.id}>
+            <Link
+              to={`/events/${row.id}`}
+              className="btn btn-outline-primary btn-sm"
+              data-bs-toggle="tooltip"
+              title="Edit Event"
+              data-cy="EventsList"
+              key={row.id}
+            >
               {ev_date_formatted}, {row.clients.name}, {row.ev_description}, {row.displayed ? "Yes" : "No"}
             </Link>
           );

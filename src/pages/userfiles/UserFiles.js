@@ -48,11 +48,18 @@ const UserFiles = () => {
 
   return (
     <div className="container p-2 my-2 border border-primary rounded-3 bg-success bg-opacity-10">
-      <TotalRows link="/userfiles/newFile" count={data?.count} title="Userfiles list" />
+      <TotalRows link="/userfiles/newFile" count={data?.count} title="Userfiles list" datacy="newFile" />
       <ul className="list-group">
         {data?.userfiles?.map((row) => {
           return (
-            <Link to={`/userfiles/${row.id}`} className="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Edit Userfile" key={row.id}>
+            <Link
+              to={`/userfiles/${row.id}`}
+              className="btn btn-outline-primary btn-sm"
+              data-bs-toggle="tooltip"
+              title="Edit Userfile"
+              data-cy="filesList"
+              key={row.id}
+            >
               {row?.clients.name}, {row?.file_name}, {row?.file_description}, {row?.displayed ? "Yes" : "No"}
             </Link>
           );

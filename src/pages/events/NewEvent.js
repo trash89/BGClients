@@ -130,6 +130,7 @@ const NewEvent = () => {
             id="ev_date"
             placeholder="Enter the event date"
             name="ev_date"
+            data-cy="ev_date"
             value={input.ev_date}
             onChange={handleChange}
             disabled={isEditing}
@@ -146,6 +147,7 @@ const NewEvent = () => {
             id="ev_name"
             placeholder="Enter the event name"
             name="ev_name"
+            data-cy="ev_name"
             value={input.ev_name}
             onChange={handleChange}
             disabled={isEditing}
@@ -161,12 +163,21 @@ const NewEvent = () => {
             rows="5"
             id="ev_description"
             name="ev_description"
+            data-cy="ev_description"
             value={input.ev_description}
             onChange={handleChange}
             disabled={isEditing}
           />
         </div>
-        <button type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
+        <button
+          type="button"
+          className="btn btn-primary btn-sm me-2"
+          data-bs-toggle="tooltip"
+          title="Cancel"
+          data-cy="cancel"
+          onClick={handleCancel}
+          disabled={isEditing}
+        >
           <i className="fa-solid fa-times" />
         </button>
         <button
@@ -174,6 +185,7 @@ const NewEvent = () => {
           className="btn btn-primary btn-sm me-2"
           data-bs-toggle="tooltip"
           title="Save"
+          data-cy="save"
           onClick={handleSave}
           disabled={isEditing || !input.ev_name || !input.ev_description || !input.ev_date || !input.client_id}
         >
