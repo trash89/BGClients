@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const TotalRows = ({ link, count, download = "", title = "", state = null }) => {
   return (
     <div className="d-flex justify-content-between mb-1 mt-1">
-      <span id="newRow">
+      <span id="newRow" data-cy="newRow">
         {link !== "" && (
           <Link to={link} state={state} className="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Create a new row">
             <i className="fa-solid fa-plus" />

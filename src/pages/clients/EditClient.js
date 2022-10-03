@@ -152,10 +152,10 @@ const EditClient = () => {
               <div className="modal-body">Are you sure to delete the client {input.name} ?</div>
               <div className="modal-body">All Events,Files and details associated with this client will be deleted too !!!</div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleDelete}>
+                <button type="button" className="btn btn-danger" data-cy="confirmDelete" data-bs-dismiss="modal" onClick={handleDelete}>
                   Delete
                 </button>
-                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">
+                <button type="button" className="btn btn-primary" data-cy="cancelDelete" data-bs-dismiss="modal">
                   Cancel
                 </button>
               </div>
@@ -171,10 +171,10 @@ const EditClient = () => {
               <div className="modal-body">Are you sure to reset the password for client {input.name} ?</div>
               <div className="modal-body">His default password will be {defaultPassword}</div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleReset}>
+                <button type="button" className="btn btn-danger" data-cy="confirmReset" data-bs-dismiss="modal" onClick={handleReset}>
                   Reset
                 </button>
-                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">
+                <button type="button" className="btn btn-primary" data-cy="cancelReset" data-bs-dismiss="modal">
                   Cancel
                 </button>
               </div>
@@ -195,6 +195,7 @@ const EditClient = () => {
                 id="email"
                 placeholder="Enter email"
                 name="email"
+                data-cy="email"
                 value={input.email}
                 onChange={handleChange}
                 disabled={isEditing}
@@ -211,6 +212,7 @@ const EditClient = () => {
                 id="name"
                 placeholder="Enter client name"
                 name="name"
+                data-cy="name"
                 value={input.name}
                 onChange={handleChange}
                 disabled={isEditing}
@@ -228,6 +230,7 @@ const EditClient = () => {
                 rows="5"
                 id="description"
                 name="description"
+                data-cy="description"
                 value={input.description}
                 onChange={handleChange}
                 disabled={isEditing}
@@ -243,19 +246,29 @@ const EditClient = () => {
                 rows="5"
                 id="address"
                 name="address"
+                data-cy="address"
                 value={input.address}
                 onChange={handleChange}
                 disabled={isEditing}
               />
             </div>
           </div>
-          <button type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm me-2"
+            data-bs-toggle="tooltip"
+            title="Cancel"
+            data-cy="cancel"
+            onClick={handleCancel}
+            disabled={isEditing}
+          >
             <i className="fa-solid fa-times" />
           </button>
           <button
             type="button"
             className="btn btn-primary btn-sm me-2"
             title="Delete"
+            data-cy="delete"
             disabled={isEditing}
             data-bs-toggle="modal"
             data-bs-target="#deleteClient"
@@ -267,6 +280,7 @@ const EditClient = () => {
             type="button"
             className="btn btn-primary btn-sm me-2"
             title="Reset Password"
+            data-cy="reset"
             disabled={isEditing}
             data-bs-toggle="modal"
             data-bs-target="#resetClient"
@@ -279,6 +293,7 @@ const EditClient = () => {
             className="btn btn-primary btn-sm me-2"
             data-bs-toggle="tooltip"
             title="Save"
+            data-cy="save"
             onClick={handleSave}
             disabled={isEditing || !input.name || !input.description || !input.address}
           >

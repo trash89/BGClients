@@ -67,7 +67,7 @@ const Clients = () => {
               to={`/clients/${row.id}`}
               className="list-group-item btn btn-light btn-sm"
               data-bs-toggle="tooltip"
-              data-test="clientsList"
+              data-cy="clientsList"
               title="Edit Client"
               key={row.id}
             >

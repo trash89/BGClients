@@ -74,6 +74,7 @@ const NewClient = () => {
               className="form-control"
               id="email"
               name="email"
+              data-cy="email"
               value={input.email}
               onChange={handleChange}
               disabled={isEditing}
@@ -83,7 +84,17 @@ const NewClient = () => {
             <label htmlFor="name" className="form-label">
               Name:
             </label>
-            <input required type="text" className="form-control" id="name" name="name" value={input.name} onChange={handleChange} disabled={isEditing} />
+            <input
+              required
+              type="text"
+              className="form-control"
+              id="name"
+              name="name"
+              data-cy="name"
+              value={input.name}
+              onChange={handleChange}
+              disabled={isEditing}
+            />
           </div>
         </div>
         <div className="row mb-3 mt-3">
@@ -97,6 +108,7 @@ const NewClient = () => {
               rows="5"
               id="description"
               name="description"
+              data-cy="description"
               value={input.description}
               onChange={handleChange}
               disabled={isEditing}
@@ -112,13 +124,22 @@ const NewClient = () => {
               rows="5"
               id="address"
               name="address"
+              data-cy="address"
               value={input.address}
               onChange={handleChange}
               disabled={isEditing}
             />
           </div>
         </div>
-        <button type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
+        <button
+          type="button"
+          className="btn btn-primary btn-sm me-2"
+          data-bs-toggle="tooltip"
+          title="Cancel"
+          data-cy="cancel"
+          onClick={handleCancel}
+          disabled={isEditing}
+        >
           <i className="fa-solid fa-times" />
         </button>
         <button
@@ -126,6 +147,7 @@ const NewClient = () => {
           className="btn btn-primary btn-sm me-2"
           data-bs-toggle="tooltip"
           title="Save"
+          data-cy="save"
           onClick={handleSave}
           disabled={isEditing || !input.email || !input.name || !input.description || !input.address}
         >
