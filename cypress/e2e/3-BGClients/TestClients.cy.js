@@ -16,6 +16,8 @@ describe("Clients tests", function () {
     const newEmail = faker.internet.email();
     const ev_name = faker.company.name();
     const newEv_name = faker.company.name();
+    const file_description = faker.lorem.lines(1);
+    const newFile_description = faker.lorem.lines(1);
     it("create a new client", function () {
       const name = faker.company.name();
       const description = faker.lorem.lines(1);
@@ -108,8 +110,30 @@ describe("Clients tests", function () {
       cy.get('[data-cy="clientsEvents"]').should("contain.text", newEv_name);
     });
 
+    it("delete the event", function () {
+      cy.intercept("GET", "**/clients/*").as("getOneClient");
+      cy.get('[data-cy="clientsList"]').contains(newEmail).click();
+      cy.wait(WAIT_TIME);
+      cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
+
+      cy.intercept("GET", "**/events/*").as("getOneEvent");
+      cy.get('[data-cy="clientsEvents"]').contains(newEv_name).click();
+      cy.wait(WAIT_TIME);
+      cy.wait("@getOneEvent").its("response.statusCode").should("be.oneOf", [200, 304]);
+
+      cy.intercept("DELETE", "**/events/*").as("deleteNewEvent");
+      cy.get('[data-cy="delete"]').click();
+      cy.wait(WAIT_TIME);
+      cy.get('[data-cy="confirmDelete"]').click();
+      cy.wait(WAIT_TIME);
+
+      cy.wait("@deleteNewEvent").its("response.statusCode").should("be.oneOf", [200, 304]);
+      cy.intercept("GET", "**/clients").as("getOneClient");
+      cy.wait(WAIT_TIME);
+      cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
+    });
+
     it("create a new file for the new created client", function () {
-      const file_description = faker.lorem.lines(1);
       cy.intercept("GET", "**/clients/*").as("getOneClient");
       cy.get('[data-cy="clientsList"]').contains(newEmail).click();
       cy.wait(WAIT_TIME);
@@ -127,6 +151,47 @@ describe("Clients tests", function () {
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
       cy.get('[data-cy="clientsFiles"]').should("contain.text", file_description);
+    });
+
+    it("edit the new file", function () {
+      cy.intercept("GET", "**/clients/*").as("getOneClient");
+      cy.get('[data-cy="clientsList"]').contains(newEmail).click();
+      cy.wait(WAIT_TIME);
+      cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
+
+      cy.get('[data-cy="clientsFiles"]').should("contain.text", file_description).click();
+      cy.wait(WAIT_TIME);
+
+      cy.fixture("test2.pdf", { encoding: null }).as("myFixture");
+      cy.get('[data-cy="file"]').selectFile("@myFixture");
+      cy.get('[data-cy="file_description"]').clear().type(newFile_description).should("have.value", newFile_description);
+
+      cy.intercept("GET", "**/clients").as("getOneClient");
+      cy.get('[data-cy="save"]').should("be.enabled").click();
+      cy.wait(WAIT_TIME);
+      cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
+      cy.get('[data-cy="clientsFiles"]').should("contain.text", newFile_description);
+    });
+
+    it("delete the file", function () {
+      cy.intercept("GET", "**/clients/*").as("getOneClient");
+      cy.get('[data-cy="clientsList"]').contains(newEmail).click();
+      cy.wait(WAIT_TIME);
+      cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
+
+      cy.get('[data-cy="clientsFiles"]').should("contain.text", newFile_description).click();
+      cy.wait(WAIT_TIME);
+
+      cy.intercept("DELETE", "**/userfiles/*").as("deleteFile");
+      cy.get('[data-cy="delete"]').click();
+      cy.wait(WAIT_TIME);
+      cy.get('[data-cy="confirmDelete"]').click();
+      cy.wait(WAIT_TIME);
+
+      cy.wait("@deleteFile").its("response.statusCode").should("be.oneOf", [200, 304]);
+      cy.intercept("GET", "**/clients").as("getOneClient");
+      cy.wait(WAIT_TIME);
+      cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
     });
 
     it("delete the new created client", function () {

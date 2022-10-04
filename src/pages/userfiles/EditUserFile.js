@@ -160,10 +160,10 @@ const EditUserFile = () => {
               </div>
               <div className="modal-body">Are you sure to delete the file {input.file_name} ?</div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleDelete}>
+                <button type="button" className="btn btn-danger" data-bs-dismiss="modal" data-cy="confirmDelete" onClick={handleDelete}>
                   Delete
                 </button>
-                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">
+                <button type="button" className="btn btn-primary" data-bs-dismiss="modal" data-cy="confirmCancel">
                   Cancel
                 </button>
               </div>
@@ -231,6 +231,7 @@ const EditUserFile = () => {
               className="form-control form-control-sm"
               id="file"
               name="file"
+              data-cy="file"
               accept=".pdf"
               onChange={(e) => {
                 setMyFile(e.target.files[0]);
@@ -248,12 +249,21 @@ const EditUserFile = () => {
               rows="5"
               id="file_description"
               name="file_description"
+              data-cy="file_description"
               value={input.file_description}
               onChange={handleChange}
               disabled={isEditing}
             />
           </div>
-          <button type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm me-2"
+            data-bs-toggle="tooltip"
+            title="Cancel"
+            onClick={handleCancel}
+            data-cy="cancel"
+            disabled={isEditing}
+          >
             <i className="fa-solid fa-times" />
           </button>
           <button
@@ -264,6 +274,7 @@ const EditUserFile = () => {
             data-bs-toggle="modal"
             data-bs-target="#deleteFile"
             data-bs-keyboard="false"
+            data-cy="delete"
           >
             <i className="fa-solid fa-trash" />
           </button>
@@ -272,6 +283,7 @@ const EditUserFile = () => {
             className="btn btn-primary btn-sm me-2"
             data-bs-toggle="tooltip"
             title="Save"
+            data-cy="save"
             onClick={handleSave}
             disabled={isEditing || !input.file_description || !input.client_id}
           >
