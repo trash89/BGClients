@@ -14,8 +14,8 @@ describe("Clients tests", function () {
   context("Context /clients", () => {
     const email = faker.internet.email();
     const newEmail = faker.internet.email();
-    const ev_name = faker.company.name();
-    const newEv_name = faker.company.name();
+    const ev_name = faker.random.word();
+    const newEv_name = faker.random.word();
     const file_description = faker.lorem.lines(1);
     const newFile_description = faker.lorem.lines(1);
     it("create a new client", function () {
@@ -59,7 +59,7 @@ describe("Clients tests", function () {
 
     it("create a new event for the new created client", function () {
       const ev_description = faker.lorem.lines(1);
-      const ev_date_gen = faker.date.soon().toISOString();
+      const ev_date_gen = faker.date.soon(2).toISOString();
       const myArray = ev_date_gen.split("T");
       const ev_date = myArray[0];
       cy.intercept("GET", "**/clients/*").as("getOneClient");
@@ -82,7 +82,7 @@ describe("Clients tests", function () {
 
     it("edit the new event, change all fields", function () {
       const ev_description = faker.lorem.lines(1);
-      const ev_date_gen = faker.date.soon().toISOString();
+      const ev_date_gen = faker.date.soon(3).toISOString();
       const myArray = ev_date_gen.split("T");
       const ev_date = myArray[0];
 
@@ -144,6 +144,7 @@ describe("Clients tests", function () {
 
       cy.fixture("test1.pdf", { encoding: null }).as("myFixture");
       cy.get('[data-cy="file"]').selectFile("@myFixture");
+      cy.wait(WAIT_TIME);
       cy.get('[data-cy="file_description"]').type(file_description).should("have.value", file_description);
 
       cy.intercept("GET", "**/clients").as("getOneClient");
@@ -164,6 +165,7 @@ describe("Clients tests", function () {
 
       cy.fixture("test2.pdf", { encoding: null }).as("myFixture");
       cy.get('[data-cy="file"]').selectFile("@myFixture");
+      cy.wait(WAIT_TIME);
       cy.get('[data-cy="file_description"]').clear().type(newFile_description).should("have.value", newFile_description);
 
       cy.intercept("GET", "**/clients").as("getOneClient");
