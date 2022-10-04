@@ -14,7 +14,8 @@ describe("Clients tests", function () {
   context("Context /clients", () => {
     const email = faker.internet.email();
     const newEmail = faker.internet.email();
-
+    const ev_name = faker.company.name();
+    const newEv_name = faker.company.name();
     it("create a new client", function () {
       const name = faker.company.name();
       const description = faker.lorem.lines(1);
@@ -55,7 +56,6 @@ describe("Clients tests", function () {
     });
 
     it("create a new event for the new created client", function () {
-      const ev_name = faker.company.name();
       const ev_description = faker.lorem.lines(1);
       const ev_date_gen = faker.date.soon().toISOString();
       const myArray = ev_date_gen.split("T");
@@ -76,6 +76,36 @@ describe("Clients tests", function () {
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
       cy.get('[data-cy="clientsEvents"]').should("contain.text", ev_name);
+    });
+
+    it("edit the new event, change all fields", function () {
+      const ev_description = faker.lorem.lines(1);
+      const ev_date_gen = faker.date.soon().toISOString();
+      const myArray = ev_date_gen.split("T");
+      const ev_date = myArray[0];
+
+      cy.intercept("GET", "**/clients/*").as("getOneClient");
+      cy.get('[data-cy="clientsList"]').contains(newEmail).click();
+      cy.wait(WAIT_TIME);
+      cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
+
+      cy.intercept("GET", "**/events/*").as("getOneEvent");
+      cy.get('[data-cy="clientsEvents"]').contains(ev_name).click();
+      cy.wait(WAIT_TIME);
+      cy.wait("@getOneEvent").its("response.statusCode").should("be.oneOf", [200, 304]);
+
+      cy.get('[data-cy="ev_date"]').clear().type(ev_date).should("have.value", ev_date);
+      cy.get('[data-cy="ev_name"]').clear().type(newEv_name).should("have.value", newEv_name);
+      cy.get('[data-cy="ev_description"]').clear().type(ev_description).should("have.value", ev_description);
+
+      cy.intercept("PATCH", "**/events/*").as("getNewEvent");
+      cy.get('[data-cy="save"]').click();
+      cy.wait(WAIT_TIME);
+      cy.wait("@getNewEvent").its("response.statusCode").should("be.oneOf", [200, 304]);
+      cy.intercept("GET", "**/clients").as("getOneClient");
+      cy.wait(WAIT_TIME);
+      cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
+      cy.get('[data-cy="clientsEvents"]').should("contain.text", newEv_name);
     });
 
     it("create a new file for the new created client", function () {

@@ -145,10 +145,10 @@ const EditEvent = () => {
               </div>
               <div className="modal-body">Are you sure to delete the event {input.ev_name} ?</div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-danger" data-bs-dismiss="modal" onClick={handleDelete}>
+                <button type="button" className="btn btn-danger" data-bs-dismiss="modal" data-cy="confirmDelete" onClick={handleDelete}>
                   Delete
                 </button>
-                <button type="button" className="btn btn-primary" data-bs-dismiss="modal">
+                <button type="button" className="btn btn-primary" data-bs-dismiss="modal" data-cy="confirmCancel">
                   Cancel
                 </button>
               </div>
@@ -181,6 +181,7 @@ const EditEvent = () => {
               id="ev_date"
               placeholder="Enter the event date"
               name="ev_date"
+              data-cy="ev_date"
               value={input.ev_date}
               onChange={handleChange}
               disabled={isEditing}
@@ -197,6 +198,7 @@ const EditEvent = () => {
               id="ev_name"
               placeholder="Enter the event name"
               name="ev_name"
+              data-cy="ev_name"
               value={input.ev_name}
               onChange={handleChange}
               disabled={isEditing}
@@ -208,6 +210,7 @@ const EditEvent = () => {
               type="checkbox"
               id="displayed"
               name="displayed"
+              data-cy="displayed"
               value={input.displayed}
               checked={input.displayed}
               onChange={(e) => {
@@ -227,12 +230,21 @@ const EditEvent = () => {
               rows="5"
               id="ev_description"
               name="ev_description"
+              data-cy="ev_description"
               value={input.ev_description}
               onChange={handleChange}
               disabled={isEditing}
             />
           </div>
-          <button type="button" className="btn btn-primary btn-sm me-2" data-bs-toggle="tooltip" title="Cancel" onClick={handleCancel} disabled={isEditing}>
+          <button
+            type="button"
+            className="btn btn-primary btn-sm me-2"
+            data-bs-toggle="tooltip"
+            title="Cancel"
+            data-cy="cancel"
+            onClick={handleCancel}
+            disabled={isEditing}
+          >
             <i className="fa-solid fa-times" />
           </button>
           <button
@@ -243,6 +255,7 @@ const EditEvent = () => {
             data-bs-toggle="modal"
             data-bs-target="#deleteEvent"
             data-bs-keyboard="false"
+            data-cy="delete"
           >
             <i className="fa-solid fa-trash" />
           </button>
@@ -252,6 +265,7 @@ const EditEvent = () => {
             className="btn btn-primary btn-sm me-2"
             data-bs-toggle="tooltip"
             title="Save"
+            data-cy="save"
             onClick={handleSave}
             disabled={isEditing || !input.ev_name || !input.ev_description || !input.ev_date || !input.client_id}
           >
