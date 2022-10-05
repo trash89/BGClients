@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 const WAIT_TIME = 3000;
 
-describe("Clients tests", function () {
+describe("Integration tests", function () {
   beforeEach(function () {
     cy.visit("http://localhost:3000");
     cy.url().should("eq", "http://localhost:3000/register");
@@ -11,7 +11,7 @@ describe("Clients tests", function () {
     cy.get(".container > .d-flex").should("contain.text", "Clients list");
   });
 
-  context("Context /clients", () => {
+  context("Context integration", () => {
     const email = faker.internet.email();
     let client_id = "";
     const email2 = faker.internet.email();
@@ -127,7 +127,7 @@ describe("Clients tests", function () {
       cy.get('[data-cy="client_id"]').select(`${client_id2}`).should("have.value", `${client_id2}`);
       cy.get('[data-cy="ev_date"]').clear().type(ev_date).should("have.value", ev_date);
       cy.get('[data-cy="ev_name"]').clear().type(newEv_name).should("have.value", newEv_name);
-      cy.get('[data-cy="displayed"]').uncheck().should("be.not.checked");
+      cy.get('[data-cy="displayed"]').uncheck().should("not.be.checked");
       cy.get('[data-cy="ev_description"]').clear().type(ev_description).should("have.value", ev_description);
 
       cy.intercept("PATCH", "**/events/*").as("getNewEvent");
@@ -145,18 +145,15 @@ describe("Clients tests", function () {
       cy.get('[data-cy="clientsList"]').contains(email2).click();
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
-
       cy.intercept("GET", "**/events/*").as("getOneEvent");
       cy.get('[data-cy="clientsEvents"]').contains(newEv_name).click();
       cy.wait(WAIT_TIME);
       cy.wait("@getOneEvent").its("response.statusCode").should("be.oneOf", [200, 304]);
-
       cy.intercept("DELETE", "**/events/*").as("deleteNewEvent");
       cy.get('[data-cy="delete"]').click();
       cy.wait(WAIT_TIME);
       cy.get('[data-cy="confirmDelete"]').click();
       cy.wait(WAIT_TIME);
-
       cy.wait("@deleteNewEvent").its("response.statusCode").should("be.oneOf", [200, 304]);
       cy.intercept("GET", "**/clients").as("getOneClient");
       cy.wait(WAIT_TIME);
@@ -194,7 +191,7 @@ describe("Clients tests", function () {
       cy.wait(WAIT_TIME);
 
       cy.get('[data-cy="client_id"]').select(`${client_id2}`).should("have.value", `${client_id2}`);
-      cy.get('[data-cy="displayed"]').uncheck().should("be.not.checked");
+      cy.get('[data-cy="displayed"]').uncheck().should("not.be.checked");
       cy.fixture("test2.pdf", { encoding: null }).as("myFixture");
       cy.get('[data-cy="file"]').selectFile("@myFixture");
       cy.wait(WAIT_TIME);
@@ -206,34 +203,28 @@ describe("Clients tests", function () {
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
       //cy.get('[data-cy="clientsFiles"]').should("contain.text", newFile_description);
     });
-
     it("delete the file, now it belongs to the second client", function () {
       cy.intercept("GET", "**/clients/*").as("getOneClient");
       cy.get('[data-cy="clientsList"]').contains(email2).click();
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
-
       cy.get('[data-cy="clientsFiles"]').should("contain.text", newFile_description).click();
       cy.wait(WAIT_TIME);
-
       cy.intercept("DELETE", "**/userfiles/*").as("deleteFile");
       cy.get('[data-cy="delete"]').click();
       cy.wait(WAIT_TIME);
       cy.get('[data-cy="confirmDelete"]').click();
       cy.wait(WAIT_TIME);
-
       cy.wait("@deleteFile").its("response.statusCode").should("be.oneOf", [200, 304]);
       cy.intercept("GET", "**/clients").as("getOneClient");
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
     });
-
     it("delete the new created client", function () {
       cy.intercept("GET", "**/clients/*").as("getOneClient");
       cy.get('[data-cy="clientsList"]').contains(newEmail).click();
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
-
       cy.get('[data-cy="delete"]').should("be.enabled");
       cy.intercept("GET", "**/clients").as("getNewClients");
       cy.get('[data-cy="delete"]').click();
@@ -248,7 +239,6 @@ describe("Clients tests", function () {
       cy.get('[data-cy="clientsList"]').contains(email2).click();
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
-
       cy.get('[data-cy="delete"]').should("be.enabled");
       cy.intercept("GET", "**/clients").as("getNewClients");
       cy.get('[data-cy="delete"]').click();

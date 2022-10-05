@@ -108,7 +108,6 @@ const EditEvent = () => {
         ev_name: input.ev_name,
         ev_description: input.ev_description,
         ev_date: input.ev_date,
-        user_id: input.user_id,
         displayed: input.displayed,
       });
       toast.success(`Successfully saved event ${input.ev_name}`);
