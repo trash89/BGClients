@@ -44,10 +44,10 @@ describe("Clients tests", function () {
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
 
-      cy.get('[data-cy="email"]').as("email").clear().should("be.empty").type(newEmail).should("have.value", newEmail);
-      cy.get('[data-cy="name"]').as("name").clear().should("be.empty").type(name).should("have.value", name);
-      cy.get('[data-cy="description"]').as("description").clear().should("be.empty").type(description).should("have.value", description);
-      cy.get('[data-cy="address"]').as("address").clear().should("be.empty").type(address).should("have.value", address);
+      cy.get('[data-cy="email"]').clear().should("be.empty").type(newEmail).should("have.value", newEmail);
+      cy.get('[data-cy="name"]').clear().should("be.empty").type(name).should("have.value", name);
+      cy.get('[data-cy="description"]').clear().should("be.empty").type(description).should("have.value", description);
+      cy.get('[data-cy="address"]').clear().should("be.empty").type(address).should("have.value", address);
       cy.get('[data-cy="save"]').should("be.enabled");
       cy.intercept("GET", "**/clients").as("getNewClients");
       cy.get('[data-cy="save"]').click();
