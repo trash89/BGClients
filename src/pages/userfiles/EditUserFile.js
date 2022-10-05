@@ -179,6 +179,7 @@ const EditUserFile = () => {
               className="form-select form-control-sm"
               id="client_id"
               name="client_id"
+              data-cy="client_id"
               value={input.client_id}
               onChange={handleChange}
               disabled={isEditing}
@@ -212,6 +213,7 @@ const EditUserFile = () => {
               type="checkbox"
               id="displayed"
               name="displayed"
+              data-cy="displayed"
               value={input.displayed}
               checked={input.displayed}
               onChange={(e) => {

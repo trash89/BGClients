@@ -160,7 +160,15 @@ const EditEvent = () => {
             <label htmlFor="client_id" className="form-label">
               Client:
             </label>
-            <select className="form-select" id="client_id" name="client_id" value={input.client_id} onChange={handleChange} disabled={isEditing}>
+            <select
+              className="form-select"
+              id="client_id"
+              name="client_id"
+              value={input.client_id}
+              data-cy="client_id"
+              onChange={handleChange}
+              disabled={isEditing}
+            >
               {data?.clients?.map((client) => {
                 return (
                   <option key={client.id} value={client.id}>

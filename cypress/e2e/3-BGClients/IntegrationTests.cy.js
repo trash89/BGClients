@@ -13,6 +13,9 @@ describe("Clients tests", function () {
 
   context("Context /clients", () => {
     const email = faker.internet.email();
+    let client_id = "";
+    const email2 = faker.internet.email();
+    let client_id2 = "";
     const newEmail = faker.internet.email();
     const ev_name = faker.random.word();
     const newEv_name = faker.random.word();
@@ -29,12 +32,38 @@ describe("Clients tests", function () {
       cy.get('[data-cy="description"]').type(description).should("have.value", description);
       cy.get('[data-cy="address"]').type(address).should("have.value", address);
       cy.intercept("GET", "**/clients").as("getClients");
+      cy.intercept("POST", "**/clients").as("saveClient");
       cy.get('[data-cy="save"]').should("be.enabled").click();
+      cy.wait("@saveClient")
+        .its("response.body")
+        .then((body) => {
+          client_id = body.client[0].id;
+        });
       cy.wait("@getClients").its("response.statusCode").should("be.oneOf", [200, 304]);
       cy.get('[data-cy="clientsList"]').should("contain.text", email);
     });
+    it("create a second client", function () {
+      const name = faker.company.name();
+      const description = faker.lorem.lines(1);
+      const address = faker.address.streetAddress({ useFullAddress: true });
 
-    it("edit the new client, change all fields", function () {
+      cy.get("[data-cy='newClient']").click();
+      cy.get('[data-cy="email"]').should("have.focus").type(email2).should("have.value", email2);
+      cy.get('[data-cy="name"]').type(name).should("have.value", name);
+      cy.get('[data-cy="description"]').type(description).should("have.value", description);
+      cy.get('[data-cy="address"]').type(address).should("have.value", address);
+      cy.intercept("GET", "**/clients").as("getClients");
+      cy.intercept("POST", "**/clients").as("saveClient");
+      cy.get('[data-cy="save"]').should("be.enabled").click();
+      cy.wait("@saveClient")
+        .its("response.body")
+        .then((body) => {
+          client_id2 = body.client[0].id;
+        });
+      cy.wait("@getClients").its("response.statusCode").should("be.oneOf", [200, 304]);
+      cy.get('[data-cy="clientsList"]').should("contain.text", email2);
+    });
+    it("edit the first created client, change all fields", function () {
       const name = faker.company.name();
       const description = faker.lorem.lines(1);
       const address = faker.address.streetAddress({ useFullAddress: true });
@@ -54,10 +83,9 @@ describe("Clients tests", function () {
       cy.wait(WAIT_TIME);
       cy.wait("@getNewClients").its("response.statusCode").should("be.oneOf", [200, 304]);
       cy.get('[data-cy="clientsList"]').should("contain.text", newEmail);
-      cy.get('[data-cy="clientsList"]').should("contain.text", name);
     });
 
-    it("create a new event for the new created client", function () {
+    it("create a new event for the first created client", function () {
       const ev_description = faker.lorem.lines(1);
       const ev_date_gen = faker.date.soon(2).toISOString();
       const myArray = ev_date_gen.split("T");
@@ -96,8 +124,10 @@ describe("Clients tests", function () {
       cy.wait(WAIT_TIME);
       cy.wait("@getOneEvent").its("response.statusCode").should("be.oneOf", [200, 304]);
 
+      cy.get('[data-cy="client_id"]').select(`${client_id2}`).should("have.value", `${client_id2}`);
       cy.get('[data-cy="ev_date"]').clear().type(ev_date).should("have.value", ev_date);
       cy.get('[data-cy="ev_name"]').clear().type(newEv_name).should("have.value", newEv_name);
+      cy.get('[data-cy="displayed"]').uncheck().should("be.not.checked");
       cy.get('[data-cy="ev_description"]').clear().type(ev_description).should("have.value", ev_description);
 
       cy.intercept("PATCH", "**/events/*").as("getNewEvent");
@@ -107,12 +137,12 @@ describe("Clients tests", function () {
       cy.intercept("GET", "**/clients").as("getOneClient");
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
-      cy.get('[data-cy="clientsEvents"]').should("contain.text", newEv_name);
+      //cy.get('[data-cy="clientsEvents"]').should("contain.text", newEv_name);
     });
 
-    it("delete the event", function () {
+    it("delete the event, now it belongs to the second client", function () {
       cy.intercept("GET", "**/clients/*").as("getOneClient");
-      cy.get('[data-cy="clientsList"]').contains(newEmail).click();
+      cy.get('[data-cy="clientsList"]').contains(email2).click();
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
 
@@ -163,6 +193,8 @@ describe("Clients tests", function () {
       cy.get('[data-cy="clientsFiles"]').should("contain.text", file_description).click();
       cy.wait(WAIT_TIME);
 
+      cy.get('[data-cy="client_id"]').select(`${client_id2}`).should("have.value", `${client_id2}`);
+      cy.get('[data-cy="displayed"]').uncheck().should("be.not.checked");
       cy.fixture("test2.pdf", { encoding: null }).as("myFixture");
       cy.get('[data-cy="file"]').selectFile("@myFixture");
       cy.wait(WAIT_TIME);
@@ -172,12 +204,12 @@ describe("Clients tests", function () {
       cy.get('[data-cy="save"]').should("be.enabled").click();
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
-      cy.get('[data-cy="clientsFiles"]').should("contain.text", newFile_description);
+      //cy.get('[data-cy="clientsFiles"]').should("contain.text", newFile_description);
     });
 
-    it("delete the file", function () {
+    it("delete the file, now it belongs to the second client", function () {
       cy.intercept("GET", "**/clients/*").as("getOneClient");
-      cy.get('[data-cy="clientsList"]').contains(newEmail).click();
+      cy.get('[data-cy="clientsList"]').contains(email2).click();
       cy.wait(WAIT_TIME);
       cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
 
@@ -210,6 +242,21 @@ describe("Clients tests", function () {
       cy.wait(WAIT_TIME);
       cy.wait("@getNewClients").its("response.statusCode").should("be.oneOf", [200, 304]);
       cy.get('[data-cy="clientsList"]').should("not.contain.text", newEmail);
+    });
+    it("delete the second client", function () {
+      cy.intercept("GET", "**/clients/*").as("getOneClient");
+      cy.get('[data-cy="clientsList"]').contains(email2).click();
+      cy.wait(WAIT_TIME);
+      cy.wait("@getOneClient").its("response.statusCode").should("be.oneOf", [200, 304]);
+
+      cy.get('[data-cy="delete"]').should("be.enabled");
+      cy.intercept("GET", "**/clients").as("getNewClients");
+      cy.get('[data-cy="delete"]').click();
+      cy.wait(WAIT_TIME);
+      cy.get('[data-cy="confirmDelete"]').click();
+      cy.wait(WAIT_TIME);
+      cy.wait("@getNewClients").its("response.statusCode").should("be.oneOf", [200, 304]);
+      //cy.get('[data-cy="clientsList"]').should("not.contain.text", email2);
     });
   });
 });
