@@ -24,20 +24,21 @@ const Events = () => {
     }
   }, [user]);
 
+  const getData = async () => {
+    dispatch(setIsLoading());
+    try {
+      const resp = await axiosInstance.get("/events");
+      dispatch(setData(resp.data));
+    } catch (error) {
+      console.log(error);
+      dispatch(setData({}));
+    } finally {
+      dispatch(clearIsLoading());
+    }
+  };
+
   useEffect(() => {
     dispatch(clearValues());
-    const getData = async () => {
-      dispatch(setIsLoading());
-      try {
-        const resp = await axiosInstance.get("/events");
-        dispatch(setData(resp.data));
-      } catch (error) {
-        console.log(error);
-        dispatch(setData({}));
-      } finally {
-        dispatch(clearIsLoading());
-      }
-    };
     getData();
   }, []);
 
@@ -62,7 +63,6 @@ const Events = () => {
   return (
     <div className="container p-2 my-2 border border-primary rounded-3 bg-success bg-opacity-10">
       <TotalRows link="/events/newEvent" count={data.count} download={handleDownloadCsv} title="Events List" datacy="newEvent" />
-
       <ul className="list-group">
         {data?.events?.map((row) => {
           const ev_date_formatted = new moment(row.ev_date).format(dateFormat);

@@ -44,25 +44,26 @@ const NewEvent = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    const getData = async () => {
-      dispatch(clearValues());
-      dispatch(setIsLoading());
-      try {
-        const resp = await axiosInstance.get("/clients");
-        dispatch(setData(resp.data));
-        if (client_id) {
-          dispatch(setInput({ ...input, name: "client_id", value: client_id }));
-        } else if (resp?.data?.clients?.length > 0) {
-          dispatch(setInput({ ...input, name: "client_id", value: resp.data.clients[0].id }));
-        }
-      } catch (error) {
-        console.log(error);
-        dispatch(setError(error?.response?.data?.error?.message || error?.message));
-      } finally {
-        dispatch(clearIsLoading());
+  const getData = async () => {
+    dispatch(setIsLoading());
+    try {
+      const resp = await axiosInstance.get("/clients");
+      dispatch(setData(resp.data));
+      if (client_id) {
+        dispatch(setInput({ ...input, name: "client_id", value: client_id }));
+      } else if (resp?.data?.clients?.length > 0) {
+        dispatch(setInput({ ...input, name: "client_id", value: resp.data.clients[0].id }));
       }
-    };
+    } catch (error) {
+      console.log(error);
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
+    } finally {
+      dispatch(clearIsLoading());
+    }
+  };
+
+  useEffect(() => {
+    dispatch(clearValues());
     getData();
   }, []);
 

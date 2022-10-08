@@ -40,51 +40,52 @@ const EditUserFile = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    const getData = async () => {
-      dispatch(clearValues());
-      dispatch(setIsLoading());
+  const getData = async () => {
+    dispatch(setIsLoading());
+    try {
+      const respClients = await axiosInstance.get("/clients");
       try {
-        const respClients = await axiosInstance.get("/clients");
-        try {
-          const resp = await axiosInstance.get(`/userfiles/${params.idFile}`);
-          const { id, client_id, file_name, file_description, user_id, displayed, updated_at, created_at, last_accessed_at, size, mimetype, signedURL } =
-            resp.data.userfile;
-          const updated_at_formatted = new moment(updated_at).format("LLLL");
-          const created_at_formatted = new moment(created_at).format("LLLL");
-          const last_accessed_at_formatted = new moment(last_accessed_at).format("LLLL");
-          dispatch(setData(respClients.data));
-          dispatch(
-            setEdit({
-              input: {
-                id,
-                client_id,
-                file_name,
-                file_description,
-                user_id,
-                displayed,
-                updated_at: updated_at_formatted,
-                created_at: created_at_formatted,
-                last_accessed_at: last_accessed_at_formatted,
-                size,
-                mimetype,
-                signedURL,
-              },
-            })
-          );
-        } catch (error) {
-          console.log(error);
-          dispatch(setError(error?.response?.data?.error?.message || error?.message));
-          dispatch(setData({}));
-        }
+        const resp = await axiosInstance.get(`/userfiles/${params.idFile}`);
+        const { id, client_id, file_name, file_description, user_id, displayed, updated_at, created_at, last_accessed_at, size, mimetype, signedURL } =
+          resp.data.userfile;
+        const updated_at_formatted = new moment(updated_at).format("LLLL");
+        const created_at_formatted = new moment(created_at).format("LLLL");
+        const last_accessed_at_formatted = new moment(last_accessed_at).format("LLLL");
+        dispatch(setData(respClients.data));
+        dispatch(
+          setEdit({
+            input: {
+              id,
+              client_id,
+              file_name,
+              file_description,
+              user_id,
+              displayed,
+              updated_at: updated_at_formatted,
+              created_at: created_at_formatted,
+              last_accessed_at: last_accessed_at_formatted,
+              size,
+              mimetype,
+              signedURL,
+            },
+          })
+        );
       } catch (error) {
         console.log(error);
         dispatch(setError(error?.response?.data?.error?.message || error?.message));
         dispatch(setData({}));
-      } finally {
-        dispatch(clearIsLoading());
       }
-    };
+    } catch (error) {
+      console.log(error);
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
+      dispatch(setData({}));
+    } finally {
+      dispatch(clearIsLoading());
+    }
+  };
+
+  useEffect(() => {
+    dispatch(clearValues());
     getData();
   }, []);
 

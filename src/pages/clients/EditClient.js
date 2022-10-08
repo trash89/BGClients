@@ -37,34 +37,35 @@ const EditClient = () => {
     }
   }, [user]);
 
+  const getData = async () => {
+    dispatch(setIsLoading());
+    try {
+      const resp = await axiosInstance.get(`/clients/${params.idClient}`);
+      dispatch(setData({ events: resp.data.events, userfiles: resp.data.userfiles }));
+      const { id, name, description, address, email, localuser_id, user_id } = resp.data.client;
+      dispatch(
+        setEdit({
+          input: {
+            id,
+            name,
+            description,
+            address,
+            email,
+            localuser_id,
+            user_id,
+          },
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
+    } finally {
+      dispatch(clearIsLoading());
+    }
+  };
+
   useEffect(() => {
-    const getData = async () => {
-      dispatch(clearValues());
-      dispatch(setIsLoading());
-      try {
-        const resp = await axiosInstance.get(`/clients/${params.idClient}`);
-        dispatch(setData({ events: resp.data.events, userfiles: resp.data.userfiles }));
-        const { id, name, description, address, email, localuser_id, user_id } = resp.data.client;
-        dispatch(
-          setEdit({
-            input: {
-              id,
-              name,
-              description,
-              address,
-              email,
-              localuser_id,
-              user_id,
-            },
-          })
-        );
-      } catch (error) {
-        console.log(error);
-        dispatch(setError(error?.response?.data?.error?.message || error?.message));
-      } finally {
-        dispatch(clearIsLoading());
-      }
-    };
+    dispatch(clearValues());
     getData();
   }, []);
 

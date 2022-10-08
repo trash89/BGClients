@@ -33,20 +33,21 @@ const Clients = () => {
     }
   }, [user]);
 
+  const getData = async () => {
+    dispatch(setIsLoading());
+    try {
+      const resp = await axiosInstance.get("/clients");
+      dispatch(setData(resp.data));
+    } catch (error) {
+      console.log(error);
+      dispatch(setData({}));
+    } finally {
+      dispatch(clearIsLoading());
+    }
+  };
+
   useEffect(() => {
     dispatch(clearValues());
-    const getData = async () => {
-      dispatch(setIsLoading());
-      try {
-        const resp = await axiosInstance.get("/clients");
-        dispatch(setData(resp.data));
-      } catch (error) {
-        console.log(error);
-        dispatch(setData({}));
-      } finally {
-        dispatch(clearIsLoading());
-      }
-    };
     getData();
   }, []);
 

@@ -38,42 +38,42 @@ const EditEvent = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    const getData = async () => {
-      dispatch(clearValues());
-      dispatch(setIsLoading());
+  const getData = async () => {
+    dispatch(setIsLoading());
+    try {
+      const respClients = await axiosInstance.get("/clients");
       try {
-        const respClients = await axiosInstance.get("/clients");
-        try {
-          const resp = await axiosInstance.get(`/events/${params.idEvent}`);
-          const { id, client_id, ev_name, ev_description, ev_date, user_id, displayed } = resp.data.event;
-          dispatch(setData(respClients.data));
-          dispatch(
-            setEdit({
-              input: {
-                id,
-                client_id,
-                ev_name,
-                ev_description,
-                ev_date,
-                user_id,
-                displayed,
-              },
-            })
-          );
-        } catch (error) {
-          console.log(error);
-          dispatch(setError(error?.response?.data?.error?.message || error?.message));
-          dispatch(setData({}));
-        }
+        const resp = await axiosInstance.get(`/events/${params.idEvent}`);
+        const { id, client_id, ev_name, ev_description, ev_date, user_id, displayed } = resp.data.event;
+        dispatch(setData(respClients.data));
+        dispatch(
+          setEdit({
+            input: {
+              id,
+              client_id,
+              ev_name,
+              ev_description,
+              ev_date,
+              user_id,
+              displayed,
+            },
+          })
+        );
       } catch (error) {
         console.log(error);
         dispatch(setError(error?.response?.data?.error?.message || error?.message));
         dispatch(setData({}));
-      } finally {
-        dispatch(clearIsLoading());
       }
-    };
+    } catch (error) {
+      console.log(error);
+      dispatch(setError(error?.response?.data?.error?.message || error?.message));
+      dispatch(setData({}));
+    } finally {
+      dispatch(clearIsLoading());
+    }
+  };
+  useEffect(() => {
+    dispatch(clearValues());
     getData();
   }, []);
 
