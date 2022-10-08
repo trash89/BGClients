@@ -15,7 +15,7 @@ Live on Vercel platform : https://bgclients.vercel.app
 The application is built with three components:
 
 - the database server, with a relational database schema deployed on Supabase PostgreSQL service.
-- the API REST server, built with Express.
+- the REST API server, built with Express.
 - the frontend application, built with ReactJS, Redux and Bootstrap5, relaying on the underlying API REST server to communicate with the database.
 
 This repository contains the frontend application.
