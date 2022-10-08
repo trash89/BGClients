@@ -12,6 +12,8 @@ When a client connects, he can view his informations on his secured area and dow
 
 Live on Vercel platform : https://bgclients.vercel.app
 
+![Query](./Screenshot.png)
+
 The application is built with three components:
 
 - the database server, with a relational database schema deployed on Supabase PostgreSQL service.
