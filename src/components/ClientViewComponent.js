@@ -89,46 +89,50 @@ const ClientViewComponent = ({ user }) => {
         </div>
       </div>
       <p className="h6">{data.client?.address}</p>
-      <div className="mb-1 mt-1">
-        {data.events?.length > 0 ? (
-          <>
-            <p className="h6">Events</p>
-            {data.events?.map((event) => {
-              const ev_date_formatted = new moment(event?.ev_date).format(dateFormat);
-              return (
-                <div className="card" key={event?.id}>
-                  <div className="card-header">
-                    {ev_date_formatted} - {event?.ev_name}
-                  </div>
-                  <div className="card-body">{event?.ev_description}</div>
-                </div>
-              );
-            })}
-          </>
-        ) : (
-          <></>
-        )}
-      </div>
-      <div className="mb-1 mt-1">
-        {data.userfiles?.length > 0 ? (
-          <>
-            <p className="h6">Files</p>
-            {data.userfiles?.map((file) => {
-              return (
-                <div className="card" key={file?.id}>
-                  <div className="card-header">{file?.file_description}</div>
-                  <div className="card-body">
-                    <a href={file?.signedURL} target="_blank" rel="noopener noreferrer">
-                      {file?.file_name}
-                    </a>
-                  </div>
-                </div>
-              );
-            })}
-          </>
-        ) : (
-          <></>
-        )}
+      <div className="container-fluid m-0 p-0">
+        <div className="row row-cols-auto">
+          <div className="col mb-1 mt-1">
+            {data.events?.length > 0 ? (
+              <>
+                <p className="h6">Events</p>
+                {data.events?.map((event) => {
+                  const ev_date_formatted = new moment(event?.ev_date).format(dateFormat);
+                  return (
+                    <div className="card" key={event?.id}>
+                      <div className="card-header">
+                        {ev_date_formatted} - {event?.ev_name}
+                      </div>
+                      <div className="card-body">{event?.ev_description}</div>
+                    </div>
+                  );
+                })}
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
+          <div className="col mb-1 mt-1">
+            {data.userfiles?.length > 0 ? (
+              <>
+                <p className="h6">Files</p>
+                {data.userfiles?.map((file) => {
+                  return (
+                    <div className="card" key={file?.id}>
+                      <div className="card-header">{file?.file_description}</div>
+                      <div className="card-body">
+                        <a href={file?.signedURL} target="_blank" rel="noopener noreferrer">
+                          {file?.file_name}
+                        </a>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
       </div>
       <br />
     </section>
