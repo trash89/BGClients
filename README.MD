@@ -1,6 +1,6 @@
 # BG Clients Application
 
-The BG Clients Application is allowing to keep track of the clients for a lawyer office.
+The BG Clients Application is allowing to keep track of the clients communications for a lawyer office.
 
 It allows the creation of a private secured area for clients in order to communicate them useful informations like events and PDF files they can consult and download.
 
@@ -10,7 +10,7 @@ The administrator can publish events and files for clients.
 
 When a client connects, he can view his informations on his secured area and download his files. He can also change his own password and the administrator can also reset his password to the default one.
 
-Live on Vercel platform : https://bgclients.vercel.app
+The application is live on Vercel: https://bgclients.vercel.app
 
 ![Query](./Screenshot.png)
 
@@ -22,4 +22,4 @@ The application is built with three components:
 
 This repository contains the frontend application.
 
-### `Enjoy! :)`
+#### `Enjoy! :)`
